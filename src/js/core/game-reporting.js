@@ -66,13 +66,20 @@ function copy(aObject) {
     // don't copy DOM nodes.
     if (aObject[key]?.nodeType >= 0) continue;
 
-    // don't copy references to other objects.
+    // don't copy redundant stuff, and references to other objects.
     if (
+      key === 'dom' ||
+      key === 'css' ||
       key === 'parent' ||
       key === 'oParent' ||
       key === 'objects' ||
       key === 'target' ||
-      key === 'attacker'
+      key === 'attacker' ||
+      key === 'domCanvas' ||
+      key === 'friendlyNearby' ||
+      key === 'nearby' ||
+      key === 'collision' ||
+      key === 'funds'
     )
       continue;
 
