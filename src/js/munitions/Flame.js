@@ -6,6 +6,9 @@ import { utils } from '../core/utils.js';
 import { playSound, sounds } from '../core/sound.js';
 import { game } from '../core/Game.js';
 
+const spriteWidth = 64;
+const spriteHeight = 36;
+
 const Flame = (options = {}) => {
   let data, dom, domCanvas, collision, exports;
 
@@ -25,9 +28,6 @@ const Flame = (options = {}) => {
     },
     options
   );
-
-  const spriteWidth = 64;
-  const spriteHeight = 36;
 
   domCanvas = {
     img: {
@@ -59,12 +59,12 @@ const Flame = (options = {}) => {
   };
 
   exports = {
-    animate,
+    animate: () => animate(exports),
     data,
     dom,
     domCanvas,
-    die,
-    init: initFlame
+    die: (force) => die(exports, force),
+    init: () => initFlame(exports)
   };
 
   collision = {
@@ -95,6 +95,8 @@ const Flame = (options = {}) => {
         { exports }
       )
   };
+
+  exports.collision = collision;
 
   return exports;
 };
