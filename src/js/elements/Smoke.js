@@ -56,7 +56,7 @@ const Smoke = (options = {}) => {
 
   domCanvas = {
     img: {
-      src: refreshSprite(),
+      src: refreshSprite(data),
       source: {
         x: 0,
         y: 0,
@@ -101,17 +101,18 @@ const Smoke = (options = {}) => {
   };
 
   exports = {
-    animate,
+    animate: () => animate(exports),
     data,
     dom,
     domCanvas,
-    die
+    die: () => die(exports),
+    options
   };
 
   // in the original, smoke generation increments a key seed value for the game.
   game.incrementRandSeed();
 
-  initSmoke();
+  initSmoke(exports);
 
   return exports;
 };
