@@ -11,73 +11,8 @@ const MissileNapalm = (options = {}) => {
   const width = 22;
   const height = 20;
 
-  function die(force) {
-    // aieee!
 
-    if (data.dead && !force) return;
 
-    data.dead = true;
-
-    radarItem?.die({
-      silent: true
-    });
-
-    sprites.removeNodesAndUnlink(exports);
-
-    common.onDie(exports);
-  }
-
-  function animate() {
-    sprites.moveWithScrollOffset(exports);
-
-    if (data.dead) return true;
-
-    // avoid rolling over too many frames
-    if (data.frameCount % domCanvas.img.animationModulus === 0) {
-      domCanvas.img.animationFrame += domCanvas.img.animationFrameDirection;
-
-      if (domCanvas.img.animationFrame >= animationFrameCount) {
-        domCanvas.img.animationFrameDirection *= -1;
-      }
-
-      if (domCanvas.img.animationFrame >= 0) {
-        domCanvas.img.src = utils.image.getImageObject(
-          `shrapnel_v${domCanvas.img.frameMap[domCanvas.img.animationFrame]}.png`
-        );
-      } else {
-        // -1 = end of animation
-        collision.options.useLookAhead = false;
-      }
-
-      // flames have "velocity" in the original game
-      data.x += data.vX;
-    }
-
-    if (!data.expired && data.frameCount > data.expireFrameCount) {
-      die();
-    }
-
-    data.frameCount++;
-
-    if (!data.isInert) {
-      collisionTest(collision, exports);
-    }
-
-    // notify caller if now dead and can be removed.
-    return data.dead && !dom.o;
-  }
-
-  function initDOM() {
-    dom.o = {};
-  }
-
-  function initMissileNapalm() {
-    initDOM();
-
-    radarItem = game.objects.radar.addItem(exports);
-
-    sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
-  }
 
   data = common.inheritData(
     {
@@ -202,5 +137,79 @@ const MissileNapalm = (options = {}) => {
 
   return exports;
 };
+
+function die(exports, force) {
+  let { data, radarItem } = exports;
+
+  // aieee!
+
+  if (data.dead && !force) return;
+
+  data.dead = true;
+
+  radarItem?.die({
+    silent: true
+  });
+
+  sprites.removeNodesAndUnlink(exports);
+
+  common.onDie(exports);
+}
+
+function animate(exports) {
+  let { collision, data, dom, domCanvas } = exports;
+
+  sprites.moveWithScrollOffset(exports);
+
+  if (data.dead) return true;
+
+  // avoid rolling over too many frames
+  if (data.frameCount % domCanvas.img.animationModulus === 0) {
+    domCanvas.img.animationFrame += domCanvas.img.animationFrameDirection;
+
+    if (domCanvas.img.animationFrame >= animationFrameCount) {
+      domCanvas.img.animationFrameDirection *= -1;
+    }
+
+    if (domCanvas.img.animationFrame >= 0) {
+      domCanvas.img.src = utils.image.getImageObject(
+        `shrapnel_v${domCanvas.img.frameMap[domCanvas.img.animationFrame]}.png`
+      );
+    } else {
+      // -1 = end of animation
+      collision.options.useLookAhead = false;
+    }
+
+    // flames have "velocity" in the original game
+    data.x += data.vX;
+  }
+
+  if (!data.expired && data.frameCount > data.expireFrameCount) {
+    die(exports);
+  }
+
+  data.frameCount++;
+
+  if (!data.isInert) {
+    collisionTest(collision, exports);
+  }
+
+  // notify caller if now dead and can be removed.
+  return data.dead && !dom.o;
+}
+
+function initDOM(exports) {
+  exports.dom.o = {};
+}
+
+function initMissileNapalm(exports) {
+  let { data, dom } = exports;
+
+  initDOM(exports);
+
+  exports.radarItem = game.objects.radar.addItem(exports);
+
+  sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
+}
 
 export { MissileNapalm };
