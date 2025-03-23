@@ -89,12 +89,14 @@ const GunFire = (options = {}) => {
   };
 
   exports = {
-    animate,
+    animate: () => animate(exports),
     data,
     dom,
     domCanvas,
-    die,
-    init: initGunFire
+    die: (force) => die(exports, force),
+    frameTimeout,
+    init: () => initGunFire(exports),
+    radarItem
   };
 
   collision = {
@@ -125,7 +127,7 @@ const GunFire = (options = {}) => {
             (target.data.energy === 0 || target.data.isEnemy === data.isEnemy)
           )
         ) {
-          sparkAndDie(target);
+          sparkAndDie(exports, target);
         }
         // extra special case: BnB + enemy turret / chopper / infantry etc. firing at player.
         if (
@@ -145,6 +147,8 @@ const GunFire = (options = {}) => {
         { exports }
       )
   };
+
+  exports.collision = collision;
 
   return exports;
 };
