@@ -796,7 +796,7 @@ function claim(exports, engineer) {
     }
   }
 
-  setEnemy(engineer.data.isEnemy);
+  setEnemy(exports, engineer.data.isEnemy);
 
   data.claimPoints = 0;
 }
