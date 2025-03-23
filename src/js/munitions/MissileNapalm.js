@@ -5,14 +5,14 @@ import { sprites } from '../core/sprites.js';
 import { utils } from '../core/utils.js';
 import { game } from '../core/Game.js';
 
+const width = 22;
+const height = 20;
+
+// number of frames to iterate through
+const animationFrameCount = 3;
+
 const MissileNapalm = (options = {}) => {
-  let collision, data, dom, domCanvas, exports, radarItem;
-
-  const width = 22;
-  const height = 20;
-
-
-
+  let collision, data, dom, domCanvas, exports;
 
   data = common.inheritData(
     {
@@ -30,9 +30,6 @@ const MissileNapalm = (options = {}) => {
     },
     options
   );
-
-  // number of frames to iterate through
-  const animationFrameCount = 3;
 
   domCanvas = {
     img: {
@@ -95,12 +92,12 @@ const MissileNapalm = (options = {}) => {
   };
 
   exports = {
-    animate,
+    animate: () => animate(exports),
     data,
     dom,
     domCanvas,
     die,
-    init: initMissileNapalm
+    init: () => initMissileNapalm(exports)
   };
 
   collision = {
@@ -134,6 +131,8 @@ const MissileNapalm = (options = {}) => {
         { exports }
       )
   };
+
+  exports.collision = collision;
 
   return exports;
 };
