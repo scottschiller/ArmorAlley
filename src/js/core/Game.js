@@ -79,6 +79,8 @@ import {
 
 const DEFAULT_GAME_TYPE = 'tutorial';
 
+let jsErrors = [];
+
 // very commonly-accessed attributes to be exported
 let gameType;
 let screenScale = 1;
@@ -1254,3 +1256,26 @@ const logEvents = {
 };
 
 export { game, gameType, screenScale };
+// quick global runtime error handler
+window.addEventListener('error', (e) => {
+  try {
+    let errorMsg = e?.error?.stack;
+    if (!errorMsg) return;
+
+    // prevent runaway reporting
+    if (jsErrors.length > 8) return;
+
+    if (!jsErrors.includes(errorMsg)) {
+      jsErrors.push(errorMsg);
+      utils.log({
+        info: {
+          event: 'JS_ERROR',
+          error: errorMsg
+        }
+      });
+    }
+  } catch (err) {
+    // oh well
+    return;
+  }
+});
