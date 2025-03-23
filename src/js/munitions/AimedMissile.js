@@ -16,24 +16,24 @@ import { sprites } from '../core/sprites.js';
 import { effects } from '../core/effects.js';
 import { net } from '../core/network.js';
 
+let type = TYPES.aimedMissile;
+
 const dimensions = {
   width: 15,
   height: 4
 };
+
+const { width, height } = dimensions;
+
+// velocity x + y "basis"
+const v = 8;
 
 const AimedMissile = (options = {}) => {
   /**
    * "Dumb" missile, armed with napalm.
    */
 
-  let dom, domCanvas, data, radarItem, objects, collision, launchSound, exports;
-
-  let type = TYPES.aimedMissile;
-
-  const { width, height } = dimensions;
-
-  // velocity x + y "basis"
-  const v = 8;
+  let collision, dom, domCanvas, data, launchSound, radarItem, objects, exports;
 
   data = common.inheritData(
     {
@@ -52,7 +52,6 @@ const AimedMissile = (options = {}) => {
       halfWidth: width / 2,
       height,
       damagePoints: 12.5,
-      onDie: options.onDie || null,
       playbackRate: 0.9 + Math.random() * 0.2,
       target: null,
       vX: options.vX || 0,
@@ -63,7 +62,7 @@ const AimedMissile = (options = {}) => {
       trailerCount: 16,
       xHistory: [],
       yHistory: [],
-      yMax: null,
+      yMax: game.objects.view.data.battleField.height - 3,
       noEnergyStatus: true
     },
     options
@@ -131,12 +130,14 @@ const AimedMissile = (options = {}) => {
   };
 
   exports = {
-    animate,
+    animate: () => animate(exports),
     data,
     dom,
     domCanvas,
-    die,
-    init: initAimedMissile,
+    die: (dieOptions) => die(exports, dieOptions),
+    onDie: options.onDie || null,
+    init: () => initAimedMissile(exports),
+    launchSound,
     radarItem,
     objects
   };
@@ -147,7 +148,7 @@ const AimedMissile = (options = {}) => {
       targets: undefined,
       checkTweens: true,
       hit(target) {
-        sparkAndDie(target);
+        sparkAndDie(exports, target);
       }
     },
     items: getTypes(
@@ -155,6 +156,8 @@ const AimedMissile = (options = {}) => {
       { exports }
     )
   };
+
+  exports.collision = collision;
 
   return exports;
 };
