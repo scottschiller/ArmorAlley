@@ -751,8 +751,8 @@ const game = (() => {
         // OR, just call network methods directly.
         // percentage to pixels (circle coordinates)
         const vData = objects.view.data;
-        const x = (directionX / 100);
-        const y = (directionY / 100);
+        const x = directionX / 100;
+        const y = directionY / 100;
         if (net.active) {
           vData.mouse.delayedInputX = x;
           vData.mouse.delayedInputY = y;
