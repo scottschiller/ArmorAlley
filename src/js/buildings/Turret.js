@@ -436,7 +436,7 @@ function fire(exports) {
 }
 
 function setFiring(exports, isFiring) {
-  let { data } = exports;
+  let { data, objects } = exports;
 
   if (data.firing === isFiring) return;
 
