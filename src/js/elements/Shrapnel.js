@@ -18,20 +18,19 @@ import { playSound, sounds } from '../core/sound.js';
 import { sprites } from '../core/sprites.js';
 import { utils } from '../core/utils.js';
 
+const spriteTypes = 12;
+
+const maxVX = 16;
+const maxVY = 16;
+
 const Shrapnel = (options = {}) => {
   let dom,
     domCanvas,
     data,
     collision,
-    radarItem,
     scale,
     exports,
     type = TYPES.shrapnel;
-
-  const spriteTypes = 12;
-
-  const maxVX = 16;
-  const maxVY = 16;
 
   // default
   scale = options.scale || 0.8 + rng(0.15, type);
@@ -124,12 +123,12 @@ const Shrapnel = (options = {}) => {
   };
 
   exports = {
-    animate,
+    animate: () => animate(exports),
     data,
     dom,
     domCanvas,
-    die,
-    init: initShrapnel
+    die: () => die(exports),
+    init: () => initShrapnel(exports)
   };
 
   collision = {
@@ -145,7 +144,7 @@ const Shrapnel = (options = {}) => {
        */
       checkTweensRepositionOnHit: false,
       hit(target) {
-        hitAndDie(target);
+        hitAndDie(exports, target);
       }
     },
     items:
@@ -155,6 +154,8 @@ const Shrapnel = (options = {}) => {
         { group: 'all' }
       )
   };
+
+  exports.collision = collision;
 
   return exports;
 };
