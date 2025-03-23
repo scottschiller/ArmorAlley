@@ -1021,7 +1021,7 @@ function initDOM(exports) {
 }
 
 function initTurret(exports, options) {
-  let { data, objects, radarItem } = exports;
+  let { data, dom, objects, radarItem } = exports;
 
   refreshCollisionItems(exports);
 
