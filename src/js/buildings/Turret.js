@@ -576,7 +576,7 @@ function die(exports, dieOptions = {}) {
 }
 
 function restore(exports) {
-  let { data } = exports;
+  let { css, data } = exports;
 
   // restore visual, but don't re-activate gun yet
   if (!data.dead && data.energy !== 0) return;
@@ -594,7 +594,7 @@ function isEngineerInteracting(exports) {
 }
 
 function repair(exports, engineer, complete) {
-  let { data, dom, radarItem } = exports;
+  let { css, data, dom, radarItem } = exports;
 
   let result = false;
 
@@ -619,7 +619,7 @@ function repair(exports, engineer, complete) {
         utils.css.remove(radarItem.dom.o, css.destroyed);
         utils.css.remove(radarItem.dom.oScanNode, css.destroyed);
 
-        updateDomCanvas({ dead: false });
+        updateDomCanvas(exports, { dead: false });
 
         playSound(sounds.turretEnabled, exports);
 
@@ -802,7 +802,7 @@ function claim(exports, engineer) {
 }
 
 function engineerHit(exports, engineer) {
-  let { data, radarItem } = exports;
+  let { css, data, radarItem } = exports;
 
   // target is an engineer; either repairing, or claiming.
 
@@ -843,9 +843,9 @@ function engineerHit(exports, engineer) {
   }
 
   // play repair sounds?
-  playRepairingWrench(isEngineerInteracting, exports);
+  playRepairingWrench(() => isEngineerInteracting(exports), exports);
 
-  playTinkerWrench(isEngineerInteracting, exports);
+  playTinkerWrench(() => isEngineerInteracting(exports), exports);
 }
 
 function bnbInteract(exports, engineer) {
@@ -888,7 +888,7 @@ function engineerCanInteract(exports, isEnemy) {
 }
 
 function animate(exports) {
-  let { data, domCanvas } = exports;
+  let { css, data, domCanvas, radarItem } = exports;
 
   sprites.moveWithScrollOffset(exports);
 
