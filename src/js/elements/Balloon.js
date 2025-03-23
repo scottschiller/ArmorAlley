@@ -25,12 +25,10 @@ import { gamePrefs } from '../UI/preferences.js';
 
 const FRAME_Y_MIDDLE = 4;
 const FACING = 4;
+const windOffsetXMax = 3;
 
 const Balloon = (options = {}) => {
-  let css, data, dom, domCanvas, objects, radarItem, reset, exports;
-
-  const windOffsetXMax = 3;
-
+  let css, data, dom, domCanvas, objects, exports;
 
   objects = {
     bunker: options.bunker || null,
@@ -119,20 +117,21 @@ const Balloon = (options = {}) => {
   };
 
   exports = {
-    animate,
-    attachChain,
+    animate: () => animate(exports),
+    attachChain: (chain) => attachChain(exports, chain),
+    css,
     data,
-    detachFromBunker,
-    die,
+    detachFromBunker: () => detachFromBunker(exports),
+    die: (dieOptions) => die(exports, dieOptions),
     dom,
     // hack - see below.
     domCanvas,
-    init: initBalloon,
-    isOnScreenChange,
+    init: () => initBalloon(exports),
+    isOnScreenChange: () => isOnScreenChange(exports),
     objects,
-    reset,
-    setEnemy,
-    updateSprite
+    reset: () => reset(exports),
+    setEnemy: (isEnemy) => setEnemy(exports, isEnemy),
+    updateSprite: () => updateSprite(exports)
   };
 
   domCanvas.radarItem = Balloon.radarItemConfig({ exports });
