@@ -35,21 +35,16 @@ import { Vector } from '../core/Vector.js';
 
 const TURRET_SCAN_RADIUS = 340;
 
+const src = 'turret-sprite.png';
+
+const spriteWidth = 36;
+const spriteHeight = 128;
+const frameHeight = 32;
+
 const Turret = (options = {}) => {
-  let css,
-    data,
-    dom,
-    domCanvas,
-    objects,
-    height,
-    radarItem,
-    collisionItems,
-    targets,
-    exports;
+  let exports;
 
-
-
-
+  let css, data, dom, domCanvas, objects, height, radarItem;
 
   height = 15;
 
@@ -145,12 +140,6 @@ const Turret = (options = {}) => {
     oSubSprite: null
   };
 
-  const src = 'turret-sprite.png';
-
-  const spriteWidth = 36;
-  const spriteHeight = 128;
-  const frameHeight = 32;
-
   // base of turret
   const turretBase = {
     src: utils.image.getImageObject(src),
@@ -165,6 +154,26 @@ const Turret = (options = {}) => {
       // sprite offset indices
       frameX: 0,
       frameY: 0
+    },
+    target: {
+      width: spriteWidth / 2,
+      height: frameHeight / 2
+    }
+  };
+
+  const turretDead = {
+    src: utils.image.getImageObject(src),
+    source: {
+      x: 0,
+      y: 0,
+      is2X: true,
+      width: spriteWidth,
+      height: spriteHeight,
+      frameWidth: spriteWidth,
+      frameHeight,
+      // sprite offset indices
+      frameX: 0,
+      frameY: 3
     },
     target: {
       width: spriteWidth / 2,
@@ -201,26 +210,6 @@ const Turret = (options = {}) => {
     }
   };
 
-  const turretDead = {
-    src: utils.image.getImageObject(src),
-    source: {
-      x: 0,
-      y: 0,
-      is2X: true,
-      width: spriteWidth,
-      height: spriteHeight,
-      frameWidth: spriteWidth,
-      frameHeight,
-      // sprite offset indices
-      frameX: 0,
-      frameY: 3
-    },
-    target: {
-      width: spriteWidth / 2,
-      height: frameHeight / 2
-    }
-  };
-
   domCanvas = {
     img: [turretBase, turretGun],
     radarItem: Turret.radarItemConfig({ data })
@@ -231,21 +220,26 @@ const Turret = (options = {}) => {
   };
 
   exports = {
-    animate,
+    animate: () => animate(exports),
+    css,
     data,
-    destroy,
-    die,
+    destroy: () => destroy(exports),
+    die: (dieOptions) => die(exports, dieOptions),
     dom,
     // hackish: see below.
     domCanvas,
-    engineerCanInteract,
-    engineerHit,
-    init: initTurret,
+    engineerCanInteract: (isEnemy) => engineerCanInteract(exports, isEnemy),
+    engineerHit: (engineer) => engineerHit(exports, engineer),
+    init: () => initTurret(exports, options),
     objects,
     radarItem,
-    refreshCollisionItems,
-    resize,
-    repair,
+    refreshCollisionItems: () => refreshCollisionItems(exports),
+    resize: () => resize(exports),
+    repair: (engineer, complete) => repair(exports, engineer, complete),
+    targets: null,
+    turretBase,
+    turretGun,
+    turretDead,
     updateHealth
   };
 
