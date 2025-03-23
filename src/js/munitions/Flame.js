@@ -9,51 +9,6 @@ import { game } from '../core/Game.js';
 const Flame = (options = {}) => {
   let data, dom, domCanvas, collision, exports;
 
-  function die(force) {
-    // aieee!
-
-    if (data.dead && !force) return;
-
-    data.dead = true;
-
-    sprites.removeNodesAndUnlink(exports);
-
-    common.onDie(exports);
-  }
-
-  function animate() {
-    sprites.moveWithScrollOffset(exports);
-
-    if (data.dead) return true;
-
-    if (!data.expired && data.frameCount > data.expireFrameCount) {
-      die();
-    }
-
-    data.frameCount++;
-
-    if (!data.isInert) {
-      collisionTest(collision, exports);
-    }
-
-    // notify caller if now dead and can be removed.
-    return data.dead && !dom.o;
-  }
-
-  function initDOM() {
-    dom.o = {};
-  }
-
-  function initFlame() {
-    initDOM();
-
-    sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
-
-    if (sounds.tankFlame) {
-      playSound(sounds.tankFlame, game.players.local);
-    }
-  }
-
   data = common.inheritData(
     {
       type: 'flame',
@@ -143,5 +98,58 @@ const Flame = (options = {}) => {
 
   return exports;
 };
+
+function die(exports, force) {
+  let { data } = exports;
+
+  // aieee!
+
+  if (data.dead && !force) return;
+
+  data.dead = true;
+
+  sprites.removeNodesAndUnlink(exports);
+
+  common.onDie(exports);
+}
+
+function animate(exports) {
+  let { collision, data, dom } = exports;
+
+  sprites.moveWithScrollOffset(exports);
+
+  if (data.dead) return true;
+
+  if (!data.expired && data.frameCount > data.expireFrameCount) {
+    die(exports);
+  }
+
+  data.frameCount++;
+
+  if (!data.isInert) {
+    collisionTest(collision, exports);
+  }
+
+  // notify caller if now dead and can be removed.
+  return data.dead && !dom.o;
+}
+
+function initDOM(exports) {
+  let { dom } = exports;
+
+  dom.o = {};
+}
+
+function initFlame(exports) {
+  let { data, dom } = exports;
+
+  initDOM(exports);
+
+  sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
+
+  if (sounds.tankFlame) {
+    playSound(sounds.tankFlame, game.players.local);
+  }
+}
 
 export { Flame };
