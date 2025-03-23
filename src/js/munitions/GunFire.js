@@ -20,266 +20,6 @@ import { gamePrefs } from '../UI/preferences.js';
 const GunFire = (options = {}) => {
   let data, dom, domCanvas, collision, exports, frameTimeout, radarItem;
 
-  function spark() {
-    domCanvas.img = effects.spark();
-    data.excludeBlink = true;
-  }
-
-  function die(force) {
-    // aieee!
-
-    if (data.dead && !force) return;
-
-    data.dead = true;
-
-    sprites.removeNodesAndUnlink(exports);
-
-    radarItem?.die({
-      silent: true
-    });
-
-    common.onDie(exports);
-  }
-
-  function sparkAndDie(target) {
-    // hackish: bail if spark -> die already scheduled.
-    if (frameTimeout) return;
-
-    let now;
-    let canSpark = true;
-    let canDie = true;
-
-    const tType = target?.data?.type;
-    const pType = data.parentType;
-
-    if (target) {
-      // special case: tanks hit turrets for a lot of damage.
-      if (tType === TYPES.turret) {
-        if (pType === TYPES.tank) {
-          data.damagePoints = 8;
-          effects.inertGunfireExplosion({ exports, count: 1 + rndInt(2) });
-        } else if (pType === TYPES.helicopter) {
-          /**
-           * In the original game, helicopter gunfire is 2 and turrets have 31 hit points.
-           * To keep things challenging, make helicopter gunfire less effective on turrets.
-           */
-          data.damagePoints /= 2;
-        } else if (pType === TYPES.infantry) {
-          // infantry also take more time on turrets, in the original.
-          // this rate takes ~2x as long vs. original, but feels reasonable.
-          data.damagePoints /= 2;
-        }
-      }
-
-      // special case: tanks are impervious to infantry gunfire, end-bunkers and super-bunkers are impervious to helicopter gunfire.
-      if (
-        !(pType === TYPES.infantry && tType === TYPES.tank) &&
-        !(
-          pType === TYPES.helicopter &&
-          (tType === TYPES.endBunker || tType === TYPES.superBunker)
-        )
-      ) {
-        common.hit(target, data.damagePoints, exports);
-      }
-
-      // additional bits of shrapnel, for a helicopter shooting a few specific units
-      if (
-        pType === TYPES.helicopter &&
-        (tType === TYPES.tank ||
-          tType === TYPES.missileLauncher ||
-          tType === TYPES.helicopter ||
-          tType === TYPES.turret ||
-          tType === TYPES.bunker)
-      ) {
-        effects.inertGunfireExplosion({
-          exports,
-          count: 1 + rndInt(1),
-          vX: data.vX * rnd(1)
-        });
-      }
-
-      // play a sound for certain targets and source -> target combinations
-
-      if (tType === TYPES.helicopter) {
-        playSound(sounds.boloTank, exports);
-
-        data.domFetti.startVelocity = Math.abs(data.vX) + Math.abs(data.vY);
-
-        effects.domFetti(exports, target);
-      } else if (
-        tType === TYPES.tank ||
-        tType === TYPES.helicopter ||
-        tType === TYPES.van ||
-        tType === TYPES.bunker ||
-        tType === TYPES.endBunker ||
-        tType === TYPES.superBunker ||
-        // helicopter -> turret
-        (pType === TYPES.helicopter && tType === TYPES.turret)
-      ) {
-        // impervious to gunfire?
-        if (
-          // infantry -> tank = ricochet.
-          (pType === TYPES.infantry && tType === TYPES.tank) ||
-          // nothing can hit end or super bunkers, except tanks.
-          ((tType === TYPES.endBunker || tType === TYPES.superBunker) &&
-            pType !== TYPES.tank)
-        ) {
-          // up to five infantry may be firing at the tank.
-          // prevent the sounds from piling up.
-          now = performance.now();
-
-          if (now - common.lastInfantryRicochet > data.ricochetSoundThrottle) {
-            playSound(sounds.ricochet, exports);
-            common.lastInfantryRicochet = now;
-          }
-
-          canSpark = false;
-          canDie = false;
-
-          // bounce! reverse, and maybe flip on vertical.
-          // hackish: if gunfire *originated* "above", consider this a vertical bounce.
-          if (options.y < 358) {
-            data.vY *= -1;
-          } else if (net.active) {
-            data.vX *= -1;
-          } else {
-            data.vX *= -rnd(1);
-            data.vY *= rnd(1) * plusMinus();
-          }
-
-          // hackish: move immediately away, reduce likelihood of getting "stuck" in a bounce.
-          data.x += data.vX;
-          data.y += data.vY;
-        } else {
-          // otherwise, it "sounds" like a hit.
-          if (tType === TYPES.bunker) {
-            playSound(sounds.concreteHit, exports);
-          } else {
-            playSound(sounds.metalHit, exports);
-          }
-        }
-      } else if (tType === TYPES.balloon && sounds.balloonHit) {
-        playSound(sounds.balloonHit, exports);
-      } else if (tType === TYPES.turret) {
-        playSound(sounds.metalHit, exports);
-        effects.inertGunfireExplosion({ exports, count: 1 + rndInt(1) });
-      } else if (tType === TYPES.gunfire) {
-        // gunfire hit gunfire!
-        playSound(sounds.ricochet, exports);
-        playSound(sounds.metalHit, exports);
-      }
-    }
-
-    if (canSpark) spark();
-
-    if (canDie) {
-      // "embed", so this object moves relative to the target it hit
-      sprites.attachToTarget(exports, target);
-
-      // immediately mark as dead, prevent any more collisions.
-      data.dead = true;
-
-      // and cleanup shortly.
-      frameTimeout = common.setFrameTimeout(
-        () => {
-          // use the force, indeed.
-          const force = true;
-          die(force);
-          frameTimeout = null;
-        },
-        canSpark ? 750 : 250
-      );
-
-      if (tType !== TYPES.infantry) {
-        // hackish: override for special case
-        data.domFetti = {
-          colorType: 'grey',
-          elementCount: 1 + rndInt(1),
-          startVelocity: Math.abs(data.vX) + Math.abs(data.vY),
-          angle: 0
-        };
-
-        effects.domFetti(exports, target);
-      }
-    }
-  }
-
-  function animate() {
-    // pending die()
-    if (frameTimeout) {
-      // keep moving with scroll, while visible
-      sprites.moveWithScrollOffset(exports);
-      return false;
-    }
-
-    if (data.dead) return true;
-
-    // disappear if created on-screen, but has become off-screen.
-    if (data.isInert && !data.isOnScreen) {
-      die();
-      return;
-    }
-
-    if (
-      !data.isInert &&
-      !data.expired &&
-      data.frameCount > data.expireFrameCount
-    ) {
-      data.expired = true;
-      domCanvas.backgroundColor = data.inertColor;
-    }
-
-    if (data.isInert || data.expired) {
-      data.gravity *= 1 + (data.gravityRate - 1) * GAME_SPEED_RATIOED;
-    }
-
-    sprites.moveTo(
-      exports,
-      data.x + data.vX * GAME_SPEED_RATIOED,
-      data.y +
-        data.vY * GAME_SPEED_RATIOED +
-        (data.isInert || data.expired ? data.gravity : 0)
-    );
-
-    data.frameCount++;
-
-    // inert "gunfire" animates until it hits the ground.
-    if (!data.isInert && data.frameCount >= data.dieFrameCount) {
-      die();
-    }
-
-    // bottom?
-    if (data.y > game.objects.view.data.battleField.height) {
-      if (!data.isInert) {
-        playSound(sounds.bulletGroundHit, exports);
-      }
-      die();
-    }
-
-    if (!data.isInert) {
-      collisionTest(collision, exports);
-    }
-
-    // notify caller if now dead and can be removed.
-    return data.dead && !dom.o;
-  }
-
-  function initGunFire() {
-    // randomize a little: ±1 pixel.
-    if (!net.active && !options?.fixedXY) {
-      data.x += plusMinus();
-      data.y += plusMinus();
-    }
-
-    dom.o = {};
-
-    sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
-
-    if (!data.isInert) {
-      radarItem = game.objects.radar.addItem(exports);
-    }
-  }
-
   data = common.inheritData(
     {
       type: 'gunfire',
@@ -408,5 +148,274 @@ const GunFire = (options = {}) => {
 
   return exports;
 };
+
+function spark(exports) {
+  let { data, domCanvas } = exports;
+
+  domCanvas.img = effects.spark();
+  data.excludeBlink = true;
+}
+
+function die(exports, force) {
+  let { data, radarItem } = exports;
+
+  // aieee!
+
+  if (data.dead && !force) return;
+
+  data.dead = true;
+
+  sprites.removeNodesAndUnlink(exports);
+
+  radarItem?.die({
+    silent: true
+  });
+
+  common.onDie(exports);
+}
+
+function sparkAndDie(exports, target) {
+  let { data, frameTimeout } = exports;
+
+  // hackish: bail if spark -> die already scheduled.
+  if (frameTimeout) return;
+
+  let now;
+  let canSpark = true;
+  let canDie = true;
+
+  const tType = target?.data?.type;
+  const pType = data.parentType;
+
+  if (target) {
+    // special case: tanks hit turrets for a lot of damage.
+    if (tType === TYPES.turret) {
+      if (pType === TYPES.tank) {
+        data.damagePoints = 8;
+        effects.inertGunfireExplosion({ exports, count: 1 + rndInt(2) });
+      } else if (pType === TYPES.helicopter) {
+        /**
+         * In the original game, helicopter gunfire is 2 and turrets have 31 hit points.
+         * To keep things challenging, make helicopter gunfire less effective on turrets.
+         */
+        data.damagePoints /= 2;
+      } else if (pType === TYPES.infantry) {
+        // infantry also take more time on turrets, in the original.
+        // this rate takes ~2x as long vs. original, but feels reasonable.
+        data.damagePoints /= 2;
+      }
+    }
+
+    // special case: tanks are impervious to infantry gunfire, end-bunkers and super-bunkers are impervious to helicopter gunfire.
+    if (
+      !(pType === TYPES.infantry && tType === TYPES.tank) &&
+      !(
+        pType === TYPES.helicopter &&
+        (tType === TYPES.endBunker || tType === TYPES.superBunker)
+      )
+    ) {
+      common.hit(target, data.damagePoints, exports);
+    }
+
+    // additional bits of shrapnel, for a helicopter shooting a few specific units
+    if (
+      pType === TYPES.helicopter &&
+      (tType === TYPES.tank ||
+        tType === TYPES.missileLauncher ||
+        tType === TYPES.helicopter ||
+        tType === TYPES.turret ||
+        tType === TYPES.bunker)
+    ) {
+      effects.inertGunfireExplosion({
+        exports,
+        count: 1 + rndInt(1),
+        vX: data.vX * rnd(1)
+      });
+    }
+
+    // play a sound for certain targets and source -> target combinations
+    if (tType === TYPES.helicopter) {
+      playSound(sounds.boloTank, exports);
+
+      data.domFetti.startVelocity = Math.abs(data.vX) + Math.abs(data.vY);
+
+      effects.domFetti(exports, target);
+    } else if (
+      tType === TYPES.tank ||
+      tType === TYPES.helicopter ||
+      tType === TYPES.van ||
+      tType === TYPES.bunker ||
+      tType === TYPES.endBunker ||
+      tType === TYPES.superBunker ||
+      // helicopter -> turret
+      (pType === TYPES.helicopter && tType === TYPES.turret)
+    ) {
+      // impervious to gunfire?
+      if (
+        // infantry -> tank = ricochet.
+        (pType === TYPES.infantry && tType === TYPES.tank) ||
+        // nothing can hit end or super bunkers, except tanks.
+        ((tType === TYPES.endBunker || tType === TYPES.superBunker) &&
+          pType !== TYPES.tank)
+      ) {
+        // up to five infantry may be firing at the tank.
+        // prevent the sounds from piling up.
+        now = performance.now();
+
+        if (now - common.lastInfantryRicochet > data.ricochetSoundThrottle) {
+          playSound(sounds.ricochet, exports);
+          common.lastInfantryRicochet = now;
+        }
+
+        canSpark = false;
+        canDie = false;
+
+        // bounce! reverse, and maybe flip on vertical.
+        // hackish: if gunfire *originated* "above", consider this a vertical bounce.
+        if (options.y < 358) {
+          data.vY *= -1;
+        } else if (net.active) {
+          data.vX *= -1;
+        } else {
+          data.vX *= -rnd(1);
+          data.vY *= rnd(1) * plusMinus();
+        }
+
+        // hackish: move immediately away, reduce likelihood of getting "stuck" in a bounce.
+        data.x += data.vX;
+        data.y += data.vY;
+      } else {
+        // otherwise, it "sounds" like a hit.
+        if (tType === TYPES.bunker) {
+          playSound(sounds.concreteHit, exports);
+        } else {
+          playSound(sounds.metalHit, exports);
+        }
+      }
+    } else if (tType === TYPES.balloon && sounds.balloonHit) {
+      playSound(sounds.balloonHit, exports);
+    } else if (tType === TYPES.turret) {
+      playSound(sounds.metalHit, exports);
+      effects.inertGunfireExplosion({ exports, count: 1 + rndInt(1) });
+    } else if (tType === TYPES.gunfire) {
+      // gunfire hit gunfire!
+      playSound(sounds.ricochet, exports);
+      playSound(sounds.metalHit, exports);
+    }
+  }
+
+  if (canSpark) spark(exports);
+
+  if (canDie) {
+    // "embed", so this object moves relative to the target it hit
+    sprites.attachToTarget(exports, target);
+
+    // immediately mark as dead, prevent any more collisions.
+    data.dead = true;
+
+    // and cleanup shortly.
+    frameTimeout = common.setFrameTimeout(
+      () => {
+        // use the force, indeed.
+        const force = true;
+        die(exports, force);
+        frameTimeout = null;
+      },
+      canSpark ? 750 : 250
+    );
+
+    if (tType !== TYPES.infantry) {
+      // hackish: override for special case
+      data.domFetti = {
+        colorType: 'grey',
+        elementCount: 1 + rndInt(1),
+        startVelocity: Math.abs(data.vX) + Math.abs(data.vY),
+        angle: 0
+      };
+
+      effects.domFetti(exports, target);
+    }
+  }
+}
+
+function animate(exports) {
+  let { collision, data, dom, domCanvas, frameTimeout } = exports;
+
+  // pending die()
+  if (frameTimeout) {
+    // keep moving with scroll, while visible
+    sprites.moveWithScrollOffset(exports);
+    return false;
+  }
+
+  if (data.dead) return true;
+
+  // disappear if created on-screen, but has become off-screen.
+  if (data.isInert && !data.isOnScreen) {
+    die(exports);
+    return;
+  }
+
+  if (
+    !data.isInert &&
+    !data.expired &&
+    data.frameCount > data.expireFrameCount
+  ) {
+    data.expired = true;
+    domCanvas.backgroundColor = data.inertColor;
+  }
+
+  if (data.isInert || data.expired) {
+    data.gravity *= 1 + (data.gravityRate - 1) * GAME_SPEED_RATIOED;
+  }
+
+  sprites.moveTo(
+    exports,
+    data.x + data.vX * GAME_SPEED_RATIOED,
+    data.y +
+      data.vY * GAME_SPEED_RATIOED +
+      (data.isInert || data.expired ? data.gravity : 0)
+  );
+
+  data.frameCount++;
+
+  // inert "gunfire" animates until it hits the ground.
+  if (!data.isInert && data.frameCount >= data.dieFrameCount) {
+    die(exports);
+  }
+
+  // bottom?
+  if (data.y > game.objects.view.data.battleField.height) {
+    if (!data.isInert) {
+      playSound(sounds.bulletGroundHit, exports);
+    }
+    die(exports);
+  }
+
+  if (!data.isInert) {
+    collisionTest(collision, exports);
+  }
+
+  // notify caller if now dead and can be removed.
+  return data.dead && !dom.o;
+}
+
+function initGunFire(exports) {
+  let { data, dom, options } = exports;
+
+  // randomize a little: ±1 pixel.
+  if (!net.active && !options?.fixedXY) {
+    data.x += plusMinus();
+    data.y += plusMinus();
+  }
+
+  dom.o = {};
+
+  sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
+
+  if (!data.isInert) {
+    exports.radarItem = game.objects.radar.addItem(exports);
+  }
+}
 
 export { GunFire };
