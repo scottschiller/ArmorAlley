@@ -96,6 +96,7 @@ const GunFire = (options = {}) => {
     die: (force) => die(exports, force),
     frameTimeout,
     init: () => initGunFire(exports),
+    options,
     radarItem
   };
 
@@ -179,7 +180,7 @@ function die(exports, force) {
 }
 
 function sparkAndDie(exports, target) {
-  let { data, frameTimeout } = exports;
+  let { data, frameTimeout, options } = exports;
 
   // hackish: bail if spark -> die already scheduled.
   if (frameTimeout) return;
