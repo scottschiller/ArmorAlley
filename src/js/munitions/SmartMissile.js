@@ -78,6 +78,43 @@ function iSgn(i) {
   return i ? (i > 0 ? 1 : -1) : 0;
 }
 
+const spriteConfig = {
+  banana: {
+    src: 'banana.png',
+    spriteWidth: 32,
+    spriteHeight: 38,
+    width: 8,
+    height: 9.5,
+    scale: 0.8
+  },
+  rubberChicken: {
+    // note: different params for animation.
+    sprite: {
+      url: 'rubber-chicken-96.png',
+      spriteWidth: 96,
+      spriteHeight: 48,
+      frameWidth: 96,
+      frameHeight: 24,
+      width: 24,
+      height: 6,
+      loop: true,
+      animationDuration: 0.5
+    },
+    // TODO: frame count shouldn't be required; fix canvasAnimation() math.
+    animationFrameCount: 2,
+    useDataAngle: true,
+    scale: 0.5
+  },
+  smartMissile: {
+    src: 'smart-missile.png',
+    spriteWidth: 30,
+    spriteHeight: 8,
+    width: 15,
+    height: 4,
+    scale: 1
+  }
+};
+
 const SmartMissile = (options = {}) => {
   /**
    * I am so smart!
@@ -87,7 +124,7 @@ const SmartMissile = (options = {}) => {
    *  -- Homer Simpson
    */
 
-  let dom, data, radarItem, objects, collision, launchSound, exports;
+  let dom, data, radarItem, objects, collision, dieSound, launchSound, exports;
 
   /**
    * "Clip speed" as a range from 0-100%, e.g., 0/6 -> 6/6
@@ -101,29 +138,214 @@ const SmartMissile = (options = {}) => {
 
   const difficultyFactor = Math.max(1, 1 + difficultyOffset * clipSpeedScale);
 
-  // toward end of life, ramp this up to provide the 2X "bust" similar to the original
-  let speedBurstFactor = 1;
-
   let iCurShape = 0;
 
+  // if game preferences allow AND no default specified, then pick at random.
+  if (
+    gamePrefs.alt_smart_missiles &&
+    !options.isRubberChicken &&
+    !options.isBanana &&
+    !options.isSmartMissile
+  ) {
+    options = common.mixin(options, getRandomMissileMode());
+  }
 
+  let type = TYPES.smartMissile;
 
+  let missileData =
+    dimensions[
+      options.isRubberChicken
+        ? 'rubberChicken'
+        : options.isBanana
+          ? 'banana'
+          : 'smartMissile'
+    ];
+
+  const { width, height } = missileData;
+
+  data = common.inheritData(
+    {
+      type,
+      parent: options.parent || null,
+      parentType: options.parentType || null,
+      difficultyFactor,
+      energy: 1,
+      energyMax: 1,
+      excludeEnergy: true,
+      infantryEnergyCost: 0.5,
+      armed: false,
+      didNotify: false,
+      blink: true,
+      blinkCounter: 0,
+      visible: true,
+      expired: false,
+      hostile: false, // when expiring/falling, this object is dangerous to both friendly and enemy units.
+      nearExpiry: false,
+      nearExpiryThreshold: 0.78125,
+      lifeCyclePhase: 0,
+      frameCount: 0,
+      foundDecoy: false,
+      decoyItemTypes: getTypes('parachuteInfantry', {
+        exports: { data: { isEnemy: options.isEnemy } }
+      }),
+      decoyFrameCount: 15,
+      ramiusFrameCount: (FPS * 2) / 3,
+      expireFrameCount: parseInt(
+        (options.expireFrameCount || 256) * (1 / GAME_SPEED_RATIOED),
+        10
+      ),
+      // lifetime limit: 640 frames ought to be enough for anybody.
+      dieFrameCount: parseInt(
+        (options.dieFrameCount || 640) * (1 / GAME_SPEED_RATIOED),
+        10
+      ),
+      iCurShape,
+      width,
+      halfWidth: width / 2,
+      height,
+      halfHeight: height / 2,
+      gravity: 1,
+      damagePoints: 25,
+      isBanana: !!options.isBanana,
+      isRubberChicken: !!options.isRubberChicken,
+      isSmartMissile: !!options.isSmartMissile,
+      playbackRate: 0.9 + Math.random() * 0.2,
+      target: null,
+      vX: net.active ? 1 : 1 + Math.random(),
+      vY: net.active ? 1 : 1 + Math.random(),
+      vXMax: vMax,
+      vYMax: vMax,
+      // toward end of life, ramp this up to provide the 2X "bust" similar to the original
+      speedBurstFactor: 1,
+      thrust: 0.5,
+      deadTimer: null,
+      trailerCount: 16,
+      xHistory: [],
+      yHistory: [],
+      yMax: null,
+      angle: options.isEnemy ? 180 : 0,
+      lastAngle: options.isEnemy ? 180 : 0,
+      angleIncrement: 45,
+      noEnergyStatus: true,
+      domFetti: {
+        // may be overridden
+        colorType:
+          options.isRubberChicken || options.isBanana ? 'default' : undefined,
+        elementCount: 10 + rndInt(10),
+        startVelocity: 10 + rndInt(10),
+        spread: 360
       }
+    },
+    options
+  );
 
+  const spriteObj =
+    spriteConfig[
+      data.isBanana
+        ? 'banana'
+        : data.isRubberChicken
+          ? 'rubberChicken'
+          : 'smartMissile'
+    ];
+
+  const { scale, spriteWidth, spriteHeight } = spriteObj;
+
+  let domCanvas = {
+    img: {
+      src: !game.objects.editor
+        ? utils.image.getImageObject(spriteObj.src || spriteObj.sprite.url)
+        : null,
+      source: {
+        x: 0,
+        y: 0,
+        width: spriteWidth,
+        height: spriteHeight,
+        is2X: true,
+        frameWidth: spriteWidth,
+        frameHeight: spriteHeight,
+        frameX: 0,
+        frameY: 0
+      },
+      target: {
+        useDataAngle: true,
+        scale
       }
+    },
+
+    radarItem: {
+      width: 2.75,
+      height: 1,
+      draw: (ctx, obj, pos, width, height) => {
+        const scaledWidth = pos.width(width);
+        const scaledHeight = pos.height(height);
+
+        const left = pos.left(obj.data.left);
+        const top = obj.data.top - scaledHeight;
+
+        common.domCanvas.rotate(
+          ctx,
+          data.angle,
+          left,
+          top,
+          scaledWidth,
+          scaledHeight
+        );
+
+        ctx.roundRect(left, top, scaledWidth, scaledHeight, width);
+
+        common.domCanvas.unrotate(ctx);
       }
     }
+  };
 
+  dom = {
+    o: null
+  };
 
+  objects = {
+    target: options.target,
+    lastTarget: options.target
+  };
 
+  exports = {
+    animate: () => animate(exports),
+    data,
+    dieSound,
+    dom,
+    domCanvas,
+    die: (dieOptions) => die(exports, dieOptions),
+    init: () => initSmartMissile(exports),
+    launchSound,
+    maybeTargetDecoy: (decoyTarget) => maybeTargetDecoy(exports, decoyTarget),
+    objects,
+    onDie: options.onDie || null,
+    radarItem
+  };
 
+  collision = {
+    options: {
+      source: exports,
+      targets: undefined,
+      checkTweens: true,
+      hit(target) {
+        sparkAndDie(exports, target);
       }
+    },
+    items: getCollisionItems(exports)
+  };
 
+  if (data.isRubberChicken) {
+    // replace the base sprite
+    exports.domCanvas.animation = common.domCanvas.canvasAnimation(
       exports,
+      spriteObj
     );
   }
 
+  exports.collision = collision;
 
+  return exports;
+};
 
 function getCollisionItems(exports, group) {
   // if unspecified, getTypes() uses a default group.
@@ -206,8 +428,6 @@ function spark(exports) {
   exports.domCanvas.img = effects.spark();
   data.excludeBlink = true;
 }
-
-
 
 function maybeTargetDecoy(exports, decoyTarget) {
   let { data, launchSound, objects } = exports;
@@ -481,8 +701,6 @@ function sparkAndDie(exports, target) {
     });
   }
 
-
-
   // notify if the missile hit something (wasn't shot down), and was unarmed.
   // a missile could hit e.g., three infantry at once - so, prevent dupes.
 
@@ -589,8 +807,6 @@ function animate(exports) {
         newTarget
       );
 
-
-
       const text = `${whose} ${missileType} detected a nearby ${targetType}`;
 
       /**
@@ -605,7 +821,6 @@ function animate(exports) {
       ) {
         game.objects.notifications.addNoRepeat(text);
       }
-
 
       // we've got a live one!
       objects.target = newTarget;
@@ -784,11 +999,6 @@ function animate(exports) {
     }
   }
 
-
-
-
-
-
   // and throttle
   data.vX = Math.max(-data.vXMax, Math.min(data.vXMax, data.vX));
   data.vY = Math.max(-data.vYMax, Math.min(data.vYMax, data.vY));
@@ -846,7 +1056,6 @@ function animate(exports) {
 
   // determine angle of missile (pointing at target, not necessarily always heading that way)
   rad = Math.atan2(deltaY, deltaX);
-
 
   // 0-360
   if (rad < 0) {
@@ -954,7 +1163,6 @@ function initSmartMissile(exports) {
         }
       });
     }
-
 
     playSound(sounds.banana.launch, game.players.local, {
       onplay: (sound) => (exports.launchSound = sound),
