@@ -108,6 +108,7 @@ const Bomb = (options = {}) => {
       targets: undefined,
       checkTweens: true,
       hit(target) {
+        let { data } = exports;
         // special case: bomb being hit, eventually shot down by gunfire
         if (target.data.type === TYPES.gunfire && data.energy) {
           data.energy = Math.max(0, data.energy - target.data.damagePoints);
