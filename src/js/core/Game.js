@@ -179,7 +179,7 @@ const game = (() => {
       object?.init?.();
     }
 
-    // and caculate the zone, which will further map things.
+    // and calculate the zone, which will further map things.
     zones.refreshZone(object);
 
     return object;
