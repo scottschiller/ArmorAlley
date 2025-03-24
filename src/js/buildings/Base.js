@@ -181,12 +181,12 @@ function onSmartMissileDie(exports) {
 
   // if not within range, reset vX + vY max for next time
   if (!targetHelicopter) {
-    missileVMax = 0;
+    data.missileVMax = 0;
     return;
   }
 
   // re-load and fire ze missles, now more aggressive!
-  missileVMax = Math.min(data.missileVMax, missileVMax + 1);
+  data.missileVMax = Math.min(data.missileVMax, data.missileVMax + 1);
 
   common.setFrameTimeout(() => fire(exports), 250 + rngInt(250, data.type));
 }
