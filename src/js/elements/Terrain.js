@@ -143,7 +143,7 @@ const terrainItems = {
 };
 
 function addItem(className, x, options = {}) {
-  let data, _dom, id, /*width, height, inCache, */ exports;
+  let data, dom, id, /*width, height, inCache, */ exports;
 
   id = `terrain_item_${game.objects[TYPES.terrainItem].length}`;
 
@@ -214,32 +214,26 @@ function addItem(className, x, options = {}) {
 
   function initDOM() {
     // legacy support / editor / zone debugging
-    if (useDomNode) {
-      _dom.o = sprites.create({
-        className: `${className} terrain-item`,
-        id
-      });
-      return;
-    }
-    _dom.o = {};
+    if (!useDomNode) return;
+    dom.o = sprites.create({
+      className: `${className} terrain-item`,
+      id
+    });
   }
 
   function initItem() {
     initDOM();
   }
 
-  // prefixed to avoid name conflict with parent game namespace
-  // TODO: break this out into an Item class.
-  _dom = {
-    o: null
+  dom = {
+    o: {}
   };
 
   initItem();
 
   const props = terrainItems[className];
 
-  const width = props.width;
-  const height = props.height;
+  const { width, height } = props;
 
   function getSpriteURL() {
     return utils.image.getImageObject(
@@ -297,7 +291,7 @@ function addItem(className, x, options = {}) {
   exports = {
     animate,
     data,
-    dom: _dom,
+    dom,
     domCanvas,
     dismiss,
     summon,
