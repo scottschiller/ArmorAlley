@@ -1270,7 +1270,8 @@ window.addEventListener('error', (e) => {
       utils.log({
         info: {
           event: 'JS_ERROR',
-          error: errorMsg
+          error: errorMsg,
+          version: window.aaVersion || 'none'
         }
       });
     }
