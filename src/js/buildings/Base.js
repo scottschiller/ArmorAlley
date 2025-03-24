@@ -98,7 +98,7 @@ const Base = (options = {}) => {
     die: () => die(exports),
     init: () => initBase(exports),
     isOnScreenChange: (isOnScreen) => isOnScreenChange(exports, isOnScreen),
-    updateSprite: (exports) => applySpriteURL(exports)
+    updateSprite: () => applySpriteURL(exports)
   };
 
   return exports;

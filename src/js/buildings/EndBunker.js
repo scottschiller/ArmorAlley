@@ -119,7 +119,7 @@ const EndBunker = (options = {}) => {
       onNeutralHiddenChange(exports, isVisible),
     registerHelicopter: (helicopter) => registerHelicopter(exports, helicopter),
     updateHealth: (attacker) => updateHealth(exports, attacker),
-    updateSprite: (exports) => applySpriteURL(exports)
+    updateSprite: () => applySpriteURL(exports)
   };
 
   exports.nearby = {
