@@ -580,7 +580,7 @@ function initDOM(exports) {
 }
 
 function initBalloon(exports) {
-  let { dom, objects } = exports;
+  let { data, dom, objects } = exports;
 
   initDOM(exports);
 
