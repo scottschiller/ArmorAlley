@@ -1568,7 +1568,7 @@ const View = () => {
       }
 
       // finally, pass event through to local chopper
-      game.players.local.events.mousedown(e);
+      game.players.local?.events?.mousedown(e);
 
       // always prevent default tap-and-hold, selection and whatnot.
       e.preventDefault();
