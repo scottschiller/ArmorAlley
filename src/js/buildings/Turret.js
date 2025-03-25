@@ -594,7 +594,7 @@ function isEngineerInteracting(exports) {
 }
 
 function repair(exports, engineer, complete) {
-  let { css, data, dom, radarItem } = exports;
+  let { css, data, dom, objects, radarItem } = exports;
 
   let result = false;
 
