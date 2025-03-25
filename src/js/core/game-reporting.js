@@ -73,12 +73,15 @@ function copy(aObject) {
       key === 'parent' ||
       key === 'oParent' ||
       key === 'objects' ||
+      key === 'options' ||
       key === 'target' ||
       key === 'attacker' ||
       key === 'domCanvas' ||
       key === 'friendlyNearby' ||
       key === 'nearby' ||
       key === 'collision' ||
+      key === 'lastNearbyTarget' ||
+      key === 'radarItem' ||
       key === 'funds'
     )
       continue;
