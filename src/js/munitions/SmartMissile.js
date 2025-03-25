@@ -319,6 +319,7 @@ const SmartMissile = (options = {}) => {
     maybeTargetDecoy: (decoyTarget) => maybeTargetDecoy(exports, decoyTarget),
     objects,
     onDie: options.onDie || null,
+    options,
     radarItem
   };
 
@@ -1121,7 +1122,7 @@ function initDOM(exports) {
 }
 
 function initSmartMissile(exports) {
-  let { data, objects } = exports;
+  let { data, objects, options } = exports;
 
   initDOM(exports);
 
