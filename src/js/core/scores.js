@@ -114,6 +114,7 @@ function scoreDestroy(o) {
 
 function getScore(player) {
   // given a player (helicopter) object, return the score for the team.
+  if (!player?.data) return 0;
   return scores[player.data.isEnemy ? 1 : 0];
 }
 
