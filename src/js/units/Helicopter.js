@@ -2438,9 +2438,11 @@ const Helicopter = (options = {}) => {
          */
 
         // testing - recording / playback
-        if (data.isRemote) {
-          updateVirtualPointer?.(mouse.x, mouse.y);
+        /*
+        if (data.isRemote && updateVirtualPointer) {
+          updateVirtualPointer(mouse.x, mouse.y);
         }
+        */
 
         if (!net.active && data.isLocal && !data.isCPU) {
           /**
