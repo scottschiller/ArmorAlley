@@ -118,8 +118,8 @@ function freezeStats() {
     players: copy(game.players),
     objects: copy(common.pick(game.objects, ...keysToCopy)),
     extra: {
-      playerTeamStats: teamStats.us,
-      opponentTeamStats: teamStats.them,
+      playerTeamStats: copy(teamStats.us),
+      opponentTeamStats: copy(teamStats.them),
       friendlyBunkers: countFriendly(TYPES.bunker),
       friendlySuperBunkers: countFriendly(TYPES.superBunker),
       friendlyTurrets: countFriendly(TYPES.turret),
