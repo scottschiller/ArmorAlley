@@ -295,10 +295,60 @@ const Helicopter = (options = {}) => {
       tilt: null,
       lastTiltCSS: null,
       tiltYOffset: 0.25,
-      }
+      // TODO: practice mode - helicopter given 3x all munitions and up to 15 paratroopers, repair speed also increases to match.
+      /*
+      void refuelCopter(register itemP copterIP, register playerP thePP)
+      {
+        Boolean	handicapB;
+        
+        handicapB						= theGame.practiceB && thePP->iType == LOCALPLAYER;
+        copterIP->data.copter.iTargetV	= min(copterIP->data.copter.iTargetV, PADTOP);
+        ITEMB(copterIP)					= PADTOP;
+        copterIP->pAcc.h				=
+        copterIP->pVel.h				= 0;
+        thePP->ulCreateTime				= ulGameClock;
+        thePP->iFuel					= min(thePP->iFuel+32, MAXFUEL);
+        thePP->padTimeI++;
+        if (handicapB || !(thePP->padTimeI & 3)) {
+          copterIP->iHits		= min(thePP->myTP->copterHitsI, copterIP->iHits + 1);
 
+          thePP->iBombs	= min(thePP->myTP->maxBombsI, thePP->iBombs + 1);
+          thePP->iDumb	= min(thePP->myTP->maxDumbI, thePP->iDumb + !(thePP->padTimeI & 7));
+          thePP->iRounds	= min(thePP->myTP->maxRoundsI, thePP->iRounds+2);
+
+          if (thePP->iMissiles != thePP->myTP->maxMissilesI
+            && !(thePP->padTimeI & (handicapB ? 15 : 63)))
+            thePP->iMissiles++;
         }
       }
+
+        void openTeamsLevel()
+      {
+              short	iTeam;
+        register	teamP	theTP;
+
+        for (iTeam = 2; iTeam--;) {
+          Boolean	handicapB;
+          
+          theTP				= &theTeams[iTeam];
+          handicapB			= theTP->humanB && theGame.practiceB;
+          theTP->ulBuildTime	= ulGameClock;
+          theTP->iBuildQueue	= 0;			// No items in queue to be built
+          theTP->bResign		= false;
+          theTP->iBuildItem	= NOITEM;
+          theTP->captureTimeI	=
+          theTP->createdI		=
+          theTP->reqTimeI		= 0;
+          theTP->maxRoundsI	= handicapB ? MAXROUNDS*3 : MAXROUNDS;
+          theTP->maxDumbI		= handicapB ? MAXDUMB*3 : MAXDUMB;
+          theTP->maxBombsI	= handicapB ? MAXBOMBS*3 : MAXBOMBS;
+          theTP->maxMissilesI	= handicapB ? MAXMISSILES*3 : MAXMISSILES;
+          theTP->maxMenI		= handicapB ? MAXMEN*3 : MAXMEN;
+          theTP->copterHitsI	= handicapB ? 60 : 20;
+        }
+        openPlayersLevel(); 
+      }
+      */
       ammo: tutorialMode ? 192 : levelFlags.bullets ? 64 : 6,
       // note: bullets vs. "aimed missiles" logic, here
       maxAmmo: tutorialMode ? 192 : levelFlags.bullets ? 64 : 6,
