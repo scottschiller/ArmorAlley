@@ -403,6 +403,15 @@ function formatForWebhook(style, options = {}) {
         : '')
   );
 
+  if (options.debug && gamePrefs.webhook_url) {
+    let userWebhook = gamePrefs.webhook_url.match(/discord/i)
+      ? 'discord'
+      : gamePrefs.webhook_url.match(/slack/i)
+        ? 'slack'
+        : 'other';
+    debugInfo.push(`🪝 User webhook: ${userWebhook}`);
+  }
+
   let copyGameStats =
     '<div class="copy-game-stats-wrapper"><button type="button" data-action="copy-game-stats" data-ignore-touch="true" class="copy-game-stats">Copy</button></div>';
 
