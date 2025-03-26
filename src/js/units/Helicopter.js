@@ -2278,7 +2278,7 @@ function localReset(exports, noDelay) {
   common.setFrameTimeout(() => {
     if (shouldDelayRespawn()) {
       // check again in a moment, but don't wait - once key is released, response should be immediate.
-      window.requestAnimationFrame(() => localReset(true));
+      window.requestAnimationFrame(() => localReset(exports, true));
       return;
     }
 
