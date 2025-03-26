@@ -3866,7 +3866,6 @@ function callAction(exports, method, value) {
 }
 
 function getFiringRates() {
-  console.log('getFiringRates()', levelFlags);
   return {
     // "modern" vs. classic firing intervals.
     // also, values that need scaling for 30 / 60 FPS.
