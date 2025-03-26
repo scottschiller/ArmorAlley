@@ -67,6 +67,7 @@ function copy(aObject) {
     if (aObject[key]?.nodeType >= 0) continue;
 
     // don't copy redundant stuff, and references to other objects.
+    // TODO: fix this hackish mess when serialize-friendly data model lands.
     if (
       key === 'dom' ||
       key === 'css' ||
@@ -75,6 +76,7 @@ function copy(aObject) {
       key === 'objects' ||
       key === 'options' ||
       key === 'target' ||
+      key === 'lastTarget' ||
       key === 'attacker' ||
       key === 'domCanvas' ||
       key === 'friendlyNearby' ||
@@ -82,7 +84,16 @@ function copy(aObject) {
       key === 'collision' ||
       key === 'lastNearbyTarget' ||
       key === 'radarItem' ||
-      key === 'funds'
+      key === 'funds' ||
+      key === 'queue' ||
+      key === 'stars' ||
+      key === 'gameTips' ||
+      key === 'tips' ||
+      key.match(/terrain/i) ||
+      key === 'star' ||
+      key === 'domFetti' ||
+      // sound objects are likely to include circular references.
+      key.match(/sound/i)
     )
       continue;
 
@@ -99,9 +110,13 @@ function freezeStats() {
   // only do this once.
   if (dataCache) return;
   let teamStats = game.objects.stats.getTeamDataByPlayer(game.players.local);
+
+  // data required for stats report - MTVIE, frame counts etc.
+  let keysToCopy = Object.keys(TYPES).concat(['gameLoop']);
+
   dataCache = {
     players: copy(game.players),
-    objects: copy(game.objects),
+    objects: copy(common.pick(game.objects, ...keysToCopy)),
     extra: {
       playerTeamStats: teamStats.us,
       opponentTeamStats: teamStats.them,
