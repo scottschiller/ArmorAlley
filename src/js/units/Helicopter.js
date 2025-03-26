@@ -65,6 +65,12 @@ import { HelicopterAI } from './Helicopter-AI.js';
 import { getDefeatMessage } from '../levels/battle-over.js';
 import { findEnemy } from './Helicopter-utils.js';
 import { gamepad } from '../UI/gamepad.js';
+import { aaLoader } from '../core/aa-loader.js';
+
+function aiRNG(exports, number) {
+  let { data } = exports;
+  return rng(number, data.type, data.aiSeedOffset);
+}
 
 const Helicopter = (options = {}) => {
   let css,
@@ -73,65 +79,777 @@ const Helicopter = (options = {}) => {
     domCanvas,
     events,
     exports,
+    firingRates = getFiringRates(),
     objects,
     collision,
     radarItem,
     nextMissileTarget,
-    statsBar;
+    statsBar,
+    timers = {};
 
-  const aiRNG = (number) => rng(number, data.type, aiSeedOffset);
+  function initHelicopter(exports) {
+    let { data, dom, options } = exports;
 
+    updateFiringRates(exports);
 
-
-
+    if (data.isCPU || data.isRemote) {
+      // offset fire modulus by half, to offset sound
+      data.frameCount = Math.floor(data.fireModulus / 2);
     }
 
+    dom.o = {};
 
+    dom.fuelLine = sprites.getWithStyle('fuel-line');
 
+    dom.oSpinner = document.getElementById('spinner');
 
+    // before we move, or anything else - determine xMax + yMax.
+    refreshCoords(exports);
 
+    // if not specified (e.g., 0), assign landing pad position.
+    if (!data.x) {
+      data.x = common.getLandingPadOffsetX(exports);
     }
 
+    centerView(exports);
 
+    // sign up with the local "bank."
+    game.objects[TYPES.endBunker][data.isEnemy ? 1 : 0].registerHelicopter(
+      exports
     );
 
+    sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
 
+    // for human player: append immediately, so initial game start / respawn animation works nicely
+    sprites.updateIsOnScreen(exports);
 
+    if (net.active) {
+      callAction(exports, 'setRespawning', true);
+    } else {
+      // non-network, local player(s)
+      setRespawning(exports, true);
     }
 
+    // attach events?
 
+    if (options.attachEvents && !isMobile) {
+      // TODO: static DOM reference.
+      utils.events.add(window, 'scroll', (e) => {
+        // don't allow scrolling at all?
+        e.preventDefault();
+        return false;
+      });
     }
 
+    if (data.isLocal) {
+      updateStatusUI(exports, { force: true });
+      updateLives(exports);
     }
 
+    // note final true param, for respawn purposes
+    radarItem = game.objects.radar.addItem(
+      exports,
+      `${css.className}${data.isLocal ? ' local-player' : ''}`,
+      true
     );
 
+    exports.radarItem = radarItem;
 
+    radarItem.summon();
+  }
 
+  css = common.inheritCSS({
+    className: TYPES.helicopter,
+    animating: 'animating',
+    active: 'active',
+    disabled: 'disabled',
+    repairing: 'repairing',
+    unavailable: 'weapon-unavailable',
+    reloading: 'weapon-reloading'
+  });
 
+  // computer player
+  let isCPU = !!options.isCPU;
+
+  const energy = 20;
+
+  data = common.inheritData(
+    {
+      type: TYPES.helicopter,
+      isCPU,
+      isLocal: !!options.isLocal,
+      isRemote: !!options.isRemote,
+      attachEvents: !!options.attachEvents,
+      angle: 0,
+      excludeBlink: true, // TODO: review
+      lastReactionSound: null,
+      commentaryLastExec: 0,
+      commentaryThrottle: 30000,
+      excludeFromCollision: false,
+      pickupSound: null,
+      tiltOffset: 0,
+      shakeOffset: 0,
+      shakeOffsetMax: 6,
+      shakeThreshold: 7,
+      bombing: false,
+      exploding: false,
+      firing: false,
+      fireFrameCount: 0,
+      respawning: undefined,
+      respawningDelay: 1600,
+      missileLaunching: false,
+      missileLaunchingFrameCount: 0,
+      missileLaunchingModulus: 5,
+      missileReloading: false,
+      missileReloadingDelay: 500,
+      parachuting: false,
+      parachutingThrottle: false,
+      // hackish: setFiringRate() expects exports.
+      parachutingDelayFlying: setFiringRate(
+        { firingRates },
+        'parachutingDelayFlying'
+      ),
+      parachutingDelayLanded: setFiringRate(
+        { firingRates },
+        'parachutingDelayLanded'
+      ),
+      preserveOffscreenDOM: !!options.isLocal,
+      ignoreMouseEvents: !!game.objects.editor,
+      fuel: 100,
+      maxFuel: 100,
+      needsFuel: 25,
+      fireModulus: setFiringRate({ firingRates }, 'fireModulus'),
+      bombModulus: setFiringRate({ firingRates }, 'bombModulus'),
+      bombFrameCount: 0,
+      bombRepairModulus: 10,
+      fuelRateLanded: tutorialMode ? 18 : 9,
+      fuelRateFlying: tutorialMode ? 9 : 4.5,
+      parachuteFrameCount: 0,
+      parachuteModulus: setFiringRate({ firingRates }, 'parachuteModulus'),
+      repairModulus: 2,
+      radarJamming: 0,
+      repairComplete: false,
+      landed: true,
+      landingPad: null,
+      onLandingPad: true,
+      hasLiftOff: false,
+      cloaked: false,
+      cloakedFrameStart: 0,
+      wentIntoHiding: false,
+      wentIntoHidingSeconds: 1.5,
+      stealth: levelFlags.stealth,
+      flipped: false,
+      // if player is remote (via network,) then flip events are sent via network.
+      autoFlip: options.isRemote ? false : isCPU || gamePrefs.auto_flip,
+      // allow CPU to move back and forth a bit without flipping
+      autoFlipThreshold: isCPU ? 3 : 0,
+      repairing: false,
+      repairFrames: 0,
+      dieCount: 0,
+      ejectCount: 0,
+      energy,
+      energyMax: energy,
+      energyRepairModulus: 10,
+      energyLineScale: 0.25,
+      bnbMediaActive: false,
+      direction: 0,
+      defaultDirection: true,
+      pilot: true,
+      xMin: 0,
+      xMax: null,
+      xMaxOffset: 0,
+      yMin: 0,
+      yMax: null,
+      yMaxOffset: 3,
+      vX: 0,
+      vXMax: 12,
+      // CPU: relative to level config, original scale / speed limit of MAXVELX = 14
+      // I *think* the CPU is limited in speed in some, but not all cases.
+      /**
+       * Cases where VX is NOT clipped (`cwGotoHB()` / `cwFlyToB()`):
+       * - Taking out end bunker
+       * - Moving to position to bomb targets - `cwBombTargetB()`
+       * - Moving to position to fire missiles?
+       * - Moving to landing pad
+       * - Moving to take out bunker
+       * - Moving to take out super bunker
+       * - Moving to take out anti-aircraft gun
+       * - Moving to get men (on ground)
+       * - Moving to "kill copter", `killCopterB`
+       * - "Refit" - flying back to landing pad(s)
+       * - Flying to other side of opposing helicopter to shoot (avoid / dodge?)
+       * - Suicide run
+       */
+      vXMaxClipped:
+        isCPU && levelConfig.clipSpeedI
+          ? (levelConfig.clipSpeedI / 14) * 12
+          : 12,
+      vYMax: 10,
+      vY: 0,
+      vyMin: 0,
+      width: 48,
+      height: options.isEnemy ? 18 : 15,
+      halfWidth: 24,
+      halfHeight: 7,
+      halfHeightAdjusted: 3.5,
+      tilt: null,
+      lastTiltCSS: null,
+      tiltYOffset: 0.25,
       }
 
         }
       }
+      ammo: tutorialMode ? 192 : levelFlags.bullets ? 64 : 6,
+      // note: bullets vs. "aimed missiles" logic, here
+      maxAmmo: tutorialMode ? 192 : levelFlags.bullets ? 64 : 6,
+      ammoRepairModulus: tutorialMode || levelFlags.bullets ? 2 : 20,
+      bombs: tutorialMode ? 30 : 10,
+      maxBombs: tutorialMode ? 30 : 10,
+      parachutes: isCPU ? 5 : tutorialMode ? 1 : 0,
+      maxParachutes: 5,
+      bnbNoParachutes: false,
+      smartMissiles: 2,
+      maxSmartMissiles: 2,
+      smartMissileRepairModulus: 128,
+      midPoint: null,
+      trailerCount: 12,
+      xHistory: [],
+      yHistory: [],
+      isKamikaze: false,
+      // for AI
+      targeting: {
+        attackB: false,
+        defendB: false,
+        stealB: false,
+        clouds: false,
+        endBunkers: false,
+        helicopters: false,
+        tanks: false,
+        bunkers: false,
+        superBunkers: false,
+        turrets: false,
+        men: false,
+        vans: false,
+        retaliation: false
+      },
+      targetingModulus: FPS * 30,
+      // chance per gameType
+      bombingThreshold: {
+        easy: 0.9,
+        hard: 0.85,
+        extreme: 0.75
+      },
+      useClippedSpeed: false,
+      x: options.x || 0,
+      y: options.y || game.objects.view.data.world.height - 20,
+      muchaMuchacha: false,
+      cloakedCommentary: false,
+      domFetti: {
+        colorType: options.isEnemy ? 'grey' : 'green',
+        elementCount: 256 + rndInt(512),
+        startVelocity: 15 + rndInt(32),
+        spread: 360,
+        decay: 0.95
+      },
+      // things originally stored on the view
+      // NOTE: start at 50% / 100%, i.e,. on landing pad.
+      mouse: {
+        x: 0.5,
+        y: 1,
+        vX: 0,
+        vY: 0,
+        mouseDown: false
+      },
+      // a buffer for local input delay.
+      mouseHistory: new Array(32),
+      missileMode: null,
+      blinkCounter: 0,
+      // TODO: DRY / optimize
+      blinkCounterHide: 8 * (FPS / 30),
+      blinkCounterReset: 16 * (FPS / 30),
+      lives: DEFAULT_LIVES,
+      livesLost: 0,
+      livesPurchased: 0,
+      votes: {
+        ammo: 0,
+        bomb: 0
       }
+    },
+    options
+  );
 
+  // each helicopter gets a unique random number generator seed.
+  data.aiSeedOffset = data.id.split('_')[1] || 0;
 
+  data.midPoint = {
+    x: data.x + data.halfWidth + 10,
+    y: data.y,
+    width: 5,
+    height: data.height
+  };
 
+  if (data.isLocal) {
+    statsBar = document.getElementById('stats-bar');
   }
 
+  // TODO: clean this up
+  let lastMissileTarget;
 
+  timers = {
+    commentaryTimer: null,
+    missileReloadingTimer: null,
+    parachutingTimer: null,
+    flipTimer: null,
+    spinnerTimer: null
+  };
 
+  dom = {
+    o: null,
+    fuelLine: null,
+    oSpinner: null,
+    statsBar,
+    // hackish
+    statusBar: (() => {
+      if (!statsBar) return;
+      return {
+        infantryCount: document.getElementById('infantry-count'),
+        infantryCountLI: statsBar?.querySelectorAll('li.infantry-count')[0],
+        ammoCount: document?.getElementById('ammo-count'),
+        ammoCountLI: statsBar?.querySelectorAll('li.ammo')[0],
+        bombCount: document.getElementById('bomb-count'),
+        bombCountLI: statsBar.querySelectorAll('li.bombs')[0],
+        missileCount: document.getElementById('missile-count'),
+        missileCountLI: statsBar.querySelectorAll('li.missiles')[0]
+      };
+    })()
+  };
 
+  domCanvas = {
+    radarItem: null, // see below: Helicopter.radarItemConfig(exports)
+    img: {
+      src: null,
+      animationModulus: Math.floor(FPS * (1 / GAME_SPEED) * (1 / 21)), // 1 / 10 = 1-second animation
+      frameCount: 0,
+      animationFrame: 0,
+      animationFrameCount: 0,
+      isSequence: true,
+      source: {
+        x: 0,
+        y: 0,
+        is2X: true,
+        width: 0,
+        height: 0,
+        frameWidth: 0,
+        frameHeight: 0,
+        frameX: 0,
+        frameY: 0
+      },
+      target: {
+        width: 0,
+        height: 0
       }
     }
+  };
 
+  events = {
+    resize() {
+      refreshCoords(exports);
+    },
 
+    mousedown(e) {
+      let args;
 
+      data.mouse.mouseDown = true;
 
+      if (e.button !== 0 || isMobile || data.isCPU || !data.fuel) return;
 
+      if (!game.data.battleOver) {
+        if (!data.autoFlip) {
+          flip(exports);
+        }
+      } else {
+        // battle over; determine confetti vs. shrapnel.
 
+        // if clicking a button, don't do anything.
+        if (e.target.tagName.match(/a|button/i)) return;
 
+        const ss = game.objects.view.data.screenScale;
 
+        if (game.data.theyWon) {
+          // dirty, dirty tricks: overwrite helicopter coordinates.
+          data.x =
+            e.clientX * (1 / ss) +
+            game.objects.view.data.battleField.scrollLeft;
+          data.y = e.clientY * (1 / ss);
+
+          const count = 16 + rndInt(16);
+
+          effects.shrapnelExplosion(data, {
+            count,
+            velocity: 4 + rngInt(4 + count / 4, TYPES.shrapnel),
+            // first burst always looks too similar, here.
+            noInitialSmoke: true
+          });
+
+          effects.smokeRing(exports);
+
+          effects.inertGunfireExplosion({ exports, count: 4 + rndInt(4) });
+        } else {
+          args = {
+            x:
+              e.clientX * (1 / ss) +
+              game.objects.view.data.battleField.scrollLeft,
+            y: e.clientY * (1 / ss),
+            vX: 1 + rndInt(8),
+            vY: -rndInt(10),
+            width: 1,
+            height: 1,
+            halfWidth: 1,
+            halfHeight: 1,
+            isOnScreen: true
+          };
+
+          playSound(sounds.balloonExplosion, exports);
+
+          const elementCount = 32 + rndInt(384);
+
+          const options = {
+            data: {
+              domFetti: {
+                colorType: oneOf(['default', 'green', 'yellow', 'grey']),
+                elementCount,
+                spread: 360,
+                startVelocity: 20 + rndInt(elementCount / 12),
+                decay: 0.95
+              }
+            }
+          };
+
+          game.objects.domFetti.push(
+            domFettiBoom(options, null, args.x, args.y)
+          );
+
+          effects.smokeRing(
+            { data: args },
+            {
+              velocityMax: 5,
+              count: 8 + rndInt(8)
+            }
+          );
+        }
+      }
+    },
+    mouseup(e) {
+      data.mouse.mouseDown = false;
+    }
+  };
+
+  objects = {
+    bombs: [],
+    smartMissiles: []
+  };
+
+  // enemy chopper is a bit bigger.
+  const defaultWidth = data.isEnemy ? 110 : 100;
+  const defaultHeight = data.isEnemy ? 36 : 32;
+
+  const rotatingWidth = 100;
+  const rotatingHeight = data.isEnemy ? 42 : 40;
+
+  const spriteConfig = {
+    default: {
+      getImage: () =>
+        `helicopter${data.isEnemy ? '-enemy' : ''}${data.flipped ? '-rotated' : ''}_#.png`,
+      width: defaultWidth,
+      height: defaultHeight,
+      frameWidth: defaultWidth,
+      frameHeight: defaultHeight,
+      animationConfig: {
+        animationDuration: 0.85,
+        loop: true,
+        isSequence: true,
+        animationFrameCount: 4
+      }
+    },
+    rotating: {
+      getImage: () => {
+        if (data.isEnemy) return 'helicopter-rotating-enemy_#.png';
+        return 'helicopter-rotating_#.png';
+      },
+      width: rotatingWidth,
+      height: rotatingHeight,
+      frameWidth: rotatingWidth,
+      frameHeight: rotatingHeight,
+      // vertical sprite
+      animationConfig: {
+        animationDuration: 0.7,
+        isSequence: true,
+        animationFrameCount: 3,
+        onEnd: () => {
+          // back to default sprite.
+          swapSprite(exports, spriteConfig.default, {
+            skipFrame: true
+          });
+        }
+      }
+    }
+  };
+
+  exports = {
+    animate: () => animate(exports),
+    callAction: (method, value) => callAction(exports, method, value),
+    centerView: () => centerView(exports),
+    checkFacingTarget: (target) => checkFacingTarget(exports, target),
+    css,
+    data,
+    dom,
+    domCanvas,
+    die: (dieOptions) => die(exports, dieOptions),
+    eject: () => eject(exports),
+    events,
+    fire: () => fire(exports),
+    firingRates,
+    flip: (force) => flip(exports, force),
+    init: () => initHelicopter(exports),
+    isFacingTarget,
+    lastMissileTarget,
+    nextMissileTarget,
+    objects,
+    onHit: (attacker) => onHit(exports, attacker),
+    onKill: (target) => onKill(exports, target),
+    onLandingPad: (state, pad) => onLandingPad(exports, state, pad),
+    options,
+    reactToDamage: (attacker) => reactToDamage(exports, attacker),
+    reset: () => reset(exports),
+    refreshCoords: () => refreshCoords(exports),
+    setBombing: (state) => setBombing(exports, state),
+    setCPUBombingRate: (targetType) => setCPUBombingRate(exports, targetType),
+    setCPUFiringRate: (targetType) => setCPUFiringRate(exports, targetType),
+    setFiring: (state) => setFiring(exports, state),
+    setMissileLaunching: (state, missileModeFromNetwork) =>
+      setMissileLaunching(exports, state, missileModeFromNetwork),
+    setParachuting: (state) => setParachuting(exports, state),
+    setRespawning: (state) => setRespawning(exports, state),
+    spriteConfig,
+    startRepairing: () => startRepairing(exports),
+    timers,
+    toggleAutoFlip: () => toggleAutoFlip(exports),
+    updateFiringRates: () => updateFiringRates(exports),
+    updateLives: (plusOrMinusOneLife) =>
+      updateLives(exports, plusOrMinusOneLife),
+    updateStatusUI: (updateParams) => updateStatusUI(exports, updateParams)
+  };
+
+  // randomize "AI" timing a bit
+  data.targetingModulus += Math.floor(aiRNG(exports, 15));
+
+  domCanvas.radarItem = Helicopter.radarItemConfig({ exports, data });
+
+  if (options.isCPU) {
+    data.ai = HelicopterAI({ exports });
+  }
+
+  swapSprite(exports);
+
+  collision = {
+    options: {
+      source: exports,
+      targets: undefined,
+      hit(target) {
+        const tData = target.data;
+        if (tData.type === TYPES.chain) {
+          // special case: chains do damage, but don't kill.
+          common.hit(exports, tData.damagePoints, target);
+          // and make noise.
+          if (sounds.chainSnapping) {
+            playSound(sounds.chainSnapping, target);
+          }
+          if (data.isLocal) {
+            reactToDamage(exports, target);
+          }
+          // should the target die, too? ... probably so.
+          common.hit(target, 999, exports);
+        } else if (tData.type === TYPES.infantry) {
+          // helicopter landed, not repairing, and friendly, landed infantry (or engineer)?
+          if (data.landed && !data.onLandingPad) {
+            // check if it's at the helicopter "door".
+            if (collisionCheckMidPoint(target, exports)) {
+              // Per game tips: "infantry carry grenades" - and here's where they get used. Deadly!
+              if (tData.isEnemy !== data.isEnemy) {
+                game.objects.notifications.addNoRepeat(
+                  'Your helicopter was hit with a grenade. 🚁'
+                );
+                die(exports, { attacker: target });
+                return;
+              }
+
+              // bail if at capacity
+              if (data.parachutes >= data.maxParachutes) return;
+
+              // pick up infantry (silently)
+              target.die({ silent: true });
+              playSound(sounds.popSound, exports);
+              if (gamePrefs.bnb) {
+                const pickupSound =
+                  sounds.bnb[
+                    game.data.isBeavis
+                      ? 'beavisInfantryPickup'
+                      : 'buttheadInfantryPickup'
+                  ];
+                // only play if not already active, and delay before clearing.
+                if (!data.pickupSound)
+                  data.pickupSound = playSound(pickupSound, exports, {
+                    onfinish: () =>
+                      common.setFrameTimeout(
+                        () => (data.pickupSound = null),
+                        500
+                      )
+                  });
+              }
+              data.parachutes = Math.min(
+                data.maxParachutes,
+                data.parachutes + 1
+              );
+
+              // parachutes are changing, maybe more. TBD.
+              let updateParams = { parachutes: true };
+
+              // if an engineer, notify about repairs etc.
+              if (tData.role) {
+                game.objects.notifications.add(
+                  'An engineer partially re-armed your chopper. 🚁'
+                );
+
+                // 50% energy boost
+                data.energy = Math.min(
+                  data.energyMax,
+                  data.energy + data.energyMax / 2
+                );
+
+                // 12.5% fuel boost
+                data.fuel = Math.min(100, data.fuel + 100 / 8);
+
+                // one bomb
+                data.bombs = Math.min(data.maxBombs, data.bombs + 1);
+
+                // up to 32 bullets, OR, one "dumb" missile
+                if (levelFlags.bullets) {
+                  data.ammo = Math.min(
+                    data.maxAmmo,
+                    data.ammo + data.maxAmmo / 2
+                  );
+                } else {
+                  // "dumb" missile
+                  data.ammo = Math.min(data.maxAmmo, data.ammo + 1);
+                }
+
+                // only +1 smart missile, if you have zero left
+                if (!data.smartMissiles) {
+                  data.smartMissiles++;
+                }
+                updateParams = { force: true };
+              }
+
+              updateStatusUI(exports, updateParams);
+            }
+          }
+        } else if (tData.type === TYPES.cloud) {
+          cloak(exports, target);
+        } else if (
+          tData.type === TYPES.superBunker &&
+          tData.isEnemy === data.isEnemy &&
+          !tData.hostile
+        ) {
+          // "protect" the helicopter if completely enveloped within the bounds of a friendly super-bunker.
+          // this check is added because sometimes the collision logic is imperfect, and fast-moving bombs or missiles might hit the "inner" chopper object. Oops. :D
+          data.excludeFromCollision =
+            data.y >= tData.y &&
+            data.x >= tData.x &&
+            data.x + data.width <= tData.x + tData.width;
+        } else {
+          // hit something else. boom!
+          // special case: ensure we crash on the "roof" of a super-bunker.
+          if (tData.type === TYPES.superBunker) {
+            data.y = Math.min(
+              worldHeight -
+                (common.ricochetBoundaries[tData.type] || 0) -
+                data.height,
+              data.y
+            );
+            // stop falling, too
+            data.vY = 0;
+            // and go to adjusted position
+            moveTo(exports, data.x, data.y);
+          }
+          die(exports, { attacker: target });
+          // should the target die, too? ... probably so.
+          common.hit(target, 999, exports);
+        }
+      }
+    },
+    items: getTypes(
+      'helicopter, superBunker:all, bunker, balloon, tank, van, missileLauncher, chain, infantry:all, engineer:all, cloud:all',
+      { exports }
+    )
+  };
+
+  exports.collision = collision;
+
+  // hackish: assign to globals before init
+  if (data.isLocal) {
+    game.players.local = exports;
+  } else if (data.isRemote) {
+    game.players.remote.push(exports);
+
+    if (!data.isCPU) {
+      // just in case...
+      if (game.players.remoteHuman)
+        console.warn('WTF game.players.remoteHuman already defined???');
+
+      game.players.remoteHuman = exports;
+    }
+  }
+  if (data.isCPU) {
+    // note: not mutually exlusive, can be local (for testing purposes) or remote
+    game.players.cpu.push(exports);
+  }
+
+  // ensure the UI shows the appropriate unit colours
+  if (data.isLocal && data.isEnemy) {
+    utils.css.add(document.getElementById('player-status-bar'), 'enemy');
+    utils.css.add(document.getElementById('mobile-controls'), 'enemy');
+  }
+
+  return exports;
+};
+
+Helicopter.radarItemConfig = ({ exports, data }) => ({
+  width: 2.5 * (isiPhone ? 1.33 : 1),
+  height: 2.5 * (isiPhone ? 1.33 : 1),
+  draw: (ctx, obj, pos, width, height) => {
+    // don't draw other team's choppers if playing a battle with steath mode, and not in view
+    if (
+      data?.cloaked ||
+      (data.stealth &&
+        !data.isOnScreen &&
+        data.isEnemy !== game.players.local.data.isEnemy)
+    )
+      return;
+
+    const isLocal = data.id === game.players.local.data.id;
+
+    const radarData = exports.radarItem?.data;
+
+    if (isLocal && radarData && data.blinkCounter >= 0) {
+      // local chopper blinks continuously
+      data.blinkCounter++;
+      if (data.blinkCounter === data.blinkCounterHide) {
+        radarData.visible = !radarData.visible;
+      } else if (data.blinkCounter >= data.blinkCounterReset) {
+        radarData.visible = !radarData.visible;
+        data.blinkCounter = 0;
+      }
+    }
 
     // don't draw if not visible.
     if (isLocal && !radarData.visible && !data.respawning) return;
