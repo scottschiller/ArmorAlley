@@ -96,7 +96,7 @@ const MissileNapalm = (options = {}) => {
     data,
     dom,
     domCanvas,
-    die,
+    die: (force) => die(exports, force),
     init: () => initMissileNapalm(exports)
   };
 
