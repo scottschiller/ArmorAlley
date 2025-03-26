@@ -1527,7 +1527,7 @@ function updateStatusUI(exports, updated) {
 }
 
 function repair(exports) {
-  let { data } = exports;
+  let { data, dom } = exports;
 
   const updated = {};
 
