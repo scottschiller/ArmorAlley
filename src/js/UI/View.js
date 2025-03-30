@@ -1510,7 +1510,7 @@ const View = () => {
     mouseup(e) {
       // editor case
       if (game.objects.editor) return game.objects.editor.events.mouseup(e);
-      if (game.data.started) {
+      if (game.data.started && game.players.local) {
         game.players.local.events.mouseup(e);
       }
     },
