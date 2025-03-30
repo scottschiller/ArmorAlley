@@ -61,6 +61,30 @@
   /* radar scale, multiplier for tz */
   --radar-scale: 1;
   --rs: calc(var(--gs) * var(--radar-scale));
+  /* global monospace font style */
+  --monospace: 'Iosevka Custom', 'Fira Code', monospace;
+  --monospace-bold: 'Iosevka Custom Bold', 'Fira Code', monospace;
+}
+
+b {
+  font-family: var(--monospace-bold) !important;
+  font-weight: 500;
+}
+
+@font-face {
+  font-display: swap;
+  font-family: 'Iosevka Custom';
+  font-style: normal;
+  src: url(../../assets/font/Iosevka/Iosevka-Custom-optimized-unicode.woff2)
+    format('woff2');
+}
+
+@font-face {
+  font-display: swap;
+  font-family: 'Iosevka Custom Bold';
+  font-style: bold;
+  src: url(../../assets/font/Iosevka/Iosevka-Custom-Bold-optimized-no-unicode.woff2)
+    format('woff2');
 }
 
 @font-face {
@@ -105,17 +129,10 @@ html {
 }
 
 body,
+code,
 input {
-  /* Classic Mac OS-style "chicago" by default, with an array of safe fallbacks. */
-  font-family:
-    FA Sysfont C,
-    JetBrains Mono,
-    Menlo,
-    Monaco,
-    SF Mono,
-    Lucida Console,
-    Terminal,
-    monospace;
+  /* Tall + narrow terminal / code type, by default. */
+  font-family: var(--monospace);
 }
 
 body {
