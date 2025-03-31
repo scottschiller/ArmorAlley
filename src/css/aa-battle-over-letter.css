@@ -9,13 +9,17 @@
   font-display: swap;
 }
 
+:root {
+  --gs2: calc(var(--gs) * 1.2);
+}
+
 #battle-over-letter {
   position: absolute;
   display: none;
   top: 50%;
   left: 50%;
-  width: calc(200px * var(--gs));
-  height: calc(150px * var(--gs));
+  width: calc(200px * var(--gs2));
+  height: calc(150px * var(--gs2));
   transform: translate3d(-50%, -50%, 0) scale3d(1.2, 1.2, 1);
   filter: blur(3px);
   transition: 0.5s ease-in-out;
@@ -84,15 +88,15 @@
   font-weight: 400;
   /* font subset tricks: only uppercase letters defined. */
   text-transform: uppercase;
-  font-size: calc(15px * var(--gs));
+  font-size: calc(15px * var(--gs2));
   line-height: 1em;
-  margin-top: calc(4px * var(--gs));
+  margin-top: calc(4px * var(--gs2));
   margin-bottom: 0;
 }
 
 #battle-over-letter .letter-content h3 {
-  font-size: calc(13px * var(--gs));
-  margin-top: calc(6.5px * var(--gs));
+  font-size: calc(13px * var(--gs2));
+  margin-top: calc(6.5px * var(--gs2));
   color: #006600;
 }
 
@@ -104,7 +108,7 @@
 #battle-over-letter .letter-content p {
   color: #444;
   font-family: Geneva, verdana, arial, sans-serif;
-  font-size: calc(4.675px * var(--gs));
+  font-size: calc(5.5px * var(--gs2));
   font-style: italic;
 }
 
@@ -112,8 +116,8 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  width: calc(200px * var(--gs));
-  height: calc(150px * var(--gs));
+  width: calc(200px * var(--gs2));
+  height: calc(150px * var(--gs2));
   transform: translate3d(-50%, -50%, 0);
   cursor: pointer;
 }
@@ -144,10 +148,10 @@ body.is_safari .animated-mail .top-fold {
   top: 100%;
   left: 50%;
   transform: translate3d(-50%, -50%, 0);
-  width: calc(32px * var(--gs));
-  height: calc(31.25px * var(--gs));
+  width: calc(32px * var(--gs2));
+  height: calc(31.25px * var(--gs2));
   /* border / outline, focus tricks */
-  border: calc(3px * var(--gs)) solid transparent;
+  border: calc(3px * var(--gs2)) solid transparent;
   border-radius: 100%;
   /**
    * Hat tip: "Golden Wax Seal" via pngtree.com
@@ -172,9 +176,9 @@ body.has-gamepad.gamepad-active .animated-mail .wax-seal:focus-visible {
   filter: drop-shadow(0 0 calc(1px * var(--env-scale)) rgba(0, 0, 0, 0.25));
   color: #000;
   text-shadow: none;
-  font-size: calc(8px * var(--gs));
-  padding: calc(2px * var(--gs)) calc(8px * var(--gs));
-  line-height: calc(10px * var(--gs));
+  font-size: calc(8px * var(--gs2));
+  padding: calc(2px * var(--gs2)) calc(8px * var(--gs2));
+  line-height: calc(10px * var(--gs2));
   text-decoration: none;
   border-radius: calc(1px * var(--env-scale));
 }
@@ -188,13 +192,14 @@ body.has-gamepad.gamepad-active .animated-mail .wax-seal:focus-visible {
 
 #battle-over-letter:not(.open) .animated-mail .wax-seal:hover,
 #battle-over-letter:not(.open) .animated-mail .wax-seal.gamepad-selected {
-  filter: drop-shadow(0px 0px calc(3px * var(--gs)) rgba(0, 255, 0, 0.75));
+  filter: drop-shadow(0px 0px calc(3px * var(--gs2)) rgba(0, 255, 0, 0.75));
 }
 
 #battle-over-letter:not(.open) .animated-mail .wax-seal:active,
+#battle-over-letter:not(.open) .animated-mail .wax-seal.gamepad-active,
 #battle-over-letter:not(.open).mousedown .animated-mail .wax-seal {
   transform: translate3d(-50%, -50%, 0) scale3d(0.9, 0.9, 1);
-  filter: drop-shadow(0px 0px calc(2px * var(--gs)) rgba(0, 255, 0, 0.5));
+  filter: drop-shadow(0px 0px calc(2px * var(--gs2)) rgba(0, 255, 0, 0.5));
   transition-duration: 125ms;
 }
 
@@ -204,19 +209,19 @@ body.has-gamepad.gamepad-active .animated-mail .wax-seal:focus-visible {
   width: 0;
   height: 0;
   border-style: solid;
-  border-width: 0 0 calc(100px * var(--gs)) calc(200px * var(--gs));
+  border-width: 0 0 calc(100px * var(--gs2)) calc(200px * var(--gs2));
   border-color: transparent transparent #282;
   z-index: 2;
 }
 
 .animated-mail .top-fold {
   position: absolute;
-  top: calc(50px * var(--gs));
+  top: calc(50px * var(--gs2));
   width: 0;
   height: 0;
   border-style: solid;
   /* note: 51px to address border bleed / see-through */
-  border-width: calc(51px * var(--gs)) calc(100px * var(--gs)) 0;
+  border-width: calc(51px * var(--gs2)) calc(100px * var(--gs2)) 0;
   transform-origin: 50% 0%;
   transition:
     transform 0.8s 0.5s,
@@ -228,8 +233,8 @@ body.has-gamepad.gamepad-active .animated-mail .wax-seal:focus-visible {
 .animated-mail .back-fold {
   position: absolute;
   bottom: 0;
-  width: calc(200px * var(--gs));
-  height: calc(100px * var(--gs));
+  width: calc(200px * var(--gs2));
+  height: calc(100px * var(--gs2));
   background-color: #005a00;
   z-index: 0;
 }
@@ -241,8 +246,8 @@ body.has-gamepad.gamepad-active .animated-mail .wax-seal:focus-visible {
   width: 0;
   height: 0;
   border-style: solid;
-  border-width: calc(50px * var(--gs)) 0 calc(50px * var(--gs))
-    calc(100px * var(--gs));
+  border-width: calc(50px * var(--gs2)) 0 calc(50px * var(--gs2))
+    calc(100px * var(--gs2));
   border-color: transparent transparent transparent #171;
   z-index: 2;
 }
@@ -264,11 +269,11 @@ body.has-gamepad.gamepad-active .animated-mail .wax-seal:focus-visible {
 }
 
 .animated-mail .letter {
-  left: calc(10px * var(--gs));
+  left: calc(10px * var(--gs2));
   bottom: 0;
   position: absolute;
-  width: calc(180px * var(--gs));
-  transform: translate3d(0, calc(100% - calc(60px * var(--gs))), 0);
+  width: calc(180px * var(--gs2));
+  transform: translate3d(0, calc(100% - calc(60px * var(--gs2))), 0);
   will-change: transform;
   /**
    * Image by kues1 on Freepik
@@ -287,20 +292,20 @@ body.has-gamepad.gamepad-active .animated-mail .wax-seal:focus-visible {
   background: repeating-linear-gradient(
     -45deg,
     #ab3a3e,
-    #ab3a3e calc(8px * var(--gs)),
-    transparent calc(8px * var(--gs)),
-    transparent calc(18px * var(--gs))
+    #ab3a3e calc(8px * var(--gs2)),
+    transparent calc(8px * var(--gs2)),
+    transparent calc(18px * var(--gs2))
   );
 }
 
 .animated-mail .letter .letter-context-body {
-  padding: calc(5px * var(--gs)) calc(10px * var(--gs));
+  padding: calc(5px * var(--gs2)) calc(10px * var(--gs2));
   max-height: 50vh;
   overflow: auto;
   /* Firefox may show scaled-up scrollbars - this helps a bit. */
   scrollbar-width: thin;
   /* compensate for the bottom part of the envelope */
-  padding-bottom: calc(84px * var(--gs));
+  padding-bottom: calc(84px * var(--gs2));
 }
 
 .animated-mail .letter .letter-context-body .game-stats {
@@ -310,15 +315,15 @@ body.has-gamepad.gamepad-active .animated-mail .wax-seal:focus-visible {
   font-family: var(--monospace);
   /* compress a little bit */
   letter-spacing: -0.25px;
-  padding: calc(6px * var(--gs)) 0px;
-  font-size: calc(4px * var(--gs));
+  padding: calc(6px * var(--gs2)) 0px;
+  font-size: calc(5px * var(--gs2));
   line-height: 150%;
 }
 
 .animated-mail .letter .letter-context-body .game-stats code {
   flex-shrink: 0;
   white-space: pre-wrap;
-  font-size: calc(4px * var(--gs));
+  font-size: calc(5px * var(--gs2));
   line-height: 130%;
   margin: 0px 1.5em 0px 0px;
 }
@@ -372,15 +377,15 @@ body.gamepad-active .animated-mail .letter .letter-context-body {
   bottom: 0;
   left: 0;
   width: 100%;
-  margin-bottom: calc(3px * var(--gs));
-  padding: calc(6px * var(--gs));
+  margin-bottom: calc(3px * var(--gs2));
+  padding: calc(6px * var(--gs2));
   box-sizing: border-box;
   z-index: 2;
   text-align: center;
 }
 
 #battle-over-letter.open .animated-mail {
-  transform: translateY(calc(60px * var(--gs)));
+  transform: translateY(calc(60px * var(--gs2)));
   transition-timing-function: ease-in-out;
 }
 
@@ -399,7 +404,7 @@ body.gamepad-active .animated-mail .letter .letter-context-body {
 
 #battle-over-letter hr {
   border: none;
-  border-top: calc(0.5px * var(--gs)) dashed #999;
+  border-top: calc(0.5px * var(--gs2)) dashed #999;
 }
 
 /* duplicated from aa-game-menu */
