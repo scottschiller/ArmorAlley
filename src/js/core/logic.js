@@ -558,8 +558,8 @@ function objectsInView(
   // defaults
   options.triggerDistance = net.active
     ? NET_TRIGGER_DISTANCE
-    // standard distance?
-    : options.triggerDistance || 512;
+    : // standard distance?
+      options.triggerDistance || 512;
 
   options.friendlyOnly = !!options.friendlyOnly;
   options.enemyOnly = !options.friendlyOnly && !!options.enemyOnly;
@@ -715,8 +715,8 @@ function enemyHelicopterNearby(data, triggerDistance = 512, useCircleMath) {
   triggerDistance =
     net.active && data.type !== TYPES.van && !useCircleMath
       ? NET_TRIGGER_DISTANCE
-      // standard trigger distance?
-      : triggerDistance;
+      : // standard trigger distance?
+        triggerDistance;
 
   for (i = 0, j = helicopter.length; i < j; i++) {
     /**
