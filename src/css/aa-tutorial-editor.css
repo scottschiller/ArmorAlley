@@ -370,6 +370,11 @@ body.edit-mode #battlefield {
   position: relative;
 }
 
+#editor-window h3,
+#editor-window-help h3 {
+  font-size: 6px;
+}
+
 #editor-window ul.inline-list {
   margin: 0;
   padding: 0 0 1em;
