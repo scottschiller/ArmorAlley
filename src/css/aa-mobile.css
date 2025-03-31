@@ -492,10 +492,6 @@ body:not(.is-mobile).has-gamepad.mobile-controls_right-aligned
     transform: scale3d(1.75, 1.75, 1) translate3d(-50%, -33%, 0);
   }
 
-  body.is_iphone.tutorial-mode #tutorial-window.finder .title-bar-stripes {
-    background-size: 16.5px 1px;
-  }
-
   /* scale up a bit; center of screen, avoid The Notch and such. */
   body.is_iphone ul.stats-bar {
     /* prevent overlap with fuel bar */

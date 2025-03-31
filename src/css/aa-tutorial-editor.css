@@ -92,13 +92,14 @@ body.edit-mode .sprite .zone-flag {
 
 .finder .title-bar-stripes {
   background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACEAAAAECAAAAAAl7gk2AAAAE0lEQVR42mPcz0AAMDpQQQVBWwCpNAIDi0boDwAAAABJRU5ErkJggg==);
-  background-size: 16.5px 1px;
+  background-size: 16.5px 1.5px;
   border-color: #f3f3f3;
   border-style: solid;
   border-width: 0.5px 0.25px;
   box-sizing: border-box;
   height: 100%;
   image-rendering: auto;
+  image-rendering: -webkit-optimize-contrast;
   left: 0;
   position: absolute;
   top: 0;
@@ -183,10 +184,6 @@ body.is_iphone #tutorial-window {
   /* lighten background, since helicopter underneath for now. */
   /* note that colors are inverted for this window, heh. */
   background: rgba(255, 255, 255, 0.15);
-}
-
-#tutorial-window.finder .title-bar-stripes {
-  background-size: 16.5px 3px;
 }
 
 #tutorial-window.finder .title-bar {
