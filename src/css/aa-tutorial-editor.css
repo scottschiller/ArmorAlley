@@ -6,7 +6,7 @@
   filter: invert(1);
   left: 20px;
   position: absolute;
-  top: 17%;
+  top: 13%;
   transform: scale(2.16);
   transform-origin: 0 0;
 }
@@ -14,7 +14,7 @@
 #editor-window-help {
   display: none;
   left: 312px;
-  top: 17%;
+  top: 13%;
 }
 
 #editor-window-help .body {
