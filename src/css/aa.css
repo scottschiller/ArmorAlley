@@ -130,6 +130,7 @@ html {
 
 body,
 code,
+input,
 pre {
   /* Tall + narrow terminal / code type, by default. */
   font-family: var(--monospace);
