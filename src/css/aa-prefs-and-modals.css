@@ -185,6 +185,8 @@ body.is_safari #game-prefs-modal .emoji-human {
   width: 200px;
   image-rendering: smooth;
   image-rendering: crisp-edges;
+  /* 'auto' looks nice on non-hi-dpi Windows. */
+  image-rendering: auto;
 }
 
 body.is_safari:not(.has_touch) #game-prefs-modal .range-slider {
@@ -622,10 +624,13 @@ body.is_iphone #game-prefs-modal button {
 }
 
 .mac-classic ul.monospace li pre.header {
+  width: 95%;
   background: url(data:image/gif;base64,R0lGODlhBAAEAKEBAAAAAP///////////yH5BAEKAAEALAAAAAAEAAQAAAIGBBKGqAkFADs=)
     0 0/3px #eee;
   image-rendering: smooth;
   image-rendering: crisp-edges;
+  /* 'auto' looks nice on non-hi-dpi Windows. */
+  image-rendering: auto;
 }
 
 .mac-classic ul.monospace li pre.header b {
