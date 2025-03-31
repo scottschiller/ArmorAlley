@@ -204,12 +204,12 @@ function formatForWebhook(style, options = {}) {
 
   let layouts = {
     compact: {
-      title: 'Units ordered, lost, recycled',
+      title: 'Ordered+, Lost-, Recycled± by team',
       headers: ['U', 'L+', 'L-', '±', 'R+', 'R-', '±'],
       units: ['H', 'M', 'T', 'V', 'I', 'E']
     },
     default: {
-      title: 'Units ordered, lost, recycled',
+      title: 'Ordered+, Lost-, Recycled± by team',
       headers: ['Unit', 'L+', 'L-', 'L±', 'R+', 'R-', 'R±'],
       units: ['Heli', 'ML', 'Tank', 'Van', 'Inf', 'Eng']
     }
