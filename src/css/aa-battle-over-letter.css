@@ -37,6 +37,13 @@
   opacity: 0.99;
 }
 
+#battle-over-letter.open .body,
+#battle-over-letter.open .top-fold,
+#battle-over-letter.open .left-fold,
+#battle-over-letter.open .right-fold {
+  pointer-events: none;
+}
+
 #battle-over-letter.mousedown {
   transform: translate3d(-50%, -50%, 0) scale3d(0.975, 0.975, 1);
   transition-duration: 0.33s;
