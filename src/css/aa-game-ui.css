@@ -198,7 +198,7 @@ body.game-started #game-status {
     Lucida Console,
     Terminal,
     Monaco,
-    monospace;
+    var(--monospace);
   height: 22px;
   margin-right: 0;
   margin-top: 15px;
@@ -1408,7 +1408,7 @@ body.limited-lives-mode #mobile-controls.enemy li.inventory-item a.helicopter {
   margin: 0px auto;
   font-size: calc(5.5px * var(--gs));
   line-height: 150%;
-  font-family: monospace;
+  font-family: var(--monospace);
   /* reset cheddar font shenanigans */
   text-transform: initial;
 }
@@ -1460,7 +1460,7 @@ body.limited-lives-mode #mobile-controls.enemy li.inventory-item a.helicopter {
 
 button.copy-game-stats {
   display: inline-block;
-  font-family: monospace;
+  font-family: var(--monospace);
   letter-spacing: -0.25px;
   font-size: 100%;
   line-height: 100%;
@@ -1532,7 +1532,7 @@ button.copy-game-stats:active {
 .notification-toast code {
   display: block;
   /* slightly smaller monospace font. */
-  font-family: monospace;
+  font-family: var(--monospace);
   font-size: calc(4.75px * var(--gs));
   line-height: 120%;
   /* preserve whitespace in table, no &nbsp; tricks. */

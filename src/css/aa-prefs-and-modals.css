@@ -237,7 +237,6 @@ body.is_safari:not(.has_touch) #game-prefs-modal .range-slider {
   border: 0.5px solid #000;
   box-sizing: border-box;
   color: #000;
-  font-family: Geneva, verdana, arial, sans-serif;
   /* height: 10rem; */
   overflow: auto;
   position: relative;
@@ -247,7 +246,6 @@ body.is_safari:not(.has_touch) #game-prefs-modal .range-slider {
 
 #game-prefs-modal .body code.inline {
   font-size: 90%;
-  letter-spacing: -0.5px;
 }
 
 #game-prefs-modal .body pre.block {
@@ -607,10 +605,6 @@ body.is_iphone #game-prefs-modal button {
 
 .mac-classic ul.monospace li {
   display: block;
-}
-.mac-classic ul.monospace li,
-.mac-classic ul.monospace li pre b {
-  font-family: monospace;
 }
 
 .mac-classic ul.monospace li label pre b {
@@ -1023,20 +1017,6 @@ body.has-gamepad.gamepad-active
   box-shadow:
     0 0 0 1px #fff,
     0 0 0 4px #339933;
-}
-
-.mac-classic .label-text,
-.mac-classic .options-heading,
-.mac-classic b {
-  /* letter-spacing: -0.25px; */
-  /* previously, "Geneva" was most classic - but too heavy on Safari, too light on others. */
-  font-family:
-    Helvetica Neue,
-    Helvetica,
-    -apple-system,
-    system-ui,
-    sans-serif;
-  font-weight: 700;
 }
 
 .finder.mac-classic p {

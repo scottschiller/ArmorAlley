@@ -422,6 +422,11 @@ body.game-started #start-game-button-mobile {
   opacity: 0;
 }
 
+#game-menu h2,
+#game-description {
+  font-family: var(--monospace);
+}
+
 #game-menu h2 {
   position: relative;
   color: #e19632;
@@ -510,21 +515,6 @@ body.is_safari.is_iphone #game-menu select {
 body.is_safari.is-mobile #game-menu-wrapper button.game-start .emoji-text {
   /* ugh. */
   vertical-align: bottom;
-}
-
-#game-menu select optgroup,
-#game-menu select option,
-#game-menu select:active option,
-#game-menu select:focus option {
-  /* Font sizing (if not more) works in Firefox on Mac and Windows, and maybe also Edge and Chrome on Windows: Reset drop-down size. */
-  font-family:
-    FA Sysfont C,
-    courier,
-    sans-serif;
-  font-size: 13px;
-  /* some browsers might render the list in white, poorly, against a light background? */
-  color: #000;
-  background-color: #fff;
 }
 
 #game-menu label:hover {

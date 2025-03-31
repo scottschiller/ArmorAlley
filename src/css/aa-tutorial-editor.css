@@ -114,7 +114,7 @@ body.edit-mode .sprite .zone-flag {
   background: hsla(0, 0%, 95%, 0.75);
   border-top: 0.5px solid #000;
   color: #000;
-  font-family: Geneva, verdana, arial, sans-serif;
+  font-family: var(--monospace);
   overflow: hidden;
   padding: 1em;
   position: relative;

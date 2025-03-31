@@ -300,7 +300,7 @@ body.has-gamepad.gamepad-active .animated-mail .wax-seal:focus-visible {
   position: relative;
   display: flex;
   color: #444;
-  font-family: monospace;
+  font-family: var(--monospace);
   /* compress a little bit */
   letter-spacing: -0.25px;
   padding: calc(6px * var(--gs)) 0px;
