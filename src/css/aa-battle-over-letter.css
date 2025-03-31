@@ -389,6 +389,11 @@ body.gamepad-active .animated-mail .letter .letter-context-body {
   transition-timing-function: ease-in-out;
 }
 
+body.is-mobile #battle-over-letter.open .animated-mail {
+  /* iOS especially: leave a little more space for the address bar UI etc. */
+  transform: translateY(calc(45px * var(--gs2)));
+}
+
 #battle-over-letter.open .animated-mail .top-fold {
   transition:
     transform 0.95s,
