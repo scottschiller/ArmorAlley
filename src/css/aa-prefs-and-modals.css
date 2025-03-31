@@ -256,16 +256,13 @@ body.is_safari:not(.has_touch) #game-prefs-modal .range-slider {
 }
 
 #game-prefs-modal .battle-list {
+  /* slightly larger type, here. */
+  font-size: calc(12px * var(--prefs-font-scale));
   /* center reasonably when modal is wider. */
   text-align: center;
   /* dirty tricks: space out and pull content closer to edges. */
   width: 102%;
   margin-left: -1%;
-}
-
-#game-prefs-modal .battle-list input[type='radio'] {
-  /* positioning shenanigans */
-  margin-right: calc(-2px * var(--prefs-font-scale));
 }
 
 body.is_iphone .mac-classic ul.real-list li {
@@ -354,7 +351,7 @@ body.is_iphone .mac-classic ul.real-list li {
 
   body.is_iphone #game-prefs-modal .battle-list,
   body.is_iphone #game-prefs-modal .battle-list label {
-    font-size: calc(10px * var(--prefs-font-scale));
+    font-size: calc(11px * var(--prefs-font-scale));
   }
 }
 
@@ -362,6 +359,11 @@ body.is_iphone .mac-classic ul.real-list li {
   body.is-mobile.is_safari:not(.is_iphone) #game-prefs-modal {
     /* (likely) iPad: wider modal. */
     width: 600px;
+  }
+
+  body.is_iphone #game-prefs-modal .battle-list,
+  body.is_iphone #game-prefs-modal .battle-list label {
+    font-size: calc(9px * var(--prefs-font-scale));
   }
 
   body.is_iphone #game-prefs-modal .body {
@@ -380,10 +382,6 @@ body.is_iphone .mac-classic ul.real-list li {
 
   body.is_iphone #game-prefs-modal .battle-list li {
     line-height: 1.5em;
-  }
-
-  body.is_iphone #game-prefs-modal ul.monospace li pre {
-    letter-spacing: -0.65px;
   }
 }
 
@@ -621,7 +619,6 @@ body.is_iphone #game-prefs-modal button {
 .mac-classic ul.monospace li pre {
   display: inline-block;
   margin: 1px 0px;
-  letter-spacing: -0.33px;
 }
 
 .mac-classic ul.monospace li pre.header {
@@ -706,11 +703,6 @@ body.is_iphone #game-prefs-modal button {
 .mac-classic ul.real-list li {
   margin-bottom: 0;
   margin-left: 19px;
-}
-
-.mac-classic li,
-.mac-classic p {
-  letter-spacing: -0.25px;
 }
 
 .mac-classic ul.real-list li {
@@ -884,12 +876,18 @@ b.gamepad-button,
   font: inherit;
   height: 15px;
   /* Not removed via appearance */
-  margin: -0.5px 0 0;
+  margin: -0.5px 0 0 -2px;
   padding: 0;
   /* vertical align w/text */
   position: relative;
   transform: translateY(-0.5px);
   width: 15px;
+}
+
+#game-prefs-modal .battle-list input[type='radio'] {
+  /* battle list tweaks */
+  margin: 0px;
+  transform: translateX(2px);
 }
 
 body.is_firefox .mac-classic input[type='checkbox'] {
