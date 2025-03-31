@@ -17,6 +17,10 @@
   top: 17%;
 }
 
+#editor-window-help .body {
+  width: 34em;
+}
+
 /* safari desktop: zoom hacks */
 body.is_safari:not(.is-mobile).edit-mode #editor-window,
 body.is_safari:not(.is-mobile).edit-mode #editor-window-help {
