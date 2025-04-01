@@ -131,7 +131,7 @@ const ParachuteInfantry = (options = {}) => {
     data,
     dom,
     domCanvas,
-    die: () => die(exports),
+    die: (dieOptions) => die(exports, dieOptions),
     hit: () => hit(exports),
     init: () => initParachuteInfantry(exports),
     radarItem: null // assigned later

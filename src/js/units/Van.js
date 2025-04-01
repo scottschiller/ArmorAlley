@@ -106,7 +106,7 @@ const Van = (options = {}) => {
     data,
     dom,
     domCanvas,
-    die: () => die(exports),
+    die: (dieOptions) => die(exports, dieOptions),
     init: () => initVan(exports),
     radarItem,
     refreshSprite: () => refreshSprite(exports)

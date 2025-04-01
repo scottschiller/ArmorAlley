@@ -125,7 +125,7 @@ const Tank = (options = {}) => {
     data,
     dom,
     domCanvas,
-    die: () => die(exports),
+    die: (dieOptions) => die(exports, dieOptions),
     init: () => initDOM(exports, options),
     radarItem,
     refreshSprite: () => refreshSprite(exports),

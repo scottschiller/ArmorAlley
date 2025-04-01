@@ -113,7 +113,7 @@ const MissileLauncher = (options = {}) => {
     data,
     dom,
     domCanvas,
-    die: () => die(exports),
+    die: (dieOptions) => die(exports, dieOptions),
     friendlyNearby,
     init: () => initMissileLauncher(options, exports),
     // radarItem,
