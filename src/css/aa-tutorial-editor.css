@@ -201,6 +201,12 @@ body.is_iphone #tutorial-window {
   padding: 0 calc(3px * var(--gs));
 }
 
+#editor-window .title-bar-stripes,
+#editor-window-help .title-bar-stripes {
+  /* stripes are a bit more compact in editor. */
+  background-size: 16.5px 1px;
+}
+
 #tutorial-window.finder .body {
   font-size: calc(5px * var(--gs));
 }
