@@ -204,7 +204,7 @@ function formatForWebhook(style, options = {}) {
 
   let layouts = {
     compact: {
-      title: 'Ordered+, Lost-, Recycled± by team',
+      title: 'Order+, Loss-, Recycle± by team',
       headers: ['U', 'L+', 'L-', '±', 'R+', 'R-', '±'],
       units: ['H', 'M', 'T', 'V', 'I', 'E']
     },
