@@ -108,7 +108,7 @@
 #battle-over-letter .letter-content p {
   color: #444;
   font-family: Geneva, verdana, arial, sans-serif;
-  font-size: calc(5.5px * var(--gs2));
+  font-size: calc(5px * var(--gs2));
   font-style: italic;
 }
 
