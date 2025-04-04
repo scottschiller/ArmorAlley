@@ -37,8 +37,10 @@ let data = {
   enabled: false,
   active: false,
   foundFirstGamepad: false,
-  gamepadX: 0,
-  gamepadY: 0,
+  // initial defaults
+  // TODO: use joystick default values * 100
+  gamepadX: 0.5 * 100,
+  gamepadY: 1 * 100,
   dPadOffset: OFFSET_CENTER,
   battleOverFocusOffset: 0,
   homeFocusOffset: 0,
@@ -49,8 +51,6 @@ let data = {
   repeatIntervalHome: 100,
   repeatInterval: 50,
   lastButtonTS: 0,
-  startX: 0,
-  startY: 0,
   state: {
     // hackish: external-facing status
     isFiring: false
@@ -179,28 +179,26 @@ function updateAA() {
   let curY = gamepadState.joysticks[FLY].y;
 
   if ((lastX != 0 || lastY != 0) && curX == 0 && curY == 0) {
-    // only stop once
-    game.objects.joystick?.end?.();
+    // no-op?
+    // TODO: refactor / DRY
   } else if (curX != 0 || curY != 0) {
     if (lastX == 0 && lastY == 0) {
       // "start" moving
       game.objects.joystick?.start?.({
-        clientX: data.startX,
-        clientY: data.startY,
-        hidden: true
+        clientX: data.gamepadX,
+        clientY: data.gamepadY,
+        hidden: true,
+        isGamepad: true
       });
     } else {
       // move relative to joystick
       data.gamepadX += curX * JOYSTICK_SENSITIVITY;
       data.gamepadY += curY * JOYSTICK_SENSITIVITY;
 
-      data.gamepadX = Math.min(50, Math.max(-50, data.gamepadX));
-      data.gamepadY = Math.min(50, Math.max(-50, data.gamepadY));
+      data.gamepadX = Math.max(0, Math.min(100, data.gamepadX));
+      data.gamepadY = Math.max(0, Math.min(100, data.gamepadY));
 
-      game.objects.joystick.move({
-        clientX: data.startX + data.gamepadX,
-        clientY: data.startY + data.gamepadY
-      });
+      game.objects.joystick.jumpTo(data.gamepadX / 100, data.gamepadY / 100);
     }
   }
 
@@ -583,25 +581,20 @@ function setActive(active) {
        *
        * This bit keeps the virtual pointer in sync with the real one.
        */
-      let width = jsData.screenWidth / 2;
-      let height = jsData.screenHeight / 2;
 
       const { clientX, clientY } = game.objects.view.data.mouse;
 
-      // sync gamepad X + Y (-50 to +50) to mouse position.
-      data.gamepadX = (clientX / width - 1) * 50;
-      data.gamepadY = (clientY / height - 1) * 50;
-
       // sync gamepad joystick UI to mouse position - note slight offset.
-      data.startX = clientX + 7;
-      data.startY = clientY + 7;
-
-      game.objects.joystick.jumpTo(data.startX, data.startY);
+      data.gamepadX =
+        ((clientX + 7) / game.objects.view.data.browser.screenWidth) * 100;
+      data.gamepadY =
+        ((clientY + 7) / game.objects.view.data.browser.screenHeight) * 100;
     } else {
-      // sync gamepad pointer to last touch (joystick) position.
-      data.gamepadX = jsData.pointer.x - 50;
-      data.gamepadY = jsData.pointer.y - 50;
+      data.gamepadX = jsData.pointer.x * 100;
+      data.gamepadY = jsData.pointer.y * 100;
     }
+
+    game.objects.joystick.jumpTo(data.gamepadX, data.gamepadY);
   }
 
   // joystick cursor
