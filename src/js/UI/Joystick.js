@@ -8,8 +8,8 @@ function Joystick(options) {
 
   const DEFAULTS = {
     pointer: {
-      x: 50,
-      y: 96
+      x: 0.5,
+      y: 1
     }
   };
 
