@@ -79,6 +79,8 @@ This is a summary of work in progress. For code-level details, see the changelog
 
 `Miscellaneous`
 
+· Gamepad and touch support: helicopter flight control has been adjusted to be more usable across varying screen sizes.
+
 · Like the original, you can now crash into the ground if flying too fast.
 
 · "Unlimited helicopters" preference: for a challenge, turn this off and buy additional helicopters @ 20 funds ea. as per original game.
