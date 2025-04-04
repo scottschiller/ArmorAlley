@@ -193,7 +193,7 @@ function updateAA() {
     } else {
       // move relative to joystick
       data.gamepadX += curX * JOYSTICK_SENSITIVITY;
-      data.gamepadY += curY * JOYSTICK_SENSITIVITY;
+      data.gamepadY += curY * JOYSTICK_SENSITIVITY * 1.5;
 
       data.gamepadX = Math.max(0, Math.min(100, data.gamepadX));
       data.gamepadY = Math.max(0, Math.min(100, data.gamepadY));
