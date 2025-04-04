@@ -253,8 +253,8 @@ function Joystick(options) {
     }
   }
 
-  function end() {
     if (!data.active) return;
+  function stop() {
 
     utils.css.remove(dom.oJoystick, css.active);
     data.tweenFrame = 0;

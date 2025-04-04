@@ -367,7 +367,7 @@ function gameOver(exports, youWon) {
   game.data.theyWon = !youWon;
 
   // ensure joystick UI is hidden, if present
-  game.objects.joystick?.end();
+  game.objects.joystick?.stop();
 
   utils.css.add(document.body, 'game-over', youWon ? 'you-won' : 'you-lost');
 

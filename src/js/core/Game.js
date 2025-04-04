@@ -600,7 +600,7 @@ const game = (() => {
 
     objects.gameLoop.stop();
 
-    objects.joystick?.end();
+    objects.joystick?.stop();
 
     if (silent && gamePrefs.sound && soundManager) {
       soundManager.mute();

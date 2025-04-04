@@ -1033,7 +1033,7 @@ const View = () => {
     const registeredEvent = getTouchEvent(touchEvent);
 
     if (registeredEvent?.type === 'joystick') {
-      game.objects.joystick.end(touchEvent);
+      game.objects.joystick.stop();
     }
 
     if (

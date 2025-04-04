@@ -2511,7 +2511,7 @@ function die(exports, dieOptions = {}) {
       game.data.didEnemyWin = true;
 
       // ensure joystick UI is hidden, if present
-      game.objects.joystick?.end();
+      game.objects.joystick?.stop();
 
       game.logEvent('GAME_OVER');
 

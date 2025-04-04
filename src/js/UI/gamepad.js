@@ -609,7 +609,7 @@ function setActive(active) {
 
   // explicitly stop cursor, too?
   if (!active) {
-    game.objects.joystick?.end?.();
+    game.objects.joystick?.stop?.();
     resetSelected();
   }
 
