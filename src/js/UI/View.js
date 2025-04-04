@@ -1369,8 +1369,9 @@ const View = () => {
       clientY: 0,
       delayedInputX: 0,
       delayedInputY: 1,
-      x: 0,
-      y: 0
+      // note: start at bottom of screen / on landing pad.
+      x: 0.5,
+      y: 1
     },
     touch: {
       x: 0,
