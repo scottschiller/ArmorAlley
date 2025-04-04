@@ -950,6 +950,10 @@ function refreshCollisionItems(exports) {
    */
   if (data.targetGroundUnits) {
     targets = getTypes('tank', { exports });
+
+    // hackish: write back to exports.
+    exports.targets = targets;
+
     collisionItems = collisionItems.concat(targets);
   }
 
