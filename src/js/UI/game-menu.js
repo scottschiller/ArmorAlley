@@ -439,7 +439,7 @@ function init() {
 
   game.setGameType(defaultGameType);
 
-  const levelName = document.getElementById('game_level').value;
+  const levelName = document.getElementById('game_level')?.value;
 
   previewLevel(levelName);
 
