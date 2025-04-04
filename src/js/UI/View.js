@@ -1464,6 +1464,19 @@ const View = () => {
       }
 
       /**
+       * Hackish: Ignore touch-based mousemove() for the first second of gameplay.
+       * On mobile, the touch event to "start" carries through and can cause
+       * unwanted helicopter movement.
+       */
+      if (
+        !game.objects.editor &&
+        clientFeatures.touch &&
+        game.objects.gameLoop.data.frameCount < FPS
+      ) {
+        return;
+      }
+
+      /**
        * Mouse move events can fire at a higher rate than the game, e.g.,
        * 60fps vs. game @ 30fps. Always track, but apply only once per frame.
        */
