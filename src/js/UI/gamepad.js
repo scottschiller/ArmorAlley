@@ -187,7 +187,6 @@ function updateAA() {
       game.objects.joystick?.start?.({
         clientX: data.gamepadX,
         clientY: data.gamepadY,
-        hidden: true,
         isGamepad: true
       });
     } else {
