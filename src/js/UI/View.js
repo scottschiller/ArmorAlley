@@ -1202,6 +1202,8 @@ const View = () => {
   function applyMouseMove() {
     // apply the latest mouse input.
 
+    if (!game.data.started) return;
+
     let e = lastMouseEvent;
 
     if (!e) return;
