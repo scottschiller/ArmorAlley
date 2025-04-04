@@ -4,7 +4,7 @@ import { debug } from '../core/global.js';
 import { snowStorm } from '../lib/snowstorm.js';
 
 function Joystick(options) {
-  let css, data, dom, exports;
+  let browser, css, data, dom, exports;
 
   const DEFAULTS = {
     pointer: {
@@ -15,18 +15,32 @@ function Joystick(options) {
 
   css = {
     enabled: 'enabled',
-    joystick: 'joystick',
-    joystickPoint: 'joystick-point',
-    active: 'joystick-active'
+    joystick: 'joystick'
   };
 
   data = {
     active: false,
-    oJoystickWidth: null,
-    oJoystickHeight: null,
-    oPointWidth: null,
-    oPointHeight: null,
+    isGamepad: null,
+    /**
+     * Relative "range-to-speed" distances
+     *
+     * The joystick has an oval shape, so horizontal movement
+     * is amplified relative to vertical movement given the
+     * game's (usual) widescreen aspect ratio.
+     *
+     * This could probably be improved to be relative to
+     * real screen dimensions, e.g., small mobile portrait screens.
+     */
+    gamepadWidth: 100,
+    gamepadHeight: 100,
+    joystickWidth: 256,
+    joystickHeight: 128,
     oPointer: null,
+    // note: 0-1 here
+    last: {
+      x: DEFAULTS.pointer.x,
+      y: DEFAULTS.pointer.y
+    },
     start: {
       x: null,
       y: null
@@ -36,22 +50,19 @@ function Joystick(options) {
       clientY: 0
     },
     pointer: {
-      // percentages
       x: DEFAULTS.pointer.x,
       y: DEFAULTS.pointer.y,
       visible: false
     },
     // linear acceleration / deceleration
     easing: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1],
-    screenWidth: game.objects.view.data.browser.screenWidth,
-    screenHeight: game.objects.view.data.browser.screenHeight,
-    tweenFrame: 0,
-    tweenFrames: []
+    // these will be set in init, relative to screen dimensions
+    x: 0,
+    y: 0
   };
 
   dom = {
     o: null,
-    oJoystick: null,
     oPoint: null
   };
 
@@ -62,16 +73,6 @@ function Joystick(options) {
     return evt;
   };
 
-  function moveContainerTo(x, y) {
-    const targetX = x - data.oJoystickWidth / 2;
-    const targetY = y - data.oJoystickHeight / 2;
-    dom.oJoystick.style.transform = `translate3d(${targetX}px, ${targetY}px, 0px)`;
-  }
-
-  function resetPoint() {
-    dom.oPoint.style.transform = `translate3d(${data.oJoystickWidth / 2}px, ${data.oJoystickHeight / 2}px, 0px)`;
-  }
-
   function setPointerVisibility(visible) {
     if (data.pointer.visible === visible) return;
     utils.css.addOrRemove(dom.oPointer, visible, css.enabled);
@@ -79,141 +80,90 @@ function Joystick(options) {
   }
 
   function jumpTo(x, y) {
+    // update internal state
+    data.x = x * browser.screenWidth;
+    data.y = y * browser.screenHeight;
+
+    // other numbers, 0-1
     data.start.x = x;
     data.start.y = y;
-    moveContainerTo(x, y);
-    data.pointer.x = (x / data.screenWidth) * 100;
-    data.pointer.y = (y / data.screenHeight) * 100;
+
+    data.pointer.x = x;
+    data.pointer.y = y;
+
     updatePointer();
   }
 
   function updatePointer() {
     dom.oPointer.style.transform = `translate3d(${
-      data.screenWidth * (data.pointer.x / 100)
-    }px, ${data.screenHeight * (data.pointer.y / 100)}px, 0px)`;
+      browser.screenWidth * data.pointer.x
+    }px, ${browser.screenHeight * data.pointer.y}px, 0px)`;
   }
 
   function start(e) {
+    // e: mouse event or similar object from gamepad.
+    if (!game.data.started) return;
+
     if (data.active) return;
 
     data.active = true;
 
+    data.isGamepad = !!e.isGamepad;
+
     const evt = getEvent(e);
+
+    // set default if not already
+    if (data.last.x === null) {
+      data.last.x = DEFAULTS.pointer.x;
+      data.last.y = DEFAULTS.pointer.y;
+    }
 
     data.start.x = evt.clientX;
     data.start.y = evt.clientY;
 
-    // reposition joystick underneath mouse coords
-    moveContainerTo(data.start.x, data.start.y);
-
-    // re-center the "nub".
-    resetPoint();
-
     // ensure pointer is visible
     setPointerVisibility(true);
-
-    // show joystick UI, unless specified otherwise
-    if (!e.hidden) {
-      utils.css.add(dom.oJoystick, css.active);
-    }
 
     // stop touch from causing scroll, too?
     if (e.preventDefault) e.preventDefault();
     if (evt.preventDefault) evt.preventDefault();
   }
 
-  function makeTweenFrames(from, to) {
-    const frames = [];
-
-    // distance to move in total
-    const deltaX = to.x - from.x;
-    const deltaY = to.y - from.y;
-
-    // local copy of start coords, track position
-    let x = parseFloat(from.x);
-    let y = parseFloat(from.y);
-
-    // create array of x/y coordinates
-    for (let i = 0, j = data.easing.length; i < j; i++) {
-      // move % of total distance
-      x += deltaX * data.easing[i] * 0.01;
-      y += deltaY * data.easing[i] * 0.01;
-      frames[i] = {
-        x,
-        y
-      };
-    }
-
-    return frames;
-  }
-
-  function distance(p1, p2) {
-    let x1, y1, x2, y2;
-
-    x1 = p1[0];
-    y1 = p1[1];
-
-    x2 = p2[0];
-    y2 = p2[1];
-
-    // eslint recommends exponentation ** vs. Math.pow(), but ** is Chrome 52+ and not even in IE AFAIK. 😂
-    // eslint-disable-next-line no-restricted-properties
-    return Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2);
-  }
-
-  // circle math hat-tip: duopixel
-  // https://stackoverflow.com/a/8528999
-
-  function limit(x, y) {
-    const halfWidth = data.oJoystickWidth / 2;
-    const halfHeight = data.oJoystickHeight / 2;
-    const radius = halfWidth;
-    const center = [halfWidth, halfHeight];
-    const dist = distance([x, y], center);
-
-    if (dist <= radius) return { x, y };
-
-    x -= center[0];
-    y -= center[1];
-
-    const radians = Math.atan2(y, x);
-
-    return {
-      x: Math.cos(radians) * radius + center[0],
-      y: Math.sin(radians) * radius + center[1]
-    };
-  }
-
-  function movePoint(x, y) {
-    dom.oPoint.style.transform = `translate3d(${(x / 100) * data.oJoystickWidth}px, ${(y / 100) * data.oJoystickHeight}px, 0px)`;
-  }
-
   function setDirection(x, y) {
-    const from = {
-      x: (data.pointer.x / 100) * data.screenWidth,
-      y: (data.pointer.y / 100) * data.screenHeight
-    };
+    let w = data.isGamepad ? data.gamepadWidth : data.joystickWidth;
+    let h = data.isGamepad ? data.gamepadHeight : data.joystickHeight;
+
+    // restrict to screen dimensions
+    let newX =
+      data.last.x * browser.screenWidth + (x / w) * browser.screenWidth;
+    let newY =
+      data.last.y * browser.screenHeight + (y / h) * browser.screenHeight;
 
     // x/y are relative to screen
-    const to = {
-      x: (x / 100) * data.screenWidth,
-      y: (y / 100) * data.screenHeight
+    data.x = Math.max(0, Math.min(newX, browser.screenWidth));
+    data.y = Math.max(0, Math.min(newY, browser.screenHeight));
+  }
+
+  function getRelativeXY(x, y) {
+    let w = data.isGamepad ? data.gamepadWidth : data.joystickWidth;
+    let h = data.isGamepad ? data.gamepadHeight : data.joystickHeight;
+
+    const halfWidth = w / 2;
+    const halfHeight = h / 2;
+
+    // move relative to start point
+    let relativeX = x - data.start.x;
+    let relativeY = y - data.start.y;
+
+    return {
+      relativeX,
+      relativeY
     };
-
-    data.tweenFrames = makeTweenFrames(from, to);
-
-    // tween can change while animating, i.e. mouse constantly moving.
-    // update tween in-place, when this happens.
-    if (data.tweenFrame >= data.tweenFrames.length) {
-      data.tweenFrame = 0;
-    } else if (data.tweenFrame > 5) {
-      // allow tween to "rewind" slightly, but stay on upward motion curve.
-      // this keeps motion relatively fast during repeated touchmove() events.
-      data.tweenFrame--;
-    }
   }
 
   function move(e) {
+    if (!game.data.started) return;
+
     // ignore if joystick isn't being dragged.
     if (!data.active) return;
 
@@ -226,23 +176,7 @@ function Joystick(options) {
     data.lastMove.clientX = evt.clientX;
     data.lastMove.clientY = evt.clientY;
 
-    const halfWidth = data.oJoystickWidth / 2;
-    const halfHeight = data.oJoystickHeight / 2;
-
-    // calculate, limit between 0 and width/height.
-    const relativeX = Math.max(
-      0,
-      Math.min(halfWidth - (data.start.x - evt.clientX), data.oJoystickWidth)
-    );
-    const relativeY = Math.max(
-      0,
-      Math.min(halfHeight - (data.start.y - evt.clientY), data.oJoystickHeight)
-    );
-
-    const coords = limit(relativeX, relativeY);
-
-    // limit point to circle coordinates.
-    movePoint(coords.x, coords.y);
+    let { relativeX, relativeY } = getRelativeXY(evt.clientX, evt.clientY);
 
     // set relative velocities based on square.
     setDirection(relativeX, relativeY);
@@ -253,24 +187,15 @@ function Joystick(options) {
     }
   }
 
-    if (!data.active) return;
   function stop() {
+    if (!game.data.started) return;
 
-    utils.css.remove(dom.oJoystick, css.active);
-    data.tweenFrame = 0;
-    data.tweenFrames = [];
+    if (!data.active) return;
+
+    data.last.x = data.x / browser.screenWidth;
+    data.last.y = data.y / browser.screenHeight;
+
     data.active = false;
-  }
-
-  function refresh() {
-    data.oJoystickWidth = dom.oJoystick.offsetWidth;
-    data.oJoystickHeight = dom.oJoystick.offsetHeight;
-    data.oPointWidth = dom.oPoint.offsetWidth;
-    data.oPointHeight = dom.oPoint.offsetHeight;
-
-    // stay in sync with the source.
-    data.screenWidth = game.objects.view.data.browser.screenWidth;
-    data.screenHeight = game.objects.view.data.browser.screenHeight;
   }
 
   function addEvents() {
@@ -278,10 +203,8 @@ function Joystick(options) {
     if (debug) {
       utils.events.add(document, 'mousedown', start);
       utils.events.add(document, 'mousemove', move);
-      utils.events.add(document, 'mouseup', end);
+      utils.events.add(document, 'mouseup', stop);
     }
-
-    utils.events.add(window, 'resize', refresh);
   }
 
   function initDOM() {
@@ -289,22 +212,13 @@ function Joystick(options) {
     dom.o = (options && options.o) || document.body;
 
     dom.oPointer = document.getElementById('pointer');
-
-    const oJoystick = document.createElement('div');
-    oJoystick.className = css.joystick;
-
-    const oPoint = document.createElement('div');
-    oPoint.className = css.joystickPoint;
-
-    oJoystick.appendChild(oPoint);
-
-    dom.o.appendChild(oJoystick);
-
-    dom.oJoystick = oJoystick;
-    dom.oPoint = oPoint;
   }
 
   function setInitialPosition() {
+    // we should have screen coords, now.
+    data.x = DEFAULTS.pointer.x * browser.screenWidth;
+    data.y = DEFAULTS.pointer.y * browser.screenHeight;
+
     // update inner state
     data.pointer.x = DEFAULTS.pointer.x;
     data.pointer.y = DEFAULTS.pointer.y;
@@ -317,18 +231,11 @@ function Joystick(options) {
     // i.e., stop any animation on release.
     if (!data.active) return;
 
-    const frame = data.tweenFrames && data.tweenFrames[data.tweenFrame];
-
-    if (!frame) return;
-
-    dom.oPointer.style.transform = `translate3d(${frame.x}px, ${frame.y}px, 0px)`;
+    dom.oPointer.style.transform = `translate3d(${data.x}px, ${data.y}px, 0px)`;
 
     // update inner state
-    data.pointer.x = (frame.x / data.screenWidth) * 100;
-    data.pointer.y = (frame.y / data.screenHeight) * 100;
-
-    // next!
-    data.tweenFrame++;
+    data.pointer.x = data.x / browser.screenWidth;
+    data.pointer.y = data.y / browser.screenHeight;
 
     if (exports.onSetDirection) {
       exports.onSetDirection(data.pointer.x, data.pointer.y);
@@ -345,11 +252,12 @@ function Joystick(options) {
   }
 
   function init() {
+    browser = game.objects.view.data.browser;
+
     initDOM();
     addEvents();
 
     // get initial coords
-    refresh();
     setInitialPosition();
   }
 
