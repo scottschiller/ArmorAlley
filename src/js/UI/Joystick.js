@@ -361,9 +361,9 @@ function Joystick(options) {
     jumpTo,
     start,
     move,
-    end,
     reset,
-    setPointerVisibility
+    setPointerVisibility,
+    stop
   };
 
   return exports;
