@@ -221,6 +221,7 @@ const Turret = (options = {}) => {
 
   exports = {
     animate: () => animate(exports),
+    collisionItems: null,
     css,
     data,
     destroy: () => destroy(exports),
