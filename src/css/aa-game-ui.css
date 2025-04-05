@@ -122,7 +122,7 @@ body.game-started #game-status {
   display: inline-block;
   width: calc(4.25px * var(--gs));
   height: calc(8.5px * var(--gs));
-  margin-top: calc(-0.55px * var(--gs));
+  margin-top: calc(-0.125px * var(--gs));
   /* tighten "letter spacing" a bit */
   margin-right: calc(-0.33px * var(--gs));
   opacity: 1;
@@ -152,7 +152,7 @@ body.game-started #game-status {
    * invert 60% -> #99 (153)
    */
   filter: invert(0.6);
-  background: url(../../assets/image/UI/number-strip-chicago.svg) 0 0/100% 1000%
+  background: url(../../assets/image/UI/number-strip-iosevka.svg) 0 0/100% 1000%
     repeat-y;
   display: block;
   width: 100%;
