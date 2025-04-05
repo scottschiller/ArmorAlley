@@ -447,7 +447,7 @@ function onAddOrRemove(lastKnownGamepadCount, gpInfo = {}) {
     let label = getPrettyLabel(cfg?.label, gpInfo.gamepad.id);
 
     // Don't notify about "standard/generic" e.g., in Safari - keep it brief.
-    let labelDetail = label.match(/generic/i) ? '' : `: ${label}`;
+    let labelDetail = label?.match?.(/generic/i) ? '' : `: ${label}`;
 
     if (gpInfo.connected && !cfg) {
       // warn if not supported
