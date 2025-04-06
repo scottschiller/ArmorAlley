@@ -1,4 +1,4 @@
-`The latest and greatest: March 2025 Edition 🗞️`
+`The latest and greatest: April 2025 Edition 🗞️`
 This is a summary of work in progress. For code-level details, see the changelog section below.
 
 `UI miscellany`
