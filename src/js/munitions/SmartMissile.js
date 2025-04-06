@@ -995,7 +995,7 @@ function animate(exports) {
         }
       } else {
         // smoother Y-axis changes for airborne targets
-        data.vY += (nextVY - data.vY) / 3;
+        data.vY += (nextVY - data.vY) / 5;
       }
     }
   }
