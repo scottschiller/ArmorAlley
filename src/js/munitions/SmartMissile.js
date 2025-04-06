@@ -979,7 +979,7 @@ function animate(exports) {
       data.vX +=
         iSgn(iMisV.x[data.iCurShape] - data.vX) *
         difficultyFactor *
-        data.speedBurstFactor;
+        data.speedBurstFactor * 2/3;
 
       let nextVY = iMisV.y[data.iCurShape] * 1.5 * data.speedBurstFactor;
 
