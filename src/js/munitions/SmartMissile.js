@@ -991,7 +991,7 @@ function animate(exports) {
           data.vY = nextVY;
         } else {
           // drop faster for ground targets
-          data.vY = nextVY * 1.5;
+          data.vY = nextVY;
         }
       } else {
         // smoother Y-axis changes for airborne targets
