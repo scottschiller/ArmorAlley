@@ -345,7 +345,7 @@ function die(exports, dieOptions = {}) {
 
   // editor case: when destroyed, gone for good.
   if (game.objects.editor) {
-    sprites.removeNodes(dom);
+    sprites.removeNodes(exports?.dom);
   }
 }
 
