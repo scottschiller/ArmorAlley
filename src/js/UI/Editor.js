@@ -622,6 +622,8 @@ const Editor = () => {
 
   function moveSelectedItemsX(vX) {
     data.selectedItems.forEach((item) => {
+      if (!item?.dataset) return;
+
       const newX = parseFloat(item.dataset.x) + vX;
 
       // write the new value back to the DOM
