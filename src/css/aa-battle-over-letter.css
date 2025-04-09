@@ -10,7 +10,7 @@
 }
 
 :root {
-  --gs2: calc(var(--gs) * 1.2);
+  --gs2: calc(var(--gs) * 1.15);
 }
 
 #battle-over-letter {
