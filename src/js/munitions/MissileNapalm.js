@@ -114,7 +114,7 @@ const MissileNapalm = (options = {}) => {
           // collision logic brings us here because flame is hostile and dangerous to both, hence this special check.
           if (
             target.data.type === TYPES.helicopter &&
-            data.parent.data.isEnemy === target.data.isEnemy
+            game.objectsById[data.parent].data.isEnemy === target.data.isEnemy
           ) {
             return;
           }
