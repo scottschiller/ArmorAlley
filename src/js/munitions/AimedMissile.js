@@ -404,7 +404,7 @@ function initDOM(exports) {
 }
 
 function initAimedMissile(exports) {
-  let { data, launchSound } = exports;
+  let { data } = exports;
 
   initDOM(exports);
 
@@ -415,8 +415,8 @@ function initAimedMissile(exports) {
   exports.radarItem = game.objects.radar.addItem(exports);
 
   if (sounds.missileLaunch) {
-    launchSound = playSound(sounds.missileLaunch, game.players.local, {
-      onplay: (sound) => (launchSound = sound),
+    exports.launchSound = playSound(sounds.missileLaunch, game.players.local, {
+      onplay: (sound) => (exports.launchSound = sound),
       playbackRate
     });
 
