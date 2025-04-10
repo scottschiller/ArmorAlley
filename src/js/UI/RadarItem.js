@@ -56,7 +56,7 @@ function RadarItem(options) {
       common.setFrameTimeout(() => {
         // only do this if the parent (balloon) is still dead.
         // it may have respawned almost immediately by passing infantry.
-        if (!oParent?.data?.dead) return;
+        if (!game.objectsById[oParent]?.data?.dead) return;
         utils.css.add(dom.o, css.dead);
       }, 1000);
     }
@@ -99,7 +99,7 @@ function RadarItem(options) {
     data.stepOffset = data.stepFrames[data.stepFrame];
 
     // hackish: assign to parent
-    data.oParent.data.stepOffset = data.stepOffset;
+    game.objectsById[data.oParent].data.stepOffset = data.stepOffset;
 
     data.stepActive = true;
   }
@@ -130,7 +130,7 @@ function RadarItem(options) {
     data.stepOffset = data.stepFrames[data.stepFrame];
 
     // hackish: assign to parent
-    data.oParent.data.stepOffset = data.stepOffset;
+    game.objectsById[data.oParent].data.stepOffset = data.stepOffset;
 
     if (data.stepFrame >= data.stepFrames.length - 1) {
       data.stepActive = false;
@@ -189,7 +189,7 @@ function RadarItem(options) {
     type: 'radar-item',
     excludeLeftScroll: true, // don't include battlefield scroll in transform(x)
     isOnScreen: true, // radar items are always within view
-    oParent: options.oParent,
+    oParent: options.oParent.data.id,
     parentType: options.parentType,
     className: options.className,
     dead: false,
@@ -207,7 +207,7 @@ function RadarItem(options) {
     o: options.o
   };
 
-  oParent = options.oParent;
+  oParent = options.oParent.data.id;
 
   initRadarItem();
 
@@ -226,9 +226,9 @@ function RadarItem(options) {
     updateScanNode
   };
 
-  if (oParent.domCanvas?.radarItem) {
+  if (options.oParent?.domCanvas?.radarItem) {
     // inherit
-    exports.domCanvas = oParent.domCanvas.radarItem;
+    exports.domCanvas = options.oParent.domCanvas.radarItem;
   }
 
   return exports;
