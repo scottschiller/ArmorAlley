@@ -146,6 +146,7 @@ const Radar = () => {
         width: 0,
         height: 0
       },
+      bottomAligned: false,
       // TODO: review
       bottomAlignedY: 0
     };
@@ -175,7 +176,7 @@ const Radar = () => {
     result.layout.width = rect.width * (1 / data.cssRadarScale);
     result.layout.height = rect.height;
 
-    if (itemObject.oParent.data.bottomAligned) {
+    if (game.objectsById[itemObject.oParent]?.data?.bottomAligned) {
       // if set, use bottom: 0 and call it a day.
       result.bottomAligned = true;
     }
@@ -401,6 +402,8 @@ const Radar = () => {
   }
 
   function updateTargetMarker(targetItem, allowTransition) {
+    let targetParent = game.objectsById[targetItem?.oParent];
+
     /**
      * Ignore while jammed by van or level flags OR, "target is helicopter but hidden for this battle
      * because of helicopter stealth mode," since this "relies" on working radar.
@@ -409,8 +412,8 @@ const Radar = () => {
       data.isJammed ||
       levelFlags.jamming ||
       (levelFlags.stealth &&
-        targetItem?.oParent &&
-        targetItem.oParent.data.type === TYPES.helicopter)
+        targetParent &&
+        targetParent.data.type === TYPES.helicopter)
     ) {
       return;
     }
@@ -418,16 +421,16 @@ const Radar = () => {
     dom.targetMarker.style.opacity = 1;
 
     // sanity check: ensure this object still exists.
-    if (!targetItem?.oParent?.dom?.o) return;
+    if (!targetParent?.dom?.o) return;
 
     // layout may have been nuked; recalculate, if so.
     // TODO: fix missile launcher + turret layout stuff
     if (
       !targetItem.layout?.width ||
-      targetItem.oParent.data.type === TYPES.missileLauncher
+      targetParent.data.type === TYPES.missileLauncher
     ) {
       // HACK
-      let parentDomCanvas = targetItem.oParent.domCanvas;
+      let parentDomCanvas = targetParent.domCanvas;
       if (parentDomCanvas) {
         targetItem.layout = {
           width: pos.width(parentDomCanvas.radarItem.width),
@@ -469,7 +472,9 @@ const Radar = () => {
 
     const offset =
       data.radarTarget.data.parentType === 'balloon'
-        ? (data.radarTarget.data.oParent?.data?.width * 0.25) / data.scale || 0
+        ? (game.objectsById[data.radarTarget.data.oParent]?.data?.width *
+            0.25) /
+            data.scale || 0
         : 0;
 
     if (data.scale === 1) {
@@ -700,22 +705,34 @@ const Radar = () => {
     }
 
     // move all radar items
+    let oParent;
 
     for (i = 0, j = objects.items.length; i < j; i++) {
       // is this a "static" item which is positioned only once and never moves?
       // additionally: "this is a throttled update", OR, this is a type that gets updated every frame.
       // exception: bases and bunkers may be "dirty" due to resize, `isStale` will be set. force a refresh in that case.
 
+      oParent = game.objectsById[objects.items[i].oParent];
+
+      if (!oParent) {
+        /**
+         * It's possible a radar item can exist and lack a parent -
+         * e.g., a balloon attached to a bunker which can respawn.
+         * In this case, continue and ignore / don't render.
+         */
+        continue;
+      }
+
       if (
         data.isStale ||
         !objects.items[i].isStatic ||
         objects.items[i].domCanvas ||
-        data.animateEveryFrameTypes[objects.items[i].oParent.data.type]
+        data.animateEveryFrameTypes[oParent.data.type]
       ) {
         if (
           !game.objects.editor &&
           !objects.items[i].isStatic &&
-          staticTypes[objects.items[i].oParent.data.type]
+          staticTypes[oParent.data.type]
         ) {
           objects.items[i].isStatic = true;
         }
@@ -724,20 +741,16 @@ const Radar = () => {
         objects.items[i]?.animate?.();
 
         // constrain helicopters only, so they don't fly out-of-bounds
-        if (objects.items[i].oParent.data.type === TYPES.helicopter) {
+        if (oParent.data.type === TYPES.helicopter) {
           left =
             Math.max(
               leftBoundary,
-              Math.min(
-                rightBoundary,
-                objects.items[i].oParent.data.x / worldWidth
-              )
+              Math.min(rightBoundary, oParent.data.x / worldWidth)
             ) * game.objects.view.data.browser.screenWidth;
         } else {
           // X coordinate: full world layout -> radar scale, with a slight offset (so bunker at 0 isn't absolute left-aligned)
           left =
-            ((objects.items[i].oParent.data.x +
-              (objects.items[i].oParent.data.radarLeftOffset || 0)) /
+            ((oParent.data.x + (oParent.data.radarLeftOffset || 0)) /
               worldWidth) *
             game.objects.view.data.browser.screenWidth;
         }
@@ -753,8 +766,7 @@ const Radar = () => {
         // bottom-aligned, OR, somewhere between top and bottom of radar display, accounting for own height
         top = objects.items[i].bottomAligned
           ? 0
-          : (objects.items[i].oParent.data.y /
-              game.objects.view.data.battleField.height) *
+          : (oParent.data.y / game.objects.view.data.battleField.height) *
               data.height -
             (objects.items[i]?.layout?.height || 0);
 
@@ -780,16 +792,14 @@ const Radar = () => {
         }
 
         // resize, if method is present: currently, scan nodes and clouds.
-        if (data.isStale && objects.items[i].oParent?.resize) {
-          objects.items[i].oParent.resize(nextScale);
+        if (data.isStale && oParent?.resize) {
+          oParent.resize(nextScale);
         }
 
         // hack: resize scan nodes manually for level previews
         if (!game.data.started) {
-          if (scanNodeTypes[objects.items[i].oParent.data.type]) {
-            objects.items[i].updateScanNode(
-              scanNodeTypes[objects.items[i].oParent.data.type]
-            );
+          if (scanNodeTypes[oParent.data.type]) {
+            objects.items[i].updateScanNode(scanNodeTypes[oParent.data.type]);
           }
         }
       }
