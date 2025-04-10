@@ -467,7 +467,7 @@ function setFiring(exports, isFiring) {
   }
 
   if (!data.isEnemy) {
-    objects.cornholio?.setSpeaking(data.firing);
+    game.objectsById[objects.cornholio]?.setSpeaking(data.firing);
   }
 }
 
@@ -489,7 +489,7 @@ function die(exports, dieOptions = {}) {
   data.restoring = false;
   data.dead = true;
 
-  objects.cornholio?.hide();
+  game.objectsById[objects.cornholio]?.hide();
 
   // hackish: ensure firing is reset.
   setFiring(exports, false);
@@ -679,19 +679,21 @@ function repair(exports, engineer, complete) {
 
           data.queuedSound = null;
 
-          objects.cornholio?.show();
-          objects.cornholio?.setSpeaking(true);
+          let cornholio = game.objectsById[objects.cornholio];
+
+          cornholio?.show();
+          cornholio?.setSpeaking(true);
 
           if (!data.firing) {
             playSound(sounds.bnb.cornholioAnnounce, exports, {
               onplay: (sound) => {
-                objects.cornholio?.setActiveSound(sound);
+                cornholio?.setActiveSound(sound);
                 game.objects.notifications.add(data.bnbAnnounceText);
               },
               onfinish: () => {
                 // stop speaking when "announcement" has finished, and not actively firing.
-                objects.cornholio?.setActiveSound(null, data.firing);
-                objects.cornholio?.setSpeaking(data.firing);
+                cornholio?.setActiveSound(null, data.firing);
+                cornholio?.setSpeaking(data.firing);
               }
             });
           } else {
@@ -773,26 +775,28 @@ function claim(exports, engineer) {
 
   if (data.claimPoints < data.claimPointsMax) return;
 
+  let cornholio = game.objectsById[objects.cornholio];
+
   // change sides.
   if (!data.dead) {
     // notify only if engineer is capturing a live turret.
     // otherwise, it'll be neutralized and then rebuilt.
     if (data.isEnemy === game.players.local.data.isEnemy) {
       game.objects.notifications.add('The enemy captured a turret 🚩');
-      objects.cornholio?.hide();
+      cornholio?.hide();
     } else {
       game.objects.notifications.add('You captured a turret ⛳');
       if (gamePrefs.bnb && sounds.bnb.cornholioAnnounce) {
         playSound(sounds.bnb.cornholioAnnounce, exports, {
           onplay: (sound) => {
             game.objects.notifications.add(data.bnbAnnounceText);
-            objects.cornholio?.setActiveSound(sound);
+            cornholio?.setActiveSound(sound);
           },
           onfinish: () => {
-            objects.cornholio?.setActiveSound(null);
+            cornholio?.setActiveSound(null);
           }
         });
-        objects.cornholio?.show();
+        cornholio?.show();
       }
     }
   }
@@ -1032,16 +1036,18 @@ function initTurret(exports, options) {
 
   initDOM(exports);
 
-  objects.cornholio = game.addObject(TYPES.cornholio, {
+  let cornholio = game.addObject(TYPES.cornholio, {
     x: data.x - data.cornholioOffsetX,
     y: data.y,
-    oParent: exports
+    oParent: data.id
   });
 
+  objects.cornholio = cornholio.data.id;
+
   if (options.DOA || data.isEnemy) {
-    objects.cornholio.hide();
+    cornholio.hide();
   } else if (gamePrefs.bnb) {
-    objects.cornholio.show();
+    cornholio.show();
   }
 
   if (!noRadar) {
