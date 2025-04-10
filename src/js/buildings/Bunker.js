@@ -79,8 +79,7 @@ const Bunker = (options = {}) => {
 
   objects = {
     balloon: null,
-    chain: null,
-    helicopter: null
+    chain: null
   };
 
   domCanvas = {
@@ -189,28 +188,35 @@ function applySpriteURL(exports) {
 function createBalloon(exports) {
   let { data, objects } = exports;
 
-  if (!objects.balloon) {
-    objects.balloon = game.addObject(TYPES.balloon, {
+  let { balloon, chain } = objects;
+
+  if (!balloon) {
+    let newBalloon = game.addObject(TYPES.balloon, {
       bunker: exports,
       isEnemy: data.isEnemy,
       x: data.x,
       y: common.bottomAlignedY(-data.height)
     });
+    exports.objects.balloon = newBalloon.data.id;
   }
 
-  if (!objects.chain) {
+  if (!chain) {
     // create a chain, linking the base and the balloon
-    objects.chain = game.addObject(TYPES.chain, {
+    let oBalloon = game.objectsById[objects.balloon];
+
+    let newChain = game.addObject(TYPES.chain, {
       isEnemy: data.isEnemy,
       x: data.x + (data.halfWidth - 1.75),
       y: data.y,
-      height: data.y - objects.balloon.data.y,
-      balloon: objects.balloon,
+      height: data.y - oBalloon.data.y,
+      balloon: oBalloon,
       bunker: exports
     });
 
+    exports.objects.chain = newChain.data.id;
+
     // balloon <-> chain
-    objects?.balloon?.attachChain(objects.chain);
+    oBalloon?.attachChain(exports.objects.chain);
   }
 }
 
@@ -259,8 +265,8 @@ function capture(exports, isEnemy) {
   zones.changeOwnership(exports);
 
   // and the attached objects, too.
-  objects?.chain?.setEnemy(isEnemy);
-  objects?.balloon?.setEnemy(isEnemy);
+  game.objectsById[objects?.chain]?.setEnemy(isEnemy);
+  game.objectsById[objects?.balloon]?.setEnemy(isEnemy);
 
   playSound(sounds.doorClose, exports);
 
@@ -336,8 +342,8 @@ function repair(exports) {
 
   // fix the balloon, if it's broken - or, rather, flag it for respawn.
   if (objects.balloon) {
-    if (objects.balloon.data.dead) {
-      objects.balloon.data.canRespawn = true;
+    if (game.objectsById[objects.balloon]?.data?.dead) {
+      game.objectsById[objects.balloon].data.canRespawn = true;
     }
   } else {
     // make a new one
@@ -361,12 +367,12 @@ function detachBalloon(exports) {
   // once height is assigned, the chain will either
   // hang from the balloon it's attached to, OR, will
   // fall due to gravity (i.e., no base, no balloon.)
-  objects?.chain?.applyHeight();
+  game.objectsById[objects?.chain]?.applyHeight();
 
   if (objects.balloon) {
-    objects.balloon.attachChain(objects.chain);
-    objects.balloon.detachFromBunker();
-    objects.chain?.detachFromBunker();
+    game.objectsById[objects.balloon].attachChain(objects.chain);
+    game.objectsById[objects.balloon].detachFromBunker();
+    game.objectsById[objects.chain]?.detachFromBunker();
     nullifyBalloon(exports);
   }
 }
