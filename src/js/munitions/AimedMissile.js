@@ -423,12 +423,12 @@ function initAimedMissile(exports) {
     // human helicopter, firing aimed missile
     if (
       gamePrefs.bnb &&
-      options.parent === game.players.local &&
+      game.objectsById[data.parent] === game.players.local &&
       sounds.bnb.beavisYeahGo
     ) {
       // hackish: only play if this is the first active missile by the local player.
       const activeMissiles = game.objects['aimed-missile'].filter(
-        (m) => m?.data?.parent === options.parent
+        (m) => game.objectsById[m?.data?.parent] === game.objectsById[options.parent]
       );
       if (activeMissiles.length === 1) {
         playSound(sounds.bnb.beavisYeahGo, game.players.local);
