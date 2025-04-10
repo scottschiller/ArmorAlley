@@ -2816,7 +2816,7 @@ function maybeDisableTargetUI(exports) {
   if (data.smartMissiles) return;
 
   const activeMissiles = game.objects[TYPES.smartMissile].filter(
-    (m) => !m.data.dead && m.data.parent === game.players.local
+    (m) => !m.data.dead && game.objectsById[m.data.parent] === game.players.local
   );
 
   // bail if there are still missiles in the air.
