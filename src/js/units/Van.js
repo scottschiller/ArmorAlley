@@ -410,7 +410,7 @@ Van.radarItemConfig = () => ({
       pos.width(width),
       pos.height(height),
       // "shape" depending on orientation
-      obj.oParent?.data?.isEnemy
+      game.objectsById[obj.oParent]?.data?.isEnemy
         ? [width * 1.65, width, width, width]
         : [width, width * 1.65, width, width]
     );
