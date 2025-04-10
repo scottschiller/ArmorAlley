@@ -55,8 +55,18 @@ const Chain = (options = {}) => {
       ctx.fillStyle = pattern;
       // attached to balloon, or bunker?
       const parent = obj.objects?.balloon || obj.objects?.bunker;
-      // balloon or bunker, minus half of own width
-      const left = parent.data.x + parent.data.halfWidth - width / 2 + 0.5;
+      /**
+       * Chain may eventually be free-falling, e.g,. from a popped balloon,
+       * and hence, no bunker or balloon reference to set left position by.
+       * Workaround: assign and update x/left position when parent is known.
+       */
+      if (parent) {
+        // balloon or bunker, minus half of own width
+        obj.data.lastX =
+          parent.data.x + parent.data.halfWidth - width / 2 + 0.5;
+      }
+
+      const left = obj.data.lastX;
       const top = pos.top(obj.data.y - 32);
       // if bunker is present, don't draw chain atop bunker.
       const adjustedHeight = obj.objects.bunker?.data?.height
