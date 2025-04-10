@@ -125,12 +125,12 @@ function collisionCheckTweens(source, target, repositionOnHit = true) {
    * so, backtrack, and then step forward.
    */
 
-  const sData = source.data,
-    tData = target.data;
-
   if (!source || !target) {
     console.warn('collisionCheckTweens(): WTF no source or target?');
   }
+
+  const sData = source.data,
+    tData = target.data;
 
   // special exemption: ignore expired, non-hostile objects - e.g., expired gunfire.
   if ((sData.expired && !sData.hostile) || (tData.expired && !tData.hostile))
