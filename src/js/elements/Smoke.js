@@ -16,6 +16,9 @@ import { levelFlags } from '../levels/default.js';
 const Smoke = (options = {}) => {
   let dom, domCanvas, data, exports;
 
+  // live reference
+  let oParent = game.objectsById[options.oParent];
+
   data = common.inheritData(
     {
       type: 'smoke',
@@ -45,10 +48,10 @@ const Smoke = (options = {}) => {
       // don't draw if originating from an opposing helicopter that should be hidden, unless it's in view.
       isStealthSmoke:
         levelFlags.stealth &&
-        options.oParent &&
-        options.oParent.data.type === TYPES.helicopter &&
-        !options.oParent.data.isOnScreen &&
-        options.oParent.data.isEnemy !== game.players.local.data.isEnemy,
+        oParent &&
+        oParent.data.type === TYPES.helicopter &&
+        !oParent.data.isOnScreen &&
+        oParent.data.isEnemy !== game.players.local.data.isEnemy,
       oParent: options.oParent
     },
     options
@@ -81,14 +84,13 @@ const Smoke = (options = {}) => {
 
   // background vs. foreground canvas: show some "relative to damage" smoke behind ground units, helicopters and balloons.
   if (
-    data.oParent &&
-    (data.oParent.data.bottomAligned ||
-      data.oParent.data.type === TYPES.helicopter ||
-      data.oParent.data.type === TYPES.balloon)
+    oParent &&
+    (oParent.data.bottomAligned ||
+      oParent.data.type === TYPES.helicopter ||
+      oParent.data.type === TYPES.balloon)
   ) {
     // lastly - if a cloaked helicopter, always put behind helicopter and cloud.
-    isBackground =
-      data.oParent.data.cloaked || options.background || rnd(1) >= 0.5;
+    isBackground = oParent.data.cloaked || options.background || rnd(1) >= 0.5;
   }
 
   if (isBackground) {
