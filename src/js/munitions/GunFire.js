@@ -64,7 +64,7 @@ const GunFire = (options = {}) => {
       width: 4,
       height: 2,
       draw: (ctx, obj, pos, width, height) => {
-        ctx.fillStyle = obj.oParent?.data?.isInert
+        ctx.fillStyle = game.objectsById[obj.oParent]?.data?.isInert
           ? data.inertColor
           : data.isEnemy
             ? ENEMY_GUNFIRE_COLOR
@@ -136,7 +136,7 @@ const GunFire = (options = {}) => {
           target === game.players.local &&
           target.data.isOnScreen
         ) {
-          target.reactToDamage(data.parent);
+          target.reactToDamage(game.objectsById[data.parent]);
         }
       }
     },
