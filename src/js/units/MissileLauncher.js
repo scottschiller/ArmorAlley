@@ -462,14 +462,14 @@ MissileLauncher.radarItemConfig = () => ({
     ctx.stroke();
 
     // don't draw a missile if we don't have one - i.e., just launched. ;)
-    if (obj?.oParent?.data?.dead) return;
+    if (game.objectsById[obj?.oParent]?.data?.dead) return;
 
     ctx.beginPath();
 
     // missile (angled)
     common.domCanvas.rotate(
       ctx,
-      obj.oParent.data.isEnemy ? 20 : -20,
+      game.objectsById[obj.oParent].data.isEnemy ? 20 : -20,
       left,
       top,
       scaledWidth / 2,
@@ -480,8 +480,8 @@ MissileLauncher.radarItemConfig = () => ({
     const missileHeight = pos.height(0.5);
 
     ctx.roundRect(
-      left + (obj.oParent.data.isEnemy ? scaledWidth / 4 : 0),
-      top + (obj.oParent.data.isEnemy ? 0 : height),
+      left + (game.objectsById[obj.oParent].data.isEnemy ? scaledWidth / 4 : 0),
+      top + (game.objectsById[obj.oParent].data.isEnemy ? 0 : height),
       missileWidth,
       missileHeight,
       missileWidth
