@@ -354,20 +354,20 @@ function captureFunds(exports, target) {
 function registerHelicopter(exports, helicopter) {
   let { objects } = exports;
 
-  if (!objects.helicopters.includes(helicopter)) {
+  if (!objects.helicopters.includes(helicopter.data.id)) {
     // track all choppers
-    objects.helicopters.push(helicopter);
+    objects.helicopters.push(helicopter.data.id);
 
     // count, and mark the first R/L we get for funds purposes
     if (helicopter.data.isEnemy) {
       objects.rightHelicopterCount++;
       if (!objects.helicopters.right) {
-        objects.helicopters.right = helicopter;
+        objects.helicopters.right = helicopter.data.id;
       }
     } else {
       objects.leftHelicopterCount++;
       if (!objects.helicopters.left) {
-        objects.helicopters.left = helicopter;
+        objects.helicopters.left = helicopter.data.id;
       }
     }
   }
@@ -388,7 +388,8 @@ function distributeFunds(exports) {
     data.fundsModulus * FPS * (FPS / 30) * GAME_SPEED_RATIOED
   );
 
-  let helicopter = objects.helicopters[data.isEnemy ? 'right' : 'left'];
+  let helicopter =
+    game.objectsById[objects.helicopters[data.isEnemy ? 'right' : 'left']];
   let chopperX = helicopter.data.x;
 
   /**
