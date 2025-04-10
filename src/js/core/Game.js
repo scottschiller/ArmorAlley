@@ -104,15 +104,16 @@ function setOriginalSeeds() {
 
 setOriginalSeeds();
 
-const game = (() => {
-  let data,
-    dom,
-    boneyard,
-    objects,
-    objectsById,
-    objectConstructors,
-    players,
-    exports;
+let objectsById = {};
+
+let game = (() => {
+  let data, dom, boneyard, state, objects, objectConstructors, players, exports;
+
+  function resetObjectsById() {
+    objectsById = {};
+    // re-assign new object
+    exports.objectsById = objectsById;
+  }
 
   function addItem(className, x, options = {}) {
     return addTerrainItem(className, x, options);
@@ -1040,8 +1041,6 @@ const game = (() => {
     'stats': null
   };
 
-  objectsById = {};
-
   // a place for all the deceased. 😇☠️😂
   boneyard = {};
 
@@ -1096,6 +1095,7 @@ const game = (() => {
     objectsById,
     players,
     pause,
+    resetObjectsById,
     resume,
     setGameType,
     start,
