@@ -859,6 +859,9 @@ function startGame() {
   // update <body> based on level-specific flags, e.g., aimed missiles
   applyFlags();
 
+  // hard reset any preview-related objects
+  game.resetObjectsById();
+
   game.objects.radar.reset();
 
   game.objects.notifications.welcome();
