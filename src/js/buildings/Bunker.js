@@ -683,7 +683,9 @@ Bunker.radarItemConfig = () => ({
   height: 2.5,
   excludeFillStroke: true,
   draw: (ctx, obj, pos, width, height) => {
-    ctx.fillStyle = obj?.oParent?.data?.isEnemy ? ENEMY_COLOR : '#17a007';
+    ctx.fillStyle = game.objectsById[obj?.oParent]?.data?.isEnemy
+      ? ENEMY_COLOR
+      : '#17a007';
 
     const left = pos.left(obj.data.left);
     const scaledWidth = pos.width(width);
