@@ -61,7 +61,7 @@ Engineer.radarItemConfig = () => ({
     ctx.roundRect(
       pos.left(
         obj.data.left +
-          (obj.oParent?.data?.isEnemy ? scaledOffset : -scaledOffset)
+          (game.objectsById[obj.oParent]?.data?.isEnemy ? scaledOffset : -scaledOffset)
       ),
       pos.bottomAlign(height - 0.25, obj),
       scaledWidth,
