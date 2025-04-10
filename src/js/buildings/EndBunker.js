@@ -554,14 +554,15 @@ EndBunker.radarItemConfig = () => ({
   width: 8,
   height: 8,
   draw: (ctx, obj, pos, width, height) => {
-    if (!obj.oParent?.data?.energy) {
+    if (!game.objectsById[obj.oParent]?.data?.energy) {
       if (!pattern) {
         pattern = ctx.createPattern(slashPattern, 'repeat');
       }
       ctx.fillStyle = pattern;
     } else {
       ctx.fillStyle =
-        !gamePrefs.super_bunker_arrows || obj.oParent?.data?.isEnemy
+        !gamePrefs.super_bunker_arrows ||
+        game.objectsById[obj.oParent]?.data?.isEnemy
           ? ENEMY_COLOR
           : '#17a007';
     }
