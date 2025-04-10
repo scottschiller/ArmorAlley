@@ -72,7 +72,7 @@ function Stats() {
 
   function normalizeObj(obj) {
     if (obj && !obj.data && obj.oParent) {
-      obj = obj.oParent;
+      obj = game.objectsById[obj.oParent];
     }
     return obj;
   }
@@ -127,7 +127,8 @@ function Stats() {
     // note when player destroys MTVIE
     if (
       obj.data.isEnemy &&
-      obj?.data?.attacker?.data?.parentType === TYPES.helicopter &&
+      game.objectsById[obj?.data?.attacker]?.data?.parentType ===
+        TYPES.helicopter &&
       youKilledTypes[type]
     ) {
       gameEvents.fire(EVENTS.youKilledSomething, 'type', type);
@@ -379,7 +380,9 @@ function Stats() {
     // build out string, based on enemy/non-enemy, local vs. remote player.
     if (isHelicopter) {
       return getHelicopterLabel(
-        aData?.parentType === TYPES.helicopter ? aData.parent : attacker
+        aData?.parentType === TYPES.helicopter
+          ? game.objectsById[aData.parent]
+          : attacker
       );
     }
 
@@ -424,23 +427,25 @@ function Stats() {
     }
 
     // the object responsible for killing the target
-    let attacker = target.data?.attacker?.data;
+    let attacker = game.objectsById[target.data?.attacker]?.data;
 
     // this should not be common, save for a few units - e.g., a missile launcher that is self-destructing.
     if (!attacker) return;
+
+    let aParent = game.objectsById[attacker.parent];
 
     // certain targets can be ignored, too. i.e., bunkers don't kill missiles.
     if (notifyTypes[attacker.type]?.exclude) {
       // what about the parent - e.g., is this gunfire from an infantry?
       // don't notify if the parent is a helicopter, though - we have those covered separately.
       if (
-        attacker.parent &&
-        attacker.parent.data.type !== TYPES.helicopter &&
-        attacker.parent.data.type !== TYPES.turret &&
-        notifyTypes[attacker.parent.data.type] &&
-        !notifyTypes[attacker.parent.data.type].exclude
+        aParent &&
+        aParent.data.type !== TYPES.helicopter &&
+        aParent.data.type !== TYPES.turret &&
+        notifyTypes[aParent.data.type] &&
+        !notifyTypes[aParent.data.type].exclude
       ) {
-        attacker = attacker.parent.data;
+        attacker = aParent.data;
       } else if (
         // special case: allow "raw" off-screen shrapnel that kills stuff to be reported.
         !(attacker.type === TYPES.shrapnel && !target.data?.isOnScreen)
