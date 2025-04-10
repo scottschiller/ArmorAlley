@@ -733,7 +733,7 @@ const DomCanvas = () => {
       if (
         data.type === 'radar-item' &&
         data.parentType === TYPES.helicopter &&
-        !exports.oParent?.data?.exploding
+        !game.objectsById[data.oParent]?.data?.exploding
       ) {
         return;
       }
@@ -750,7 +750,7 @@ const DomCanvas = () => {
 
     // don't draw if explictly not visible (not undefined / false-y)
     // HACK: ignore helicopters, otherwise the player's radar item disappears after dying. TODO: debug and fix.
-    if (data.oParent?.data?.type !== TYPES.helicopter && data.visible === false)
+    if (game.objectsById[data.oParent]?.data?.type !== TYPES.helicopter && data.visible === false)
       return;
 
     // run logic, but don't actually draw if not on-screen.
@@ -793,7 +793,7 @@ const DomCanvas = () => {
       ctx.strokeStyle = '#000';
       // handle battlefield items, and radar items which link back to their parent.
       ctx.fillStyle =
-        data.isEnemy || exports.oParent?.data?.isEnemy
+        data.isEnemy || game.objectsById[data.oParent]?.data?.isEnemy
           ? ENEMY_UNIT_COLOR
           : '#17a007';
       // TODO: review oData vs. data, radar item vs. battlefield (e.g., chain object) logic.
