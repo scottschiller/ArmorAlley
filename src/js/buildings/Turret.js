@@ -577,7 +577,7 @@ function die(exports, dieOptions = {}) {
 }
 
 function restore(exports) {
-  let { css, data } = exports;
+  let { data } = exports;
 
   // restore visual, but don't re-activate gun yet
   if (!data.dead && data.energy !== 0) return;
