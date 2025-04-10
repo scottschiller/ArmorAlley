@@ -195,7 +195,7 @@ const Radar = () => {
     let itemObject;
 
     if (item.data.bottomAligned) {
-      className += ' bottom-aligned';
+      className = (className ? className + ' ' : '') + 'bottom-aligned';
     }
 
     itemObject = RadarItem({
