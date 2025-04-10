@@ -1,3 +1,4 @@
+import { game } from '../core/Game.js';
 import { objectsInView } from '../core/logic.js';
 
 // CPU threshold for "dangerously-low" flying
@@ -53,7 +54,7 @@ function rectContains(rect, point) {
 function findObj(type, obj) {
   // return the battlefield object itself, OR, its sub-object as long as not dead.
   if (obj.data.type === type) return !obj?.data?.dead ? obj : null;
-  const o = obj.objects?.[type];
+  const o = game.objectsById[obj.objects?.[type]];
   return !o?.data?.dead ? o : null;
 }
 
