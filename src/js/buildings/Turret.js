@@ -241,7 +241,7 @@ const Turret = (options = {}) => {
     turretBase,
     turretGun,
     turretDead,
-    updateHealth
+    updateHealth: (attacker) => updateHealth(exports, attacker)
   };
 
   return exports;
@@ -714,7 +714,7 @@ function repair(exports, engineer, complete) {
   return result;
 }
 
-function updateHealth(exports /*attacker*/) {
+function updateHealth(exports /*, attacker*/) {
   let { data } = exports;
 
   // special case: beavis "reacts" to friendly cornholio turret hits.
