@@ -698,6 +698,14 @@ function previewLevel(levelName) {
 
   game.objects.radar.reset();
 
+  // ensure that GUIDs start from zero, so objects line up if we're playing a network game.
+  common.resetGUID();
+
+  // likewise, nuke any game objects.
+  game.resetObjectsById();
+
+  let lastTurretX = 0;
+
   const initMethods = {
     base: {
       // TODO: review + remove?
@@ -710,12 +718,17 @@ function previewLevel(levelName) {
     }
   };
 
-  // ensure that GUIDs start from zero, so objects line up if we're playing a network game.
-  common.resetGUID();
+  const STUB_CHAIN_ID = 'chain_full_height_stub';
 
-  let lastTurretX = 0;
+  // hackish: assign a stub chain
+  game.objectsById[STUB_CHAIN_ID] = {
+    data: {
+      // enough to get to bottom of radar
+      height: worldHeight
+    }
+  };
 
-  data.forEach((item) => {
+  data.forEach((item, index) => {
     // don't show landing pads that are intentionally hidden by terrain decor
     if (item[0] === TYPES.landingPad && item[3]?.obscured) return;
 
@@ -754,6 +767,12 @@ function previewLevel(levelName) {
     if (hostileSB && canShowHostile) {
       exports.data.hostile = true;
     }
+
+    /**
+     * Hackish: assign stub objects to objectsById[]
+     * so parent and related lookups work during preview.
+     */
+    game.objectsById[exports.data.id] = exports;
 
     // if present, render on canvas.
     if (game.objectConstructors[item[0]]?.radarItemConfig) {
@@ -806,9 +825,12 @@ function previewLevel(levelName) {
 
     // if a bunker, also make a matching balloon.
     if (item[0] === 'bunker') {
+      let balloonID = `balloon_${index}`;
+
       const balloonExports = {
         data: common.inheritData(
           {
+            id: balloonID,
             type: 'balloon',
             isOnScreen: true,
             isEnemy: exports.data.isEnemy,
@@ -821,14 +843,13 @@ function previewLevel(levelName) {
         )
       };
 
+      // fake the balloon and chain
+      game.objectsById[balloonID] = balloonExports;
+
       // attach a stub chain
       balloonExports.objects = {
-        chain: {
-          data: {
-            // enough to get to bottom of radar
-            height: worldHeight
-          }
-        }
+        balloon: balloonID,
+        chain: STUB_CHAIN_ID
       };
 
       // render on canvas
