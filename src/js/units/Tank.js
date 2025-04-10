@@ -616,7 +616,7 @@ Tank.radarItemConfig = () => ({
     const barrelHeight = pos.height(0.25);
 
     ctx.roundRect(
-      left + scaledWidth * (obj.oParent.data.isEnemy ? -0.2 : 0.6),
+      left + scaledWidth * (game.objectsById[obj.oParent].data.isEnemy ? -0.2 : 0.6),
       top - 3,
       barrelWidth,
       barrelHeight,
