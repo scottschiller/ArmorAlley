@@ -54,7 +54,10 @@ const Chain = (options = {}) => {
       }
       ctx.fillStyle = pattern;
       // attached to balloon, or bunker?
-      const parent = obj.objects?.balloon || obj.objects?.bunker;
+      const parent =
+        game.objectsById[obj.objects?.balloon] ||
+        game.objectsById[obj.objects?.bunker];
+
       /**
        * Chain may eventually be free-falling, e.g,. from a popped balloon,
        * and hence, no bunker or balloon reference to set left position by.
@@ -69,10 +72,10 @@ const Chain = (options = {}) => {
       const left = obj.data.lastX;
       const top = pos.top(obj.data.y - 32);
       // if bunker is present, don't draw chain atop bunker.
-      const adjustedHeight = obj.objects.bunker?.data?.height
+      const adjustedHeight = game.objectsById[obj.objects.bunker]?.data?.height
         ? worldHeight -
           obj.data.y -
-          (obj.objects.bunker?.data?.height || 0) +
+          (game.objectsById[obj.objects.bunker]?.data?.height || 0) +
           3.75
         : height;
       ctx.rect(
@@ -91,8 +94,8 @@ const Chain = (options = {}) => {
   };
 
   objects = {
-    bunker: options.bunker || null,
-    balloon: options.balloon || null
+    bunker: options?.bunker?.data?.id || null,
+    balloon: options?.balloon?.data?.id || null
   };
 
   exports = {
@@ -134,7 +137,11 @@ function jerkCheck(exports, sound) {
   let { data, objects } = exports;
 
   // can't be jerking your chain if there's no balloon, it's not in view, and/or the chain is dead.
-  if (!objects.balloon || !objects.balloon.data.isOnScreen || data.dead)
+  if (
+    !objects.balloon ||
+    !game.objectsById[objects.balloon]?.data?.isOnScreen ||
+    data.dead
+  )
     skipSound(sound);
 }
 
@@ -184,14 +191,14 @@ function die(exports) {
   data.dead = true;
 
   // detach balloon, if applicable
-  if (objects.balloon) {
-    objects.balloon.detachFromBunker();
+  if (objects.balloon && game.objectsById[objects.balloon]) {
+    game.objectsById[objects.balloon].detachFromBunker();
     objects.balloon = null;
   }
 
   // remove bunker reference, too
-  if (objects.bunker) {
-    objects.bunker.nullifyChain();
+  if (objects.bunker && game.objectsById[objects.bunker]) {
+    game.objectsById[objects.bunker].nullifyChain();
     objects.bunker = null;
   }
 
@@ -219,15 +226,18 @@ function animate(exports) {
 
   // move if attached, fall if not
 
-  if (objects.bunker && !objects.bunker.data.dead) {
-    if (objects.balloon) {
+  let balloon = objects.balloon && game.objectsById[objects.balloon];
+  let bunker = objects.bunker && game.objectsById[objects.bunker];
+
+  if (bunker && !bunker.data.dead) {
+    if (balloon) {
       // bunker -> chain -> balloon
 
       // slight offset, so chain runs right underneath balloon
-      y = objects.balloon.data.y + objects.balloon.data.height - 3;
+      y = balloon.data.y + balloon.data.height - 3;
 
       // make the chain fall faster if the balloon is toast.
-      if (objects.balloon.data.dead) {
+      if (balloon.data.dead) {
         // fall until the bottom is reached.
         if (data.y < game.objects.view.data.world.height + 2) {
           data.fallingVelocity += data.fallingVelocityIncrement;
@@ -262,8 +272,7 @@ function animate(exports) {
       }
 
       // always track height, only assign if chain becomes detached.
-      height =
-        game.objects.view.data.world.height - y - objects.bunker.data.height;
+      height = game.objects.view.data.world.height - y - bunker.data.height;
     } else {
       // - bunker -> chain, no balloon object at all?
       // this case should probably never happen
@@ -280,11 +289,11 @@ function animate(exports) {
       zones.changeOwnership(exports);
     }
 
-    if (objects.balloon && !objects.balloon.data.dead) {
+    if (balloon && !balloon.data.dead) {
       // chain -> balloon
-      x = objects.balloon.data.x + objects.balloon.data.halfWidth - 3;
+      x = balloon.data.x + balloon.data.halfWidth - 3;
 
-      y = objects.balloon.data.y + objects.balloon.data.height - 1;
+      y = balloon.data.y + balloon.data.height - 1;
     } else {
       // free-falling, detached chain
       y = data.y;

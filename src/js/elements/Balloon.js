@@ -31,7 +31,7 @@ const Balloon = (options = {}) => {
   let css, data, dom, domCanvas, objects, exports;
 
   objects = {
-    bunker: options.bunker || null,
+    bunker: options?.bunker?.data?.id || null,
     chain: null
   };
 
@@ -64,8 +64,8 @@ const Balloon = (options = {}) => {
       energy,
       energyMax: energy,
       direction: 0,
-      detached: !objects.bunker,
-      hostile: !objects.bunker, // dangerous when detached
+      detached: !game.objectsById[objects.bunker],
+      hostile: !game.objectsById[objects.bunker], // dangerous when detached
       holdingWind: false,
       verticalDirection: -1,
       verticalDirectionDefault: -1,
@@ -194,7 +194,11 @@ function checkRespawn(exports) {
   let { data, objects } = exports;
 
   // odd edge case - data not always defined if destroyed at the right time?
-  if (data?.canRespawn && data?.dead && !objects.bunker?.data?.dead) {
+  if (
+    data?.canRespawn &&
+    data?.dead &&
+    !game.objectsById[objects.bunker]?.data?.dead
+  ) {
     reset(exports);
   }
 }
@@ -244,11 +248,11 @@ function setEnemy(exports, isEnemy) {
 }
 
 function attachChain(exports, chain = null) {
-  let { objects } = exports;
+  let { data, objects } = exports;
 
   // a "circular" loop that's actually a chain. ;)
   objects.chain = chain;
-  objects.chain?.attachBalloon(exports);
+  game.objectsById[objects.chain]?.attachBalloon(data.id);
 }
 
 function detachFromBunker(exports) {
@@ -266,13 +270,13 @@ function detachFromBunker(exports) {
   }
 
   // disconnect bunker <-> balloon references
-  if (objects.bunker) {
+  if (game.objectsById[objects.bunker]) {
     // the balloon will now "own" the chain.
-    objects.bunker.nullifyBalloon();
+    game.objectsById[objects.bunker].nullifyBalloon();
     objects.bunker = null;
   } else {
     // if no bunker to detach, there should be no chain, either.
-    attachChain(exports);
+    attachChain(exports, null);
   }
 
   // assign immediate wind, based on ownership.
@@ -356,7 +360,7 @@ function isOnScreenChange(exports) {
   if (!data.detached) return;
 
   // chains don't get `isOnScreenChange()`, typically connected to bunkers or balloons
-  objects.chain?.isJerking(data.isOnScreen);
+  game.objectsById[objects.chain]?.isJerking(data.isOnScreen);
 }
 
 function holdWind(exports) {
@@ -438,7 +442,8 @@ function animate(exports) {
     return (
       data.dead &&
       !data.deadTimer &&
-      (!objects.bunker || objects.bunker?.data?.dead)
+      (!game.objectsById[objects.bunker] ||
+        game.objectsById[objects.bunker]?.data?.dead)
     );
   }
 
@@ -586,7 +591,7 @@ function initBalloon(exports) {
 
   if (!objects.bunker) {
     // ensure we're free of chain + bunker
-    attachChain(exports);
+    attachChain(exports, null);
     detachFromBunker(exports);
   }
 
@@ -618,13 +623,15 @@ Balloon.radarItemConfig = ({ exports }) => ({
     const left = pos.left(obj.data.left);
     const scaledWidth = pos.width(width);
     const scaledHeight = pos.height(height);
-    if (exports?.objects?.chain && !exports.objects.chain.data.dead) {
+    let chain =
+      exports?.objects?.chain && game.objectsById[exports.objects.chain];
+    if (chain && !chain.data.dead) {
       const chainX = left + scaledWidth / 2;
       const chainY = obj.data.top + scaledHeight / 2;
       const chainHeight =
-        ((exports?.objects.bunker
+        ((game.objectsById[exports?.objects.bunker]
           ? worldHeight
-          : exports.objects.chain.data.height) /
+          : chain.data.height) /
           worldHeight) *
         game.objects.radar.data.height;
       ctx.beginPath();
