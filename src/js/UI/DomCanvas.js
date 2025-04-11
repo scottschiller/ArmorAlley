@@ -969,11 +969,10 @@ const DomCanvas = () => {
         top += exports.data.halfHeight + 2.5;
       }
       // wild hack: reference radar item while summoning (rising) from landing pad, as the offset lives there.
-      if (exports.data.radarItem) {
+      if (exports.radarItem) {
         top +=
-          exports.data.radarItem.data.stepOffset !== undefined
-            ? exports.data.height *
-              (1 - exports.data.radarItem.data.stepOffset || 0)
+          exports.radarItem.data.stepOffset !== undefined
+            ? exports.data.height * (1 - exports.radarItem.data.stepOffset || 0)
             : 0;
       }
     } else if (
