@@ -299,7 +299,7 @@ function sparkAndDie(exports, target) {
           ? isWeakened
             ? `A${weakened} enemy`
             : 'An enemy'
-          : game.objectsById[data?.parent]?.data?.id === game.players.local.data.id
+          : data.parent === game.players.local.data.id
             ? `Your${weakened}`
             : `A friendly${weakened}`;
       const missileType = game.objects.stats.formatForDisplay(
@@ -419,7 +419,7 @@ function initAimedMissile(exports) {
     // human helicopter, firing aimed missile
     if (
       gamePrefs.bnb &&
-      game.objectsById[data.parent] === game.players.local &&
+      data.parent === game.players.local.data.id &&
       sounds.bnb.beavisYeahGo
     ) {
       // hackish: only play if this is the first active missile by the local player.

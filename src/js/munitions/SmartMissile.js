@@ -652,7 +652,7 @@ function sparkAndDie(exports, target) {
           ? isWeakened
             ? `A${weakened} enemy`
             : 'An enemy'
-          : game.objectsById[data?.parent]?.data?.id === game.players.local.data.id
+          : data.parent === game.players.local.data.id
             ? `Your${weakened}`
             : `A friendly${weakened}`;
       const missileType = game.objects.stats.formatForDisplay(
@@ -717,7 +717,7 @@ function sparkAndDie(exports, target) {
     const whose =
       data.isEnemy !== game.players.local.data.isEnemy
         ? 'An enemy'
-        : data?.parentType === TYPES.helicopter
+        : data.parentType === TYPES.helicopter
           ? 'Your'
           : 'A friendly';
     const missileType = game.objects.stats.formatForDisplay(data.type, exports);
@@ -772,7 +772,7 @@ function animate(exports) {
     const whose =
       data.isEnemy !== game.players.local.data.isEnemy
         ? 'An enemy'
-        : game.objectsById[data?.parent]?.data?.id === game.players.local.data.id
+        : data.parent === game.players.local.data.id
           ? `Your`
           : `A friendly`;
     const missileType = game.objects.stats.formatForDisplay(data.type, exports);
@@ -1190,7 +1190,7 @@ function initSmartMissile(exports) {
     // human helicopter, firing smart missile
     if (
       gamePrefs.bnb &&
-      game.objectsById[options.parent] === game.players.local &&
+      data.parent === game.players.local.data.id &&
       sounds.bnb.beavisYeahGo
     ) {
       // hackish: only play if this is the first active missile.
