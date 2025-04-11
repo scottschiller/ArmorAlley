@@ -1105,10 +1105,6 @@ function animate(exports) {
     }
   }
 
-  // missiles are animated by their parent - e.g., helicopters,
-  // and not the main game loop. so, on-screen status is checked manually here.
-  sprites.updateIsOnScreen(exports);
-
   collisionTest(collision, exports);
 }
 

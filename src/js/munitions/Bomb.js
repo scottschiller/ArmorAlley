@@ -543,10 +543,6 @@ function animate(exports) {
 
   collisionTest(exports.collision, exports);
 
-  // bombs are animated by their parent - e.g., helicopters,
-  // and not the main game loop. so, on-screen status is checked manually here.
-  sprites.updateIsOnScreen(exports);
-
   // notify caller if dead, and node has been removed.
   return data.dead && !data.deadTimer && !dom.o;
 }
