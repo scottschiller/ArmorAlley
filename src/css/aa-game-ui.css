@@ -193,16 +193,14 @@ body.game-started #game-status {
   display: inline-block;
   filter: blur(8px);
   height: 22px;
-  margin-right: 0;
   margin-top: 15px;
   opacity: 0;
-  padding-right: 1px;
   position: relative;
   transition: 0.25s ease-out;
-  transition-property: width, margin, opacity, filter, transform;
+  transition-property: color, width, margin, opacity, filter, transform;
   vertical-align: top;
   /* small letter, e.g., "T" for "Tank" */
-  min-width: 1em;
+  min-width: 0.85em;
 }
 
 body.is-mobile #queue .queue-item {
@@ -247,9 +245,9 @@ body.is-mobile #queue .queue-item {
   margin-top: -60%;
   opacity: 0;
   position: absolute;
-  left: 0;
+  left: 0px;
   text-align: center;
-  min-width: 1em;
+  min-width: 0.8em;
   text-shadow: 0 1px 0 #000;
   top: 0;
   transform: scale(1);
@@ -1547,7 +1545,6 @@ button.copy-game-stats:active {
 .notification-toast sup.nsf {
   font-size: 75%;
   /* pull closer to text at left */
-  margin-left: -1.5px;
   position: relative;
   right: -1px;
   /* super-script: closer to fraction "slash" */
@@ -1570,7 +1567,7 @@ button.copy-game-stats:active {
   position: absolute;
   top: 0;
   left: 0;
-  margin: -66% 0 0 -50%;
+  margin: -66% 0 0 -20%;
   display: inline-block;
   transform: scale3d(0.9, 0.9, 1);
   transform-origin: 50% 50%;
