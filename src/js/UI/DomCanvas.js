@@ -750,7 +750,10 @@ const DomCanvas = () => {
 
     // don't draw if explictly not visible (not undefined / false-y)
     // HACK: ignore helicopters, otherwise the player's radar item disappears after dying. TODO: debug and fix.
-    if (game.objectsById[data.oParent]?.data?.type !== TYPES.helicopter && data.visible === false)
+    if (
+      game.objectsById[data.oParent]?.data?.type !== TYPES.helicopter &&
+      data.visible === false
+    )
       return;
 
     // run logic, but don't actually draw if not on-screen.
