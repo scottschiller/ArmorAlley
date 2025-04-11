@@ -207,6 +207,7 @@ const Radar = () => {
           : sprites.withStyle(document.createElement('div')),
       parentType: item.data.type,
       className,
+      // note: live parent (object, not ID) reference, for RadarItem().
       oParent: item,
       canRespawn: canRespawn || false,
       isStatic: false,
