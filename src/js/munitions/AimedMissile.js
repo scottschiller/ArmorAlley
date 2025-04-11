@@ -299,7 +299,7 @@ function sparkAndDie(exports, target) {
           ? isWeakened
             ? `A${weakened} enemy`
             : 'An enemy'
-          : data?.parent?.data?.id === game.players.local.data.id
+          : game.objectsById[data?.parent]?.data?.id === game.players.local.data.id
             ? `Your${weakened}`
             : `A friendly${weakened}`;
       const missileType = game.objects.stats.formatForDisplay(
