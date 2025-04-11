@@ -869,29 +869,24 @@ const DomCanvas = () => {
   }
 
   function drawEnergy(exports, ctx) {
-    if (exports.data.energy === undefined) return;
+    let { data } = exports;
+
+    if (data.energy === undefined) return;
 
     // special case: turrets can be dead and being repaired, non-zero energy until "restored"
-    if (exports.data.dead && exports.data.energy === 0) return;
+    if (data.dead && data.energy === 0) return;
 
     if (gamePrefs.show_health_status === PREFS.SHOW_HEALTH_NEVER) return;
 
     // only draw if on-screen
-    if (!exports.data.isOnScreen) return;
+    if (!data.isOnScreen) return;
 
     // don't show UI on enemy choppers while cloaked (in a cloud)
-    if (
-      exports.data.cloaked &&
-      exports.data.isEnemy !== game.players.local.data.isEnemy
-    )
+    if (data.cloaked && data.isEnemy !== game.players.local.data.isEnemy)
       return;
 
     // allow turrets being "restored" by engineers (dead, but not yet revived) to show energy.
-    if (
-      (exports.data.energy <= 0 || exports.data.dead) &&
-      !exports.data.engineerInteracting
-    )
-      return;
+    if ((data.energy <= 0 || data.dead) && !data.engineerInteracting) return;
 
     // fade out as timer counts down, fading within last fraction of a second
     let fpsOffset = FPS * ENERGY_TIMER_FADE_RATIO;
@@ -899,60 +894,56 @@ const DomCanvas = () => {
     let opacity;
 
     // account for custom timings, e.g., on turrets.
-    let defaultTimer =
-      FPS * ENERGY_TIMER_DELAY * (exports.data.energyTimerScale || 1);
+    let defaultTimer = FPS * ENERGY_TIMER_DELAY * (data.energyTimerScale || 1);
 
-    let timerDelta = defaultTimer - exports.data.energyCanvasTimer;
+    let timerDelta = defaultTimer - data.energyCanvasTimer;
 
     // fade in, first.
     if (timerDelta < fpsOffset) {
       opacity = Math.min(1, Math.max(0, timerDelta / fpsOffset));
     } else {
-      exports.data.energyCanvasTimerFadeInComplete = true;
+      data.energyCanvasTimerFadeInComplete = true;
       // eventually, fade out
       opacity = Math.min(
         1,
-        Math.max(
-          0,
-          Math.max(0, exports.data.energyCanvasTimer - fpsOffset) / fpsOffset
-        )
+        Math.max(0, Math.max(0, data.energyCanvasTimer - fpsOffset) / fpsOffset)
       );
     }
 
-    if (exports.data.energyCanvasTimer > 0) {
-      exports.data.energyCanvasTimer--;
+    if (data.energyCanvasTimer > 0) {
+      data.energyCanvasTimer--;
     }
 
-    if (exports.data.energyCanvasTimer <= 0) {
+    if (data.energyCanvasTimer <= 0) {
       // reset the "fade-in" state.
-      exports.data.energyCanvasTimerFadeInComplete = false;
+      data.energyCanvasTimerFadeInComplete = false;
     }
 
     // timer up, OR don't "always" show
     if (
-      exports.data.energyCanvasTimer <= 0 &&
+      data.energyCanvasTimer <= 0 &&
       gamePrefs.show_health_status !== PREFS.SHOW_HEALTH_ALWAYS
     )
       return;
 
-    let energy = exports.data.energy / exports.data.energyMax;
+    let energy = data.energy / data.energyMax;
 
-    if (exports.data.lastDrawnEnergy === undefined) {
-      exports.data.lastDrawnEnergy =
-        exports.data.lastEnergy !== undefined ? exports.data.lastEnergy : 1;
+    if (data.lastDrawnEnergy === undefined) {
+      data.lastDrawnEnergy =
+        data.lastEnergy !== undefined ? data.lastEnergy : 1;
     }
 
     // animate toward target energy
-    let diff = energy - exports.data.lastDrawnEnergy;
+    let diff = energy - data.lastDrawnEnergy;
 
     // nothing to do?
     if (!diff) return;
 
     // "animate" the energy bar value change
-    exports.data.lastDrawnEnergy += diff * (1 / (FPS / 16));
+    data.lastDrawnEnergy += diff * (1 / (FPS / 16));
 
     // hackish: re-assign "energy" as the value to draw.
-    energy = exports.data.lastDrawnEnergy;
+    energy = data.lastDrawnEnergy;
 
     // don't draw at 100%.
     if (energy === 1) return;
@@ -961,55 +952,55 @@ const DomCanvas = () => {
     let innerRadius = 3.125;
 
     // TODO: DRY.
-    let left = exports.data.x;
-    let top = exports.data.y;
+    let left = data.x;
+    let top = data.y;
 
-    if (exports.data.type === TYPES.balloon) {
-      left += exports.data.halfWidth + 0.5;
-      top += exports.data.halfHeight - 0.5;
-    } else if (exports.data.type === TYPES.bunker) {
-      left += exports.data.halfWidth + 0.5 * game.objects.view.data.screenScale;
-      top += exports.data.height * 0.425;
-    } else if (exports.data.type === TYPES.helicopter) {
-      if (exports.data.isEnemy) {
-        left += exports.data.halfWidth + (exports.data.flipped ? 8 : -3);
-        top += exports.data.halfHeight + 4;
+    if (data.type === TYPES.balloon) {
+      left += data.halfWidth + 0.5;
+      top += data.halfHeight - 0.5;
+    } else if (data.type === TYPES.bunker) {
+      left += data.halfWidth + 0.5 * game.objects.view.data.screenScale;
+      top += data.height * 0.425;
+    } else if (data.type === TYPES.helicopter) {
+      if (data.isEnemy) {
+        left += data.halfWidth + (data.flipped ? 8 : -3);
+        top += data.halfHeight + 4;
       } else {
-        left += exports.data.halfWidth + (exports.data.flipped ? -3 : 7);
-        top += exports.data.halfHeight + 2.5;
+        left += data.halfWidth + (data.flipped ? -3 : 7);
+        top += data.halfHeight + 2.5;
       }
       // wild hack: reference radar item while summoning (rising) from landing pad, as the offset lives there.
       if (exports.radarItem) {
         top +=
           exports.radarItem.data.stepOffset !== undefined
-            ? exports.data.height * (1 - exports.radarItem.data.stepOffset || 0)
+            ? data.height * (1 - exports.radarItem.data.stepOffset || 0)
             : 0;
       }
     } else if (
-      exports.data.type === TYPES.infantry ||
-      exports.data.type === TYPES.parachuteInfantry
+      data.type === TYPES.infantry ||
+      data.type === TYPES.parachuteInfantry
     ) {
-      left += exports.data.halfWidth + (exports.data.isEnemy ? 0 : 3);
+      left += data.halfWidth + (data.isEnemy ? 0 : 3);
       top -= outerRadius + 5;
       // special infantry offset case, accounting for moving back and forth while firing; also, yuck.
       left += exports.domCanvas?.animation?.img?.target?.xOffset || 0;
-    } else if (exports.data.type === TYPES.turret) {
-      left += exports.data.width - 1;
+    } else if (data.type === TYPES.turret) {
+      left += data.width - 1;
       top -= outerRadius + 4;
-    } else if (exports.data.type === TYPES.missileLauncher) {
-      left += exports.data.halfWidth;
-      top += exports.data.halfHeight;
-    } else if (exports.data.type === TYPES.van) {
-      left += exports.data.halfWidth;
-      top += exports.data.halfHeight - 2.5;
-    } else if (exports.data.type === TYPES.tank) {
-      left += exports.data.halfWidth + 1;
-      top += exports.data.halfHeight - 1.5;
-    } else if (exports.data.type === TYPES.superBunker) {
-      left += exports.data.halfWidth;
+    } else if (data.type === TYPES.missileLauncher) {
+      left += data.halfWidth;
+      top += data.halfHeight;
+    } else if (data.type === TYPES.van) {
+      left += data.halfWidth;
+      top += data.halfHeight - 2.5;
+    } else if (data.type === TYPES.tank) {
+      left += data.halfWidth + 1;
+      top += data.halfHeight - 1.5;
+    } else if (data.type === TYPES.superBunker) {
+      left += data.halfWidth;
       top += 5.5;
-    } else if (exports.data.bottomAligned) {
-      left += exports.data.halfWidth + 0.5;
+    } else if (data.bottomAligned) {
+      left += data.halfWidth + 0.5;
       top -= outerRadius + 2;
     }
 
@@ -1074,10 +1065,7 @@ const DomCanvas = () => {
     ctx.stroke();
 
     // animation when repairing (helicopters) / energy is going up (turret + tank self-repair.)
-    if (
-      exports.data.repairing ||
-      exports.data.energy > exports.data.lastEnergy
-    ) {
+    if (data.repairing || data.energy > data.lastEnergy) {
       ctx.strokeStyle = 'rgba(255, 255, 255, 0.75)';
 
       let progress = common.easing.cubic(
