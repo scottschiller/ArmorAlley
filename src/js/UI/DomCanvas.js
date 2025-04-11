@@ -456,7 +456,7 @@ const DomCanvas = () => {
     if (tracking || data.shadowBlur) {
       ctx.shadowBlur = 0;
       let shadowSmoothingHack =
-        isSafari && (tracking || data.shadowBlur) && !ctx.imageSmoothingEnabled;
+        isSafari && (tracking || data.shadowBlur) && ctx.imageSmoothingEnabled;
 
       if (shadowSmoothingHack) {
         ctx.imageSmoothingEnabled = false;
