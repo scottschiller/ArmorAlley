@@ -15,7 +15,7 @@ const Flame = (options = {}) => {
   data = common.inheritData(
     {
       type: 'flame',
-      parent: options.parent || null,
+      parent: options.parent?.data?.id || null,
       parentType: options.parentType || null,
       isEnemy: options.isEnemy,
       frameCount: 0,

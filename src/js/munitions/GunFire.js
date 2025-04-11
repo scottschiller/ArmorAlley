@@ -23,7 +23,7 @@ const GunFire = (options = {}) => {
   data = common.inheritData(
     {
       type: 'gunfire',
-      parent: options.parent || null,
+      parent: options.parent?.data?.id || null,
       parentType: options.parentType || null,
       isInert: !!options.isInert,
       isEnemy: options.isEnemy,

@@ -17,7 +17,7 @@ const MissileNapalm = (options = {}) => {
   data = common.inheritData(
     {
       type: 'missile-napalm',
-      parent: options.parent || null,
+      parent: options.parent?.data?.id || null,
       parentType: options.parentType || null,
       isEnemy: options.isEnemy,
       hostile: true, // for collision logic, dangerous to all infantry and engineers.

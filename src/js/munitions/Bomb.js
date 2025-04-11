@@ -28,7 +28,7 @@ const Bomb = (options = {}) => {
   exports.data = common.inheritData(
     {
       type: 'bomb',
-      parent: options.parent || null,
+      parent: options.parent?.data?.id || null,
       parentType: options.parentType || null,
       deadTimer: null,
       excludeBlink: true,

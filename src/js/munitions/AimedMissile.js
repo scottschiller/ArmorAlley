@@ -38,7 +38,7 @@ const AimedMissile = (options = {}) => {
   data = common.inheritData(
     {
       type,
-      parent: options.parent || null,
+      parent: options.parent?.data?.id || null,
       parentType: options.parentType || null,
       energy: 2,
       energyMax: 2,
