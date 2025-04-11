@@ -233,11 +233,6 @@ body.is_safari #game-menu select:focus {
   border-radius: 2px;
 }
 
-#flight-range {
-  /* hide until game start */
-  display: none;
-}
-
 #exit {
   display: none;
 }

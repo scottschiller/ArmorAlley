@@ -845,8 +845,6 @@ function PrefsManager() {
             updateBattleLists();
           });
         });
-      // drop range UI, since we don't limit helicopter movement in network mode
-      document.getElementById('flight-range')?.remove();
     } else {
       updateBattleLists();
 
