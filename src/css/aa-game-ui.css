@@ -192,13 +192,6 @@ body.game-started #game-status {
   color: #ccc;
   display: inline-block;
   filter: blur(8px);
-  font-family:
-    JetBrains Mono,
-    SF Mono,
-    Lucida Console,
-    Terminal,
-    Monaco,
-    var(--monospace);
   height: 22px;
   margin-right: 0;
   margin-top: 15px;

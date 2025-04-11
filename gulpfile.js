@@ -636,7 +636,6 @@ function tidyThatFloppyCopy() {
     `${dp.font}/**/*.*`,
 
     // empty directories
-    `${dp.font}/JetBrainsMono`,
     `${dp.font}/war-wound`,
 
     // except certain fonts
