@@ -876,6 +876,13 @@ const DomCanvas = () => {
     // only draw if on-screen
     if (!exports.data.isOnScreen) return;
 
+    // don't show UI on enemy choppers while cloaked (in a cloud)
+    if (
+      exports.data.cloaked &&
+      exports.data.isEnemy !== game.players.local.data.isEnemy
+    )
+      return;
+
     // allow turrets being "restored" by engineers (dead, but not yet revived) to show energy.
     if (
       (exports.data.energy <= 0 || exports.data.dead) &&
