@@ -27,9 +27,9 @@ const StarController = () => {
 
   // game prefs vs. number of stars
   const scaleMap = {
-    less: 0.25,
-    standard: 0.85,
-    more: 3
+    less: 0.1,
+    standard: 0.5,
+    more: 1.5
   };
 
   data = {
