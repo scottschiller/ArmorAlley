@@ -1,20 +1,19 @@
-**Armor Alley: Remastered**
----
+## **Armor Alley: Remastered**
 
-~~~
-                            ▄██▀      
-                          ▄█▀         
+```
+                            ▄██▀
+                          ▄█▀
           ▄████▄▄▄▄▄▄▄▄▄ █▀▄▄▄▄▄▄▄▄▄▄▄
-                      ▄█████▄▄▄▄  ▀▀▀ 
-      ▄         ▄████████████████▄   
+                      ▄█████▄▄▄▄  ▀▀▀
+      ▄         ▄████████████████▄
       ██       ▀████████████████████▄
       ▀███    ▄██████████████████████
-       ████▄▄███████████████████████▀ 
+       ████▄▄███████████████████████▀
       ████████▀▀▀▀▀▀▀▀████▀█▀▀▀▀█▀
        ██▀              ██▘▘ ██▘▘
 
  A R M O R  A L L E Y :: R E M A S T E R E D
-~~~
+```
 
 A browser-based interpretation of the Macintosh + MS-DOS releases of Armor Alley.
 
@@ -28,28 +27,23 @@ Original game Copyright (C) 1989 - 1991, Information Access Technologies.
 
 https://en.wikipedia.org/wiki/Armor_alley
 
+## **Quick Links**
 
-**Quick Links**
----
+- 10th Anniversary summary video (3m 45s): https://youtu.be/oYUCUvg02rY
 
-* 10th Anniversary summary video (3m 45s): https://youtu.be/oYUCUvg02rY
+* History, review, tutorial, demos, "Midnight Oasis" walk-through: (1h 12m 55s): https://youtu.be/6wEMcssFJ-E
 
-+ History, review, tutorial, demos, "Midnight Oasis" walk-through: (1h 12m 55s): https://youtu.be/6wEMcssFJ-E
+- [Original article about building "V1.0"](https://www.schillmania.com/content/entries/2013/armor-alley-web-prototype/) (from 2013)
 
-* [Original article about building "V1.0"](https://www.schillmania.com/content/entries/2013/armor-alley-web-prototype/) (from 2013)
+- 2022 Demo, features and walk-through of "extreme" mode (55 minutes): https://youtu.be/9BQ62c7u2JM
 
-* 2022 Demo, features and walk-through of "extreme" mode (55 minutes): https://youtu.be/9BQ62c7u2JM 
-
-**Developer Notes**
----
+## **Developer Notes**
 
 For running the game locally and JS + CSS build instructions, see [src/README.md](src/README.md).
 
-**Changelog / Revision History**
----
+## **Changelog / Revision History**
 
-**V2.01.20230520: 10th Anniversary "Remastered" Edition Addendum**
----
+## **V2.01.20230520: 10th Anniversary "Remastered" Edition Addendum**
 
 Previous release: V2.0.20230501.
 
@@ -57,63 +51,63 @@ Previous release: V2.0.20230501.
 
 ## Video overview
 
-* 10th Anniversary summary video (3m 45s): https://youtu.be/oYUCUvg02rY
+- 10th Anniversary summary video (3m 45s): https://youtu.be/oYUCUvg02rY
 
-* History, review, tutorial, demos, "Midnight Oasis" walk-through: (1h 12m 55s): https://youtu.be/6wEMcssFJ-E
+- History, review, tutorial, demos, "Midnight Oasis" walk-through: (1h 12m 55s): https://youtu.be/6wEMcssFJ-E
 
 ## Bug fixes of note
 
-* Don't let helicopter reach absolute edge of screen; buffer 5% on each side.
+- Don't let helicopter reach absolute edge of screen; buffer 5% on each side.
 
-* Mobile / touchscreen: Bananas weren't firing sometimes, due to incorrect keyboard mappings.
+- Mobile / touchscreen: Bananas weren't firing sometimes, due to incorrect keyboard mappings.
 
-* Sound: Always wait for sound load before firing `onplay()`.
+- Sound: Always wait for sound load before firing `onplay()`.
 
-* Sound: Relative, in terms of distance to the helicopter.
+- Sound: Relative, in terms of distance to the helicopter.
 
-* Video: Ensure video is active when initial request / preload completes before playing.
+- Video: Ensure video is active when initial request / preload completes before playing.
 
-* Editor: Engineers were being output as infantry.
+- Editor: Engineers were being output as infantry.
 
-* Update positioning of helicopter trailers for both sides, and when rotated.
+- Update positioning of helicopter trailers for both sides, and when rotated.
 
-* BnB: Show existing "Cornholio" turrets at start of game.
+- BnB: Show existing "Cornholio" turrets at start of game.
 
-* "Midnight Oasis" network level: Added terrain decor - gravestones, trees etc.
+- "Midnight Oasis" network level: Added terrain decor - gravestones, trees etc.
 
 ## Updates
 
-* Project now has its own site: https://armor-alley.net/
+- Project now has its own site: https://armor-alley.net/
 
-* Nice progressive web app-style icon set.
+- Nice progressive web app-style icon set.
 
-* Updated "Armor Alley" wordmark to resemble the original boxed software one, based on the "Stencil Compress D" font.
+- Updated "Armor Alley" wordmark to resemble the original boxed software one, based on the "Stencil Compress D" font.
 
 ## For developers
 
-* Added developer notes, `gulp-cli`-based build via `npm`: [src/README.md](src/README.md).
+- Added developer notes, `gulp-cli`-based build via `npm`: [src/README.md](src/README.md).
 
-* Concatenated + minified / bundled JS + CSS files, see [gulpfile.js](gulpfile.js) for build script.
+- Concatenated + minified / bundled JS + CSS files, see [gulpfile.js](gulpfile.js) for build script.
 
-* SM2 + Snowstorm are now ES6 modules, included vs. concatenated into bundle.
+- SM2 + Snowstorm are now ES6 modules, included vs. concatenated into bundle.
 
 ---
 
-**V2.0.20230501: 10th Anniversary "Remastered" Edition**
----
+## **V2.0.20230501: 10th Anniversary "Remastered" Edition**
+
 Previous release: V1.6.20220201. Original release: V1.0.20131031.
 
 ## New features
 
-* **Mobile / touch screen support**. Updated UX / UI, better playability and feature parity vs. desktop. Portrait is playable, but landscape is preferable on smaller screens.
+- **Mobile / touch screen support**. Updated UX / UI, better playability and feature parity vs. desktop. Portrait is playable, but landscape is preferable on smaller screens.
 
-* **Network multiplayer**, like the original game. PvP, or co-op. Can be played with or against CPU players, as well.
+- **Network multiplayer**, like the original game. PvP, or co-op. Can be played with or against CPU players, as well.
 
-* **22 game levels.** 10 original game "campaign" battles, plus 12 levels designed for network games.
+- **22 game levels.** 10 original game "campaign" battles, plus 12 levels designed for network games.
 
-* **Level editor**. Create or modify existing levels. Data stored in URL at present - terrible, I know. Also compatible with network games.
+- **Level editor**. Create or modify existing levels. Data stored in URL at present - terrible, I know. Also compatible with network games.
 
-* Optional **"Virtual Stupidity"** theme pack. 🎸🤘
+- Optional **"Virtual Stupidity"** theme pack. 🎸🤘
 
 ## Performance improvements
 
@@ -140,6 +134,7 @@ Previous release: V1.6.20220201. Original release: V1.0.20131031.
 • "Virtual Stupidity": 500+ meticulously-picked samples. [21f7726](https://github.com/scottschiller/ArmorAlley/commit/21f7726acde0b03b251e589963e1dde556566a74)
 
 ## UX / UI
+
 • "Live Graveyard" feature: decorate the battlefield over time. [032f845](https://github.com/scottschiller/ArmorAlley/commit/032f8459321ea61a73421450be44d7c4340a9e66)
 
 • "Remastered" 8-bit sprite assets from Armor Alley V1.1 for Macintosh. The original 1.0 and PC-DOS version had up to 4-bit colour.
@@ -267,6 +262,7 @@ Previous release: V1.6.20220201. Original release: V1.0.20131031.
 • Updated favicon + related app / tile images.
 
 ---
+
 **V1.6.20220101: Massive update for 2022, based on work from 2020 + 2021**
 
 ![Armor Alley: Home Screen](https://user-images.githubusercontent.com/174437/148264540-d92c7440-8170-4413-b143-e113717ead8f.png)
@@ -275,180 +271,180 @@ Previous release: V1.6.20220201. Original release: V1.0.20131031.
 
 **Video overview**
 
- * Demo, features and walk-through of "extreme" mode (55 minutes): https://youtu.be/9BQ62c7u2JM 
+- Demo, features and walk-through of "extreme" mode (55 minutes): https://youtu.be/9BQ62c7u2JM
 
 **Performance improvements**
 
- • The game should be smoother, targeting 30FPS. It is OK full-screen @ 1080p and windowed @ 4K in Chrome on a 2018 Mac Mini, 3.2 GHz 6-core i7 w/Intel UHD Graphics 630 1536 MB.
+• The game should be smoother, targeting 30FPS. It is OK full-screen @ 1080p and windowed @ 4K in Chrome on a 2018 Mac Mini, 3.2 GHz 6-core i7 w/Intel UHD Graphics 630 1536 MB.
 
- • More GPU-accelerated rendering, reduced DOM nodes by removing when off-screen (e.g., static terrain items)
+• More GPU-accelerated rendering, reduced DOM nodes by removing when off-screen (e.g., static terrain items)
 
- • All sprites should be on the GPU and moved using transforms, reducing paint operations
+• All sprites should be on the GPU and moved using transforms, reducing paint operations
 
- • All transforms (CSS + JS) for positioning + animation are 3d, with the goal of GPU acceleration - e.g., translate3d(), rotate3d(), scale3d()
+• All transforms (CSS + JS) for positioning + animation are 3d, with the goal of GPU acceleration - e.g., translate3d(), rotate3d(), scale3d()
 
- • DOM nodes are not appended at object create time - now deferred until the object is on-screen for the first time.
+• DOM nodes are not appended at object create time - now deferred until the object is on-screen for the first time.
 
- • All "sub-sprites" should now be GPU-accelerated via CSS animations, transforms and transitions
+• All "sub-sprites" should now be GPU-accelerated via CSS animations, transforms and transitions
 
- • Sound: Only create `Audio()` when actively playing sounds, and destroy when they finish playing. Browsers are starting to limit the number of `Audio()` instances.
+• Sound: Only create `Audio()` when actively playing sounds, and destroy when they finish playing. Browsers are starting to limit the number of `Audio()` instances.
 
- • Sound: Queue and play sounds all at once with each animation frame callback, vs. prior ad-hoc behaviour.
+• Sound: Queue and play sounds all at once with each animation frame callback, vs. prior ad-hoc behaviour.
 
- • Refactored game tip scroller to only show two nodes at a time, 1024px width vs. 102,400px. Front-end tech / Chrome Dev Tools demo: https://youtu.be/eVW0WgTdK3A
+• Refactored game tip scroller to only show two nodes at a time, 1024px width vs. 102,400px. Front-end tech / Chrome Dev Tools demo: https://youtu.be/eVW0WgTdK3A
 
- • Performance: Don't update known static radar items: turret, base, bunkers (bunker, end bunker, super bunker) unless marked as "stale" during resize / world scaling
+• Performance: Don't update known static radar items: turret, base, bunkers (bunker, end bunker, super bunker) unless marked as "stale" during resize / world scaling
 
- • Performance: CSS / `contentVisibility` to reduce / optimize rendering costs
+• Performance: CSS / `contentVisibility` to reduce / optimize rendering costs
 
- • Animation loop: improved timing, target 30 fps. Request next frame right away. Exit early if next frame arrives too quickly.
+• Animation loop: improved timing, target 30 fps. Request next frame right away. Exit early if next frame arrives too quickly.
 
- • Turret "scan" is now a CSS animation; previously, animated via JS.
+• Turret "scan" is now a CSS animation; previously, animated via JS.
 
- • Smart missiles and helicopter trailers are now GPU-accelerated.
+• Smart missiles and helicopter trailers are now GPU-accelerated.
 
- • Performance: Battlefield and radar units are now positioned via transform: translate3d() - no more legacy CSS shenanigans using `bottom: 0px`.
+• Performance: Battlefield and radar units are now positioned via transform: translate3d() - no more legacy CSS shenanigans using `bottom: 0px`.
 
- • Memory leak fixes: DOM nodes, audio events, and a few others.
+• Memory leak fixes: DOM nodes, audio events, and a few others.
 
 **Sound**
 
- • Over 100 sound assets now in use
+• Over 100 sound assets now in use
 
- • New and updated sound effects: Infantry and engineer gunfire, injury and death, credit +/-, helicopter and turret guns, shell casings on turrets,
+• New and updated sound effects: Infantry and engineer gunfire, injury and death, credit +/-, helicopter and turret guns, shell casings on turrets,
 bullets hitting the ground, turret being disabled and enabled (restored.)
 
 **UX / UI**
 
- • Proper "game options" modal with radio buttons and checkboxes for various UX/UI and gameplay features
+• Proper "game options" modal with radio buttons and checkboxes for various UX/UI and gameplay features
 
- • "It was a dark and stormy night" - option for snow on the battlefield. (May be slow on some computers.)
+• "It was a dark and stormy night" - option for snow on the battlefield. (May be slow on some computers.)
 
- • Bunkers, balloons and super-bunkers now use graphics from the Macintosh (68K) version of Armor Alley; a bit more orange, and less garish yellow.
+• Bunkers, balloons and super-bunkers now use graphics from the Macintosh (68K) version of Armor Alley; a bit more orange, and less garish yellow.
 
- • Dune ][-style credit / debit UI and sounds
+• Dune ][-style credit / debit UI and sounds
 
- • Toast-style game notifications
+• Toast-style game notifications
 
- • Health status bars when units are being hit or repaired
+• Health status bars when units are being hit or repaired
 
- • New and improved smoke / particle effects, more explosions and shrapnel, more fun!
+• New and improved smoke / particle effects, more explosions and shrapnel, more fun!
 
- • Order queue: Refactored UI to show letters (e.g., MTVIE), with superscript numbers as appropriate.
+• Order queue: Refactored UI to show letters (e.g., MTVIE), with superscript numbers as appropriate.
 
- • Missiles smoke more, and in extreme mode, have a burst of thrust (as in the original game) as they near expiry
+• Missiles smoke more, and in extreme mode, have a burst of thrust (as in the original game) as they near expiry
 
- • Pseudo-3D effect on shrapnel: Increase size slightly with vertical position on screen
+• Pseudo-3D effect on shrapnel: Increase size slightly with vertical position on screen
 
- • Ground units are "behind" most terrain elements like trees, bushes etc.
+• Ground units are "behind" most terrain elements like trees, bushes etc.
 
 **Bug fixes**
 
- • Bombing floating balloons no longer causes an explosion on the ground
+• Bombing floating balloons no longer causes an explosion on the ground
 
- • Improved bomb and shrapnel alignment / collision positioning with balloons, tanks, bunkers, and super-bunkers
+• Improved bomb and shrapnel alignment / collision positioning with balloons, tanks, bunkers, and super-bunkers
 
- • Fixed bug with quickly-respawning balloons (shooting balloon while infantry are passing under bunker, for example.)
+• Fixed bug with quickly-respawning balloons (shooting balloon while infantry are passing under bunker, for example.)
 
- • Fixed UI bug where the "incoming missile" white line would not always disappear.
+• Fixed UI bug where the "incoming missile" white line would not always disappear.
 
- • Game end: Improve alignment of view and base
+• Game end: Improve alignment of view and base
 
- • Adjusted initial position of game, centering view on the helicopter + base
+• Adjusted initial position of game, centering view on the helicopter + base
 
- • Helicopter / super-bunker: Improve vertical alignment if helicopter crashes on superbunker "roof."
+• Helicopter / super-bunker: Improve vertical alignment if helicopter crashes on superbunker "roof."
 
- • Fixed radar item for Super Bunkers, now shows correct friendly / enemy status.
+• Fixed radar item for Super Bunkers, now shows correct friendly / enemy status.
 
- • Cloud "wind" accelerates / decelerates more smoothly
+• Cloud "wind" accelerates / decelerates more smoothly
 
- • Clouds no longer "bounce" when they drift off the end of the world, but get a nice bit of wind to bring them back into view.
+• Clouds no longer "bounce" when they drift off the end of the world, but get a nice bit of wind to bring them back into view.
 
- • Slight vertical alignment tweaks on gunfire and balloons in radar view.
+• Slight vertical alignment tweaks on gunfire and balloons in radar view.
 
- • Improved orientation of heat-seeking smart missiles (and rubber chickens and bananas) as they track their target
+• Improved orientation of heat-seeking smart missiles (and rubber chickens and bananas) as they track their target
 
- • Tweaked movement and velocity of smart missiles, making them potentially faster / more random
+• Tweaked movement and velocity of smart missiles, making them potentially faster / more random
 
- • Enemy helicopter will now turn to face targets. Sometimes it would fire the other way. ;)
+• Enemy helicopter will now turn to face targets. Sometimes it would fire the other way. ;)
 
- • Improved helicopter motion when approaching landing pad - "bounce" has largely been eliminated.
+• Improved helicopter motion when approaching landing pad - "bounce" has largely been eliminated.
 
- • Improved off-screen / on-screen DOM pruning, restoration of 3D transforms when re-appending DOM elements
+• Improved off-screen / on-screen DOM pruning, restoration of 3D transforms when re-appending DOM elements
 
- • Fixed end-game bug, sometimes ground units (e.g. van) did not appear at base when blowing up.
+• Fixed end-game bug, sometimes ground units (e.g. van) did not appear at base when blowing up.
 
- • Adjusted collision detection: if helicopter is hiding "in" a friendly super-bunker, bombs should hit the roof of the super bunker and not the helicopter.
+• Adjusted collision detection: if helicopter is hiding "in" a friendly super-bunker, bombs should hit the roof of the super bunker and not the helicopter.
 
 **Gameplay**
 
- • New weapon: Heat-seeking bananas
+• New weapon: Heat-seeking bananas
 
- • Ground unit "Traffic Control" option: Vehicles try to leave space between, and avoid overlapping each other. Tanks will now "park" behind friendly tanks, avoiding a pile-up. Tanks normally only stop to fire. Vans and missile launchers will now wait for each other, too. Tanks will not stop for vans or missile launchers, giving tanks a greater chance of ending up at the front of a convoy - a preferable offensive position.
+• Ground unit "Traffic Control" option: Vehicles try to leave space between, and avoid overlapping each other. Tanks will now "park" behind friendly tanks, avoiding a pile-up. Tanks normally only stop to fire. Vans and missile launchers will now wait for each other, too. Tanks will not stop for vans or missile launchers, giving tanks a greater chance of ending up at the front of a convoy - a preferable offensive position.
 
- • Units can now be "recycled" if they cross the battlefield, you are rewarded 2x cost in credits
+• Units can now be "recycled" if they cross the battlefield, you are rewarded 2x cost in credits
 
- • Engineers can now steal all funds from enemy bunker
+• Engineers can now steal all funds from enemy bunker
 
- • Engineers can now repair (but not rebuid) friendly bunkers
+• Engineers can now repair (but not rebuid) friendly bunkers
 
- • Bullets now ricochet off non-friendly super-bunkers
+• Bullets now ricochet off non-friendly super-bunkers
 
- • Shrapnel will ricochet off certain units (tank, super-bunker)
+• Shrapnel will ricochet off certain units (tank, super-bunker)
 
- • "Incoming missile" doesn't show in extreme mode when the radar is jammed.
+• "Incoming missile" doesn't show in extreme mode when the radar is jammed.
 
- • End base, extreme mode: if a defense missile is destroyed, respawn another within 0.5 seconds.
+• End base, extreme mode: if a defense missile is destroyed, respawn another within 0.5 seconds.
 
- • Missile launchers trigger when closer to the helicopter, more likely now to be on-screen
+• Missile launchers trigger when closer to the helicopter, more likely now to be on-screen
 
- • Helicopter respawn: Delay if certain ground units are obstructing the landing pad.
+• Helicopter respawn: Delay if certain ground units are obstructing the landing pad.
 
- • Enemy helicopter AI: Default 10% of dropping bombs when targeting a tank, subject to game difficulty (hard: 15%, extreme: 25%.)
+• Enemy helicopter AI: Default 10% of dropping bombs when targeting a tank, subject to game difficulty (hard: 15%, extreme: 25%.)
 
- • Bombs can now collide with smart missiles and take them out
+• Bombs can now collide with smart missiles and take them out
 
- • Tank gunfire only hits bunkers if tanks are shooting at a helicopter, or another tank (bug fix: previously, tanks could destroy a bunker trying to hit an infantry on the other side.)
+• Tank gunfire only hits bunkers if tanks are shooting at a helicopter, or another tank (bug fix: previously, tanks could destroy a bunker trying to hit an infantry on the other side.)
 
- • Super bunkers that are un-manned are "neutral" and dangerous to both sides, and will be shown as hostile on the radar. (This includes when tanks disarm a bunker by firing at it.)
+• Super bunkers that are un-manned are "neutral" and dangerous to both sides, and will be shown as hostile on the radar. (This includes when tanks disarm a bunker by firing at it.)
 
- • Bomb trajectory now includes the helicopter's Y-axis velocity, and they now rotate along with their trajectory.
+• Bomb trajectory now includes the helicopter's Y-axis velocity, and they now rotate along with their trajectory.
 
- • Helicopters now rise up from the landing pad on game start and respawn, like the original game.
+• Helicopters now rise up from the landing pad on game start and respawn, like the original game.
 
- • Helicopter gunfire takes tilt / angle into account.
+• Helicopter gunfire takes tilt / angle into account.
 
- • Helicopter "shake" starts when health is under 70%, gets worse with damage. This affects gunfire trajectory.
+• Helicopter "shake" starts when health is under 70%, gets worse with damage. This affects gunfire trajectory.
 
- • Your missile launchers only fire at the enemy helicopter when the convoy is "unassisted", e.g., there is no friendly helicopter or turret nearby.
+• Your missile launchers only fire at the enemy helicopter when the convoy is "unassisted", e.g., there is no friendly helicopter or turret nearby.
 
- • Extreme mode: If you shoot down the enemy base's smart missiles while near the base, it will launch new ones that are faster and more difficult to dodge.
+• Extreme mode: If you shoot down the enemy base's smart missiles while near the base, it will launch new ones that are faster and more difficult to dodge.
 
- • While on a landing pad, your gunfire may go over infantry's heads most of the time.
+• While on a landing pad, your gunfire may go over infantry's heads most of the time.
 
- • Don't assume the top of the battlefield is always safe; watch out for balloons!
+• Don't assume the top of the battlefield is always safe; watch out for balloons!
 
- • Paratroopers now fall at slightly different rates, and may be affected more by wind
+• Paratroopers now fall at slightly different rates, and may be affected more by wind
 
- • A few additional, inspirational [ game paused in background ] messages
+• A few additional, inspirational [ game paused in background ] messages
 
 **Technical notes: development / code**
 
- • Migrated core JavaScript to ES6 syntax, retaining functional + prototypal inheritance style. Slightly less verbose.
+• Migrated core JavaScript to ES6 syntax, retaining functional + prototypal inheritance style. Slightly less verbose.
 
- • As part of ES6 migration, dropped legacy IE 8 + 9 code and checks: ancient event handlers, lack of transform, `requestAnimationFrame()` polyfill etc.
+• As part of ES6 migration, dropped legacy IE 8 + 9 code and checks: ancient event handlers, lack of transform, `requestAnimationFrame()` polyfill etc.
 
- • Lots of cleanup: Exit early, reduced `if/else` nesting. Dropped all `setTimeout()` calls, moved to a frame-based approach: `setFrameTimeout()`.
+• Lots of cleanup: Exit early, reduced `if/else` nesting. Dropped all `setTimeout()` calls, moved to a frame-based approach: `setFrameTimeout()`.
 
- • `aa.js` (core game code) is massive at ~450 KB, and seems like a good candidate to be broken up into ES6 modules. TBD.
+• `aa.js` (core game code) is massive at ~450 KB, and seems like a good candidate to be broken up into ES6 modules. TBD.
 
------
+---
 
 **Prior release notes**
 
 For history back to V1.0, see [CHANGELOG.txt](CHANGELOG.txt).
 
------
+---
 
 ## License
 
@@ -471,7 +467,7 @@ OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
 TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
 OF THIS SOFTWARE.
 
------
+---
 
 ## Acknowledgements and Credits
 
@@ -564,7 +560,7 @@ Macintosh System 7-style scrollbars (images and CSS) - [System.css](https://gith
 
 [Metal_Hit_02.wav](https://freesound.org/people/dheming/sounds/197398/) by dheming
 
-[bolo-hit-tank-self.wav](https://en.wikipedia.org/wiki/Bolo_(1987_video_game)) from "[Bolo](https://bolo.net/)", Copyright (C) Steuart Cheshire 1993. A subtle tribute to my favourite Mac game of all-time, hands down. <3
+[bolo-hit-tank-self.wav](<https://en.wikipedia.org/wiki/Bolo_(1987_video_game)>) from "[Bolo](https://bolo.net/)", Copyright (C) Steuart Cheshire 1993. A subtle tribute to my favourite Mac game of all-time, hands down. <3
 
 (See also: [Orona](https://github.com/stephank/orona) Coffeescript partial port, WinBolo source code [on Google Code via archive.org](https://web.archive.org/web/20170105114652/https://code.google.com/archive/p/winbolo/) and [on GitHub](https://github.com/kippandrew/winbolo))
 
