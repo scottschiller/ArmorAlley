@@ -529,7 +529,7 @@ function GameEvents() {
     addEvent(EVENTS.helicopterCollision, {
       onFire: (state) => {
         if (!gamePrefs.bnb) return;
-        playSoundWithDelay(sounds.bnb[state.name])
+        playSoundWithDelay(sounds.bnb[state.name]);
       }
     });
   }
