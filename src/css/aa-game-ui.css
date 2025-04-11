@@ -1406,7 +1406,7 @@ body.limited-lives-mode #mobile-controls.enemy li.inventory-item a.helicopter {
   display: inline-block;
   text-align: left;
   margin: 0px auto;
-  font-size: calc(5.5px * var(--gs));
+  font-size: calc(6.5px * var(--gs));
   line-height: 150%;
   font-family: var(--monospace);
   /* reset cheddar font shenanigans */
