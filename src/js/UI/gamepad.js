@@ -499,7 +499,9 @@ function getPrettyLabel(gpLabel, gpID) {
    * Others take label if not "generic" - else, ID.
    */
   let label =
-    isSafari || !gpLabel.match(/generic/i) ? gpLabel : gpID || gpLabel;
+    isSafari || (gpLabel && !gpLabel?.match(/generic/i))
+      ? gpLabel
+      : gpID || gpLabel;
 
   let firstBracket = label.indexOf('(');
 
