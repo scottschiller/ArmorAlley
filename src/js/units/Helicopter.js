@@ -27,8 +27,6 @@ import {
   GAME_SPEED_RATIOED,
   GAME_SPEED,
   DEFAULT_LIVES,
-  HELICOPTER_BOUNDARY_LEFT,
-  HELICOPTER_BOUNDARY_RIGHT,
   debug,
   debugCollision
 } from '../core/global.js';

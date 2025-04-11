@@ -23,11 +23,6 @@ const ua = navigator.userAgent;
 // N.B.: You get four choppers, as the original "lives remaining" UI goes down to 0.
 const DEFAULT_LIVES = 3;
 
-// constraints on chopper movement, some buffer vs. edge-of-screen
-const HELICOPTER_BOUNDARY = 0.2;
-const HELICOPTER_BOUNDARY_LEFT = HELICOPTER_BOUNDARY;
-const HELICOPTER_BOUNDARY_RIGHT = 1 - HELICOPTER_BOUNDARY;
-
 // how many seconds to show the unit energy UI, on the "sometimes" pref
 const ENERGY_TIMER_DELAY = 2;
 
@@ -531,8 +526,6 @@ export {
   demo,
   forceAppleMobile,
   getTypes,
-  HELICOPTER_BOUNDARY_LEFT,
-  HELICOPTER_BOUNDARY_RIGHT,
   minimal,
   parseTypes,
   isChrome,
