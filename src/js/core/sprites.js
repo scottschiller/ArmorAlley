@@ -396,6 +396,29 @@ const sprites = {
     }
   },
 
+  movePendingDie: (exports) => {
+    let { data } = exports;
+
+    /**
+     * Move with "attached" target offset, if there is one -
+     * e.g., shrapnel "stuck" to helicopter.
+     */
+    let target = data.target && game.objectsById[data.target];
+
+    if (target?.data) {
+      sprites.moveTo(
+        exports,
+        target.data.x + data.targetOffsetX,
+        target.data.y + data.targetOffsetY
+      );
+    } else {
+      // keep moving with scroll, while visible
+      sprites.moveWithScrollOffset(exports);
+    }
+
+    sprites.maybeFade(exports);
+  },
+
   updateEnergy: (object) => {
     // only do work if visible, OR "always" shown and needing updates
     if (
