@@ -44,7 +44,7 @@ const Shrapnel = (options = {}) => {
       alwaysDraw: true,
       isFading: false,
       fadeFrame: 0,
-      fadeFrames: FPS,
+      fadeFrames: FPS * 0.33,
       // sometimes zero / non-moving?
       vX: rng(Math.max(-maxVX, Math.min(maxVX, options.vX || 0)), type),
       vY: rng(Math.max(-maxVY, Math.min(maxVY, options.vY || 0)), type),
@@ -349,10 +349,8 @@ function animate(exports) {
   let { collision, data, dom } = exports;
 
   if (data.dead) {
-    // keep moving with scroll, while visible
-    sprites.moveWithScrollOffset(exports);
-
-    maybeFade(exports);
+    // may be attached to a target, and/or fading out.
+    sprites.movePendingDie(exports);
 
     return !dom.o;
   }
@@ -382,6 +380,8 @@ function animate(exports) {
       data.x,
       worldHeight - (data.height / 2) * data.relativeScale
     );
+    // take longer to "burn out"
+    data.fadeFrames *= 3;
     die(exports);
   } else {
     data.gravity *=
