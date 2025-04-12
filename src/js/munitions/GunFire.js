@@ -326,7 +326,7 @@ function sparkAndDie(exports, target) {
         die(exports, force);
         exports.frameTimeout = null;
       },
-      canSpark ? 750 : 250
+      canSpark ? 1000 : 250
     );
 
     if (tType !== TYPES.infantry) {
