@@ -116,14 +116,13 @@ const sprites = {
   attachToTarget: (exports, target) => {
     // "stick" a target, moving a munition (bomb, gunfire, spark) relative to the target it has hit
 
-    if (!exports?.data || !target) return;
+    if (!exports?.data || !target?.data) return;
 
     // track and move with the target, too
-    exports.data.target = target;
+    exports.data.target = target.data.id;
 
-    // note the target's coords at moment of impact; this will be checked by setTransformXY()
-    exports.data.targetStartX = target?.data?.x;
-    exports.data.targetStartY = target?.data?.y;
+    exports.data.targetOffsetX = exports.data.x - target.data.x;
+    exports.data.targetOffsetY = exports.data.y - target.data.y;
   },
 
   setTransformXY: (exports, o, x, y) => {
@@ -167,17 +166,6 @@ const sprites = {
       x = parseFloat(x);
 
       x -= game.objects.view.data.battleField.scrollLeft;
-
-      // animating e.g., a bomb that's hit a tank: move the spark sprite
-      // relative to the tank, as the tank may still be alive and moving
-      if (exports?.data?.target) {
-        // has the target moved?
-        let deltaX = exports.data.target.data.x - exports.data.targetStartX;
-        let deltaY = exports.data.target.data.y - exports.data.targetStartY;
-
-        x += deltaX;
-        y = `${parseFloat(y) + deltaY}px`;
-      }
 
       // back to pixels
       x = `${x}px`;
