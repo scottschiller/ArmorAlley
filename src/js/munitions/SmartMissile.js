@@ -179,7 +179,12 @@ const SmartMissile = (options = {}) => {
       blinkCounter: 0,
       visible: true,
       expired: false,
-      hostile: false, // when expiring/falling, this object is dangerous to both friendly and enemy units.
+      // when expiring/falling, this object is dangerous to both friendly and enemy units.
+      hostile: false,
+      isFading: false,
+      // fade begins at >= 0.
+      fadeFrame: FPS * -0.15,
+      fadeFrames: FPS * 0.15,
       nearExpiry: false,
       nearExpiryThreshold: 0.78125,
       lifeCyclePhase: 0,
@@ -428,6 +433,7 @@ function spark(exports) {
   // TODO: random rotation?
   exports.domCanvas.img = effects.spark();
   data.excludeBlink = true;
+  data.isFading = true;
 }
 
 function maybeTargetDecoy(exports, decoyTarget) {
@@ -743,7 +749,7 @@ function animate(exports) {
 
   // notify caller if now dead and can be removed.
   if (data.dead) {
-    sprites.moveWithScrollOffset(exports);
+    sprites.movePendingDie(exports);
     return data.dead && !dom.o;
   }
 
