@@ -13,7 +13,8 @@ import {
   getTypes,
   GAME_SPEED_RATIOED,
   rngInt,
-  rngPlusMinus
+  rngPlusMinus,
+  FPS
 } from '../core/global.js';
 import { playSound, sounds } from '../core/sound.js';
 import { sprites } from '../core/sprites.js';
@@ -34,6 +35,7 @@ const Bomb = (options = {}) => {
       excludeBlink: true,
       hasHitGround: false,
       hidden: !!options.hidden,
+      isFading: false,
       isMuted: false,
       groundCollisionTest: false,
       width: 14,
@@ -42,6 +44,9 @@ const Bomb = (options = {}) => {
       halfHeight: 3,
       explosionWidth: 51,
       explosionHeight: 22,
+      // fade begins at >= 0.
+      fadeFrame: FPS * -0.15,
+      fadeFrames: FPS * 0.25,
       hostile: false,
       gravity: 1,
       energy: 3,
@@ -180,6 +185,7 @@ function dieExplosion(exports) {
 
 function spark(exports) {
   exports.domCanvas.img = effects.spark();
+  exports.data.isFading = true;
 }
 
 function die(exports, dieOptions = {}) {
@@ -516,7 +522,9 @@ function animate(exports) {
   exports.domCanvas?.dieExplosion?.animate();
 
   if (data.dead) {
-    sprites.moveWithScrollOffset(exports);
+    // may be attached to a target, and/or fading out.
+    sprites.movePendingDie(exports);
+
     return !data.deadTimer && !dom.o;
   }
 
