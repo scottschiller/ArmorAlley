@@ -9,7 +9,8 @@ import {
   rnd,
   GAME_SPEED_RATIOED,
   ENEMY_GUNFIRE_COLOR,
-  FRIENDLY_GUNFIRE_COLOR
+  FRIENDLY_GUNFIRE_COLOR,
+  FPS
 } from '../core/global.js';
 import { playSound, sounds } from '../core/sound.js';
 import { sprites } from '../core/sprites.js';
@@ -25,6 +26,7 @@ const GunFire = (options = {}) => {
       type: 'gunfire',
       parent: options.parent?.data?.id || null,
       parentType: options.parentType || null,
+      isFading: false,
       isInert: !!options.isInert,
       isEnemy: options.isEnemy,
       expired: false,
@@ -38,6 +40,9 @@ const GunFire = (options = {}) => {
         ((options.dieFrameCount || 75) * 1) / GAME_SPEED_RATIOED,
         10
       ), // live up to N frames, then die?
+      // fade begins at >= 0.
+      fadeFrame: FPS * -0.15,
+      fadeFrames: FPS * 0.15,
       width: options.isInert ? 1.5 : 2,
       height: options.isInert ? 1.5 : 1,
       gravity: 0.25,
@@ -169,6 +174,8 @@ function die(exports, force) {
   if (data.dead && !force) return;
 
   data.dead = true;
+
+  data.isFading = true;
 
   sprites.removeNodesAndUnlink(exports);
 
@@ -318,6 +325,8 @@ function sparkAndDie(exports, target) {
     // immediately mark as dead, prevent any more collisions.
     data.dead = true;
 
+    data.isFading = true;
+
     // and cleanup shortly.
     exports.frameTimeout = common.setFrameTimeout(
       () => {
@@ -348,8 +357,10 @@ function animate(exports) {
 
   // pending die()
   if (frameTimeout) {
-    // keep moving with scroll, while visible
-    sprites.moveWithScrollOffset(exports);
+
+    // may be attached to a target, and/or fading out.
+    sprites.movePendingDie(exports);
+
     return false;
   }
 
