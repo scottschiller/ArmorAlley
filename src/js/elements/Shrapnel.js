@@ -345,26 +345,6 @@ function ricochet(exports, targetType) {
   playSound(sounds.ricochet, exports);
 }
 
-function maybeFade(exports) {
-  let { data, dom, domCanvas } = exports;
-
-  if (!data.isFading) return;
-
-  // if fading, animate every frame.
-  if (data.isFading) {
-    data.fadeFrame += GAME_SPEED_RATIOED;
-
-    if (data.fadeFrame < data.fadeFrames) {
-      domCanvas.img.target.opacity = 1 - data.fadeFrame / data.fadeFrames;
-    }
-
-    if (data.fadeFrame > data.fadeFrames) {
-      // animation finished
-      sprites.removeNodes(dom);
-    }
-  }
-}
-
 function animate(exports) {
   let { collision, data, dom } = exports;
 

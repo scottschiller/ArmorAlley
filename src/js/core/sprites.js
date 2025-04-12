@@ -5,6 +5,7 @@ import {
   ENERGY_TIMER_DELAY,
   ENERGY_TIMER_FADE_RATIO,
   FPS,
+  GAME_SPEED_RATIOED,
   isChrome,
   rnd,
   useDOMPruning,
@@ -372,6 +373,27 @@ const sprites = {
         360
       )}deg)`
     );
+  },
+
+  maybeFade: (exports) => {
+    let { data, dom, domCanvas } = exports;
+
+    if (!data.isFading) return;
+
+    // if fading, animate every frame.
+    data.fadeFrame += GAME_SPEED_RATIOED;
+
+    // don't start fade until +ve.
+    if (data.fadeFrame < 0) return;
+
+    if (data.fadeFrame < data.fadeFrames) {
+      domCanvas.img.target.opacity = 1 - data.fadeFrame / data.fadeFrames;
+    }
+
+    if (data.fadeFrame > data.fadeFrames) {
+      // animation finished
+      sprites.removeNodes(dom);
+    }
   },
 
   updateEnergy: (object) => {
