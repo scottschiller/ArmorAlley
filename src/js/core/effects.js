@@ -513,6 +513,9 @@ const effects = {
       frameHeight: 5,
       frameX: 0,
       frameY: 0
+    },
+    target: {
+      opacity: 1
     }
   }),
 
