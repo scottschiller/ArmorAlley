@@ -3,6 +3,8 @@ This is a summary of work in progress. For code-level details, see the changelog
 
 `UI miscellany`
 
+· Fixed shrapnel and "sparks" embedding in targets on impact, and fading out.
+
 · Updated primary UI typeface: "Iosveka" - clean, tall and legible.
 
 · Game tips use Times New Roman-style serif type, like the original Mac version.
