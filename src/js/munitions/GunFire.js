@@ -319,12 +319,12 @@ function sparkAndDie(exports, target) {
     data.dead = true;
 
     // and cleanup shortly.
-    frameTimeout = common.setFrameTimeout(
+    exports.frameTimeout = common.setFrameTimeout(
       () => {
         // use the force, indeed.
         const force = true;
         die(exports, force);
-        frameTimeout = null;
+        exports.frameTimeout = null;
       },
       canSpark ? 750 : 250
     );
