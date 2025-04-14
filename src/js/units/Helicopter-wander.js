@@ -144,10 +144,4 @@ function resetSineWaveTimer(data) {
   }
 }
 
-export {
-  clearSineWaveTimer,
-  resetSineWave,
-  resetSineWaveTimer,
-  sineWave,
-  wander
-};
+export { resetSineWave, resetSineWaveTimer, sineWave, wander };
