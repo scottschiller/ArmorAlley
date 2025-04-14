@@ -38,7 +38,6 @@ const Van = (options = {}) => {
     {
       type: TYPES.van,
       bottomAligned: true,
-      deadTimer: null,
       frameCount: 0,
       radarJammerModulus: FPS / 3,
       radarJammerModulus1X: FPS / 3,
@@ -68,7 +67,8 @@ const Van = (options = {}) => {
         colorType: options.isEnemy ? 'grey' : 'green',
         elementCount: 5 + rndInt(5),
         startVelocity: 8 + rndInt(8)
-      }
+      },
+      timers: {}
     },
     options
   );
@@ -107,6 +107,7 @@ const Van = (options = {}) => {
     dom,
     domCanvas,
     die: (dieOptions) => die(exports, dieOptions),
+    dieComplete: () => dieComplete(exports),
     init: () => initVan(exports),
     radarItem,
     refreshSprite: () => refreshSprite(exports)
@@ -181,10 +182,7 @@ function die(exports, dieOptions = {}) {
 
   effects.damageExplosion(exports);
 
-  data.deadTimer = common.setFrameTimeout(() => {
-    sprites.removeNodesAndUnlink(exports);
-    data.deadTimer = null;
-  }, 1000);
+  data.timers.deadTimer = common.frameTimeout.set('dieComplete', 1000);
 
   if (radarItem) {
     radarItem.die(dieOptions);
@@ -210,6 +208,10 @@ function die(exports, dieOptions = {}) {
     // TODO: review and remove? May be covered in most cases.
     game.objects.notifications.add('You lost a van 💥');
   }
+}
+
+function dieComplete(exports) {
+  sprites.removeNodesAndUnlink(exports);
 }
 
 function onOurSide(exports) {
@@ -246,7 +248,7 @@ function animate(exports) {
     sprites.moveWithScrollOffset(exports);
   }
 
-  if (data.dead) return !data.deadTimer;
+  if (data.dead) return !data.timers.deadTimer;
 
   effects.smokeRelativeToDamage(exports);
 
@@ -330,7 +332,7 @@ function animate(exports) {
     );
   }
 
-  return data.dead && !data.deadTimer;
+  return data.dead && !data.timers.deadTimer;
 }
 
 function gameOver(exports, youWon) {
