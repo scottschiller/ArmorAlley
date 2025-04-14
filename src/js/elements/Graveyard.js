@@ -140,15 +140,17 @@ function addGravestone(exports) {
   const gravestoneType = isInfantry
     ? 'gravestones_infantry'
     : isHelicopter
-    ? 'gravestones_helicopters'
-    : 'gravestones_vehicles';
+      ? 'gravestones_helicopters'
+      : 'gravestones_vehicles';
 
   // for non-infantry types, add a few extra before the gravestone pops up.
   if (dType !== TYPES.infantry && rng(1, TYPES.terrainItem) >= 0.5) {
     gravestoneQueue.push({
       data: {
         type: pickFrom(smallMediumDecor),
-        x: exports.data.x + rngPlusMinus(rng(12, TYPES.terrainItem), TYPES.terrainItem),
+        x:
+          exports.data.x +
+          rngPlusMinus(rng(12, TYPES.terrainItem), TYPES.terrainItem),
         gravestoneType
       }
     });
