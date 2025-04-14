@@ -61,7 +61,6 @@ const MissileLauncher = (options = {}) => {
       halfWidth: width / 2,
       height,
       halfHeight: height / 2,
-      orderComplete: false,
       scanDistance: MISSILE_LAUNCHER_SCAN_RADIUS,
       state: 0,
       stateMax: 3,
@@ -76,7 +75,8 @@ const MissileLauncher = (options = {}) => {
         elementCount: 7 + rndInt(7),
         startVelocity: 10 + rndInt(10)
       },
-      hasScanNode: true
+      hasScanNode: true,
+      timers: {}
     },
     options
   );
@@ -114,9 +114,11 @@ const MissileLauncher = (options = {}) => {
     dom,
     domCanvas,
     die: (dieOptions) => die(exports, dieOptions),
+    dieComplete: () => dieComplete(exports),
     friendlyNearby,
     init: () => initMissileLauncher(options, exports),
     // radarItem,
+    maybeResize: () => maybeResize(exports),
     refreshSprite: () => refreshSprite(exports),
     resize: () => resize(exports),
     resume: () => resume(exports),
@@ -190,9 +192,7 @@ function die(exports, dieOptions = {}) {
     }
 
     // account for .scan-node transition time
-    common.setFrameTimeout(() => {
-      sprites.removeNodesAndUnlink(exports);
-    }, 1100);
+    data.timers.dieComplete = common.frameTimeout.set('dieComplete', 1100);
 
     if (!dieOptions.firingMissile) {
       common.addGravestone(exports);
@@ -208,7 +208,7 @@ function die(exports, dieOptions = {}) {
       }
     }
   } else {
-    sprites.removeNodesAndUnlink(exports);
+    dieComplete();
   }
 
   // stop moving while exploding
@@ -223,6 +223,10 @@ function die(exports, dieOptions = {}) {
   radarItem.die(dieOptions);
 
   common.onDie(exports, dieOptions);
+}
+
+function dieComplete(exports) {
+  sprites.removeNodesAndUnlink(exports);
 }
 
 function fire(exports) {
@@ -344,7 +348,7 @@ function animate(exports) {
 
   effects.smokeRelativeToDamage(exports);
 
-  if (data.orderComplete && !data.stopped) {
+  if (!data.timers.orderActive && !data.stopped) {
     // regular timer or back wheel bump
     if (data.frameCount % data.stateModulus === 0) {
       data.state++;
@@ -389,6 +393,11 @@ function animate(exports) {
   return data.dead && !dom.o;
 }
 
+function maybeResize(exports) {
+  if (exports.data.dead) return;
+  resize(exports);
+}
+
 function resize(exports) {
   return common.resizeScanNode(
     exports,
@@ -421,15 +430,9 @@ function initMissileLauncher(options, exports) {
 
   common.initNearby(exports.friendlyNearby, exports);
 
-  data.frameTimeout = common.setFrameTimeout(() => {
-    data.orderComplete = true;
-    data.frameTimeout = null;
-  }, 2000);
+  data.timers.orderActive = common.frameTimeout.set(null, 2000);
 
-  common.setFrameTimeout(() => {
-    if (data.dead) return;
-    resize(exports);
-  }, 150);
+  data.timers.maybeResize = common.frameTimeout.set('maybeResize', 150); 
 
   exports.radarItem = game.objects.radar.addItem(
     exports,
