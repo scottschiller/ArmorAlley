@@ -241,7 +241,7 @@ body.game-paused #tutorial-window {
 }
 
 #tutorial-window .body {
-  min-width: 25em;
+  min-width: 26em;
 }
 
 #tutorial-window .body img {
