@@ -52,7 +52,6 @@ const Tank = (options = {}) => {
     {
       type: TYPES.tank,
       bottomAligned: true,
-      deadTimer: null,
       energy,
       energyMax: energy,
       energyLineScale: 0.8,
@@ -82,7 +81,8 @@ const Tank = (options = {}) => {
         elementCount: 20 + rndInt(20),
         startVelocity: 5 + rndInt(10),
         spread: 90
-      }
+      },
+      timers: {}
     },
     options
   );
@@ -126,6 +126,7 @@ const Tank = (options = {}) => {
     dom,
     domCanvas,
     die: (dieOptions) => die(exports, dieOptions),
+    dieComplete: () => dieComplete(exports),
     init: () => initDOM(exports, options),
     radarItem,
     refreshSprite: () => refreshSprite(exports),
@@ -164,6 +165,7 @@ const Tank = (options = {}) => {
       hit(target) {
         // determine whether to fire, or resume (if no friendly tank nearby)
         if (shouldFireAtTarget(exports, target)) {
+          // TODO: lastNearbyTarget to ID
           data.lastNearbyTarget = target;
           stop(exports);
         } else {
@@ -366,10 +368,7 @@ function die(exports, dieOptions = {}) {
 
     effects.smokeRing(exports, { isGroundUnit: true });
 
-    data.deadTimer = common.setFrameTimeout(() => {
-      sprites.removeNodesAndUnlink(exports);
-      data.deadTimer = null;
-    }, 1500);
+    data.timers.deadTimer = common.frameTimeout.set('dieComplete', 1500);
 
     // special case: you destroyed a tank, and didn't crash into one.
     if (gamePrefs.bnb && data.isEnemy && attackerType !== TYPES.helicopter) {
@@ -464,6 +463,10 @@ function die(exports, dieOptions = {}) {
   common.onDie(exports, dieOptions);
 }
 
+function dieComplete(exports) {
+  sprites.removeNodesAndUnlink(exports);
+}
+
 function shouldFireAtTarget(exports, target) {
   let { data } = exports;
 
@@ -500,7 +503,7 @@ function animate(exports) {
     sprites.moveWithScrollOffset(exports);
     domCanvas.dieExplosion?.animate?.();
 
-    return !data.deadTimer && !dom.o;
+    return !data.timers.deadTimer && !dom.o;
   }
 
   if (!data.stopped && domCanvas?.img) {
@@ -566,7 +569,7 @@ function animate(exports) {
 
   recycleTest(exports);
 
-  return data.dead && !data.deadTimer && !dom.o;
+  return data.dead && !data.timers.deadTimer && !dom.o;
 }
 
 function initDOM(exports, options) {
