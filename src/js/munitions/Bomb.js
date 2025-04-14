@@ -31,7 +31,6 @@ const Bomb = (options = {}) => {
       type: 'bomb',
       parent: options.parent?.data?.id || null,
       parentType: options.parentType || null,
-      deadTimer: null,
       excludeBlink: true,
       hasHitGround: false,
       hidden: !!options.hidden,
@@ -59,6 +58,7 @@ const Bomb = (options = {}) => {
       bottomAlign: false,
       angle: 0,
       scale: null,
+      timers: {},
       domFetti: {
         colorType: 'bomb',
         elementCount: 3 + rndInt(3),
@@ -139,6 +139,7 @@ const Bomb = (options = {}) => {
 
   Object.assign(exports, {
     die: (dieOptions = {}) => die(exports, dieOptions),
+    dieComplete: () => dieComplete(exports),
     bombHitTarget: (target) => bombHitTarget(exports, target),
     animate: () => animate(exports),
     initBomb: () => initBomb(exports)
@@ -369,11 +370,7 @@ function die(exports, dieOptions = {}) {
     sprites.attachToTarget(exports, dieOptions.target);
   }
 
-  data.deadTimer = common.setFrameTimeout(() => {
-    exports.domCanvas.dieExplosion = null;
-    sprites.removeNodesAndUnlink(exports);
-    data.deadTimer = null;
-  }, 1500);
+  data.timers.deadTimer = common.frameTimeout.set('dieComplete', 1500);
 
   // TODO: move into something common?
   if (data.isOnScreen) {
@@ -408,6 +405,11 @@ function die(exports, dieOptions = {}) {
   if (options.onDie) {
     options.onDie(exports, dieOptions);
   }
+}
+
+function dieComplete(exports) {
+  exports.domCanvas.dieExplosion = null;
+  sprites.removeNodesAndUnlink(exports);
 }
 
 function bombHitTarget(exports, target) {
@@ -525,7 +527,7 @@ function animate(exports) {
     // may be attached to a target, and/or fading out.
     sprites.movePendingDie(exports);
 
-    return !data.deadTimer && !dom.o;
+    return !data.timers.deadTimer && !dom.o;
   }
 
   data.gravity *= 1 + 0.1 * GAME_SPEED_RATIOED;
@@ -552,7 +554,7 @@ function animate(exports) {
   collisionTest(exports.collision, exports);
 
   // notify caller if dead, and node has been removed.
-  return data.dead && !data.deadTimer && !dom.o;
+  return data.dead && !data.timers.deadTimer && !dom.o;
 }
 
 function initDOM(exports) {
