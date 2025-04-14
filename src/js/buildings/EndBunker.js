@@ -378,9 +378,6 @@ function distributeFunds(exports) {
 
   let { data, objects } = exports;
 
-  // edge case: tutorial mode, and no enemy chopper present yet
-  if (!objects.helicopters.length) return;
-
   // TODO: handle multiple players / shared banking / ??? later.
 
   // 2x for 60 FPS
@@ -390,6 +387,10 @@ function distributeFunds(exports) {
 
   let helicopter =
     game.objectsById[objects.helicopters[data.isEnemy ? 'right' : 'left']];
+
+  // if no helicopter (e.g., tutorial and enemy isn't present yet), bail.
+  if (!helicopter) return;
+
   let chopperX = helicopter.data.x;
 
   /**
