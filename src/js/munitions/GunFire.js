@@ -19,7 +19,7 @@ import { net } from '../core/network.js';
 import { gamePrefs } from '../UI/preferences.js';
 
 const GunFire = (options = {}) => {
-  let data, dom, domCanvas, collision, exports, frameTimeout, radarItem;
+  let data, dom, domCanvas, collision, exports, radarItem;
 
   data = common.inheritData(
     {
@@ -56,7 +56,8 @@ const GunFire = (options = {}) => {
         startVelocity: 2 + rndInt(10),
         spread: 360,
         decay: 0.935
-      }
+      },
+      timers: {}
     },
     options
   );
@@ -99,7 +100,7 @@ const GunFire = (options = {}) => {
     dom,
     domCanvas,
     die: (force) => die(exports, force),
-    frameTimeout,
+    forceDie: () => forceDie(exports),
     init: () => initGunFire(exports),
     options,
     radarItem
@@ -166,6 +167,12 @@ function spark(exports) {
   data.excludeBlink = true;
 }
 
+function forceDie(exports) {
+  // use the force, indeed.
+  const force = true;
+  die(exports, force);
+}
+
 function die(exports, force) {
   let { data, radarItem } = exports;
 
@@ -187,10 +194,10 @@ function die(exports, force) {
 }
 
 function sparkAndDie(exports, target) {
-  let { data, frameTimeout, options } = exports;
+  let { data, options } = exports;
 
   // hackish: bail if spark -> die already scheduled.
-  if (frameTimeout) return;
+  if (data.timers.frameTimeout) return;
 
   let now;
   let canSpark = true;
@@ -328,13 +335,8 @@ function sparkAndDie(exports, target) {
     data.isFading = true;
 
     // and cleanup shortly.
-    exports.frameTimeout = common.setFrameTimeout(
-      () => {
-        // use the force, indeed.
-        const force = true;
-        die(exports, force);
-        exports.frameTimeout = null;
-      },
+    data.timers.frameTimeout = common.frameTimeout.set(
+      'forceDie',
       canSpark ? 1000 : 250
     );
 
@@ -353,14 +355,12 @@ function sparkAndDie(exports, target) {
 }
 
 function animate(exports) {
-  let { collision, data, dom, domCanvas, frameTimeout } = exports;
+  let { collision, data, dom, domCanvas } = exports;
 
   // pending die()
-  if (frameTimeout) {
-
+  if (data.timers.frameTimeout) {
     // may be attached to a target, and/or fading out.
     sprites.movePendingDie(exports);
-
     return false;
   }
 
