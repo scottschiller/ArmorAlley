@@ -504,6 +504,7 @@ const common = {
     }
 
     exports = {
+      _isLegacyTimer: true,
       animate,
       data,
       reset,
