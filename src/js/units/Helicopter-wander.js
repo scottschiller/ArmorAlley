@@ -135,22 +135,12 @@ function sineWave(data) {
 
 function resetSineWaveTimer(data) {
   // delay "sine wave" activity
-  if (data.sineWaveTimer) {
+  if (data.timers.sineWaveTimer) {
     // back to zero
-    data.sineWaveTimer.restart();
+    common.frameTimeout.restart(data.timers.sineWaveTimer);
   } else {
     // new timer
-    data.sineWaveTimer = common.setFrameTimeout(
-      () => (data.sineWaveTimer = null),
-      2000
-    );
-  }
-}
-
-function clearSineWaveTimer(data) {
-  if (data.sineWaveTimer) {
-    data.sineWaveTimer.reset();
-    data.sineWaveTimer = null;
+    data.timers.sineWaveTimer = common.frameTimeout.set(null, 2000);
   }
 }
 
