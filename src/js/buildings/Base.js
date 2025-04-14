@@ -75,7 +75,8 @@ const Base = (options = {}) => {
         startVelocity: 15 + rndInt(30),
         spread: 180,
         decay: 0.95
-      }
+      },
+      timers: {}
     },
     options
   );
@@ -96,6 +97,7 @@ const Base = (options = {}) => {
     dom,
     domCanvas,
     die: () => die(exports),
+    fire: () => fire(exports),
     init: () => initBase(exports),
     isOnScreenChange: (isOnScreen) => isOnScreenChange(exports, isOnScreen),
     updateSprite: () => applySpriteURL(exports)
@@ -188,7 +190,10 @@ function onSmartMissileDie(exports) {
   // re-load and fire ze missles, now more aggressive!
   data.missileVMax = Math.min(data.missileVMax, data.missileVMax + 1);
 
-  common.setFrameTimeout(() => fire(exports), 250 + rngInt(250, data.type));
+  data.timers.fire = common.frameTimeout.set(
+    'fire',
+    250 + rngInt(250, data.type)
+  );
 }
 
 function delayedNukeAndLetter(exports) {
