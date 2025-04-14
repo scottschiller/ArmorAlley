@@ -16,7 +16,8 @@ const smallMediumDecor = [
   'checkmark-grass',
   'flower',
   'flower-bush',
-  'palm-tree'
+  'palm-tree',
+  'tumbleweed'
 ].concat(mediumDecor);
 
 const largeDecor = mediumDecor.concat(['sand-dune', 'sand-dunes']);
