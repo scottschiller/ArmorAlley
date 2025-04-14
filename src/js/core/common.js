@@ -373,6 +373,91 @@ const common = {
     }
   },
 
+  frameTimeout: {
+    animate: (exports, timerData) => {
+      if (!timerData) return;
+
+      // if reset() was called, exit early
+      if (timerData.didReset) return true;
+
+      // has the timer completed?
+      if (timerData.methodFired) return true;
+
+      timerData.frameCount++;
+
+      if (timerData.frameCount >= timerData.frameInterval) {
+        // fire the "callback" method, whether a string or object with params
+
+        // try to destructure, first
+        let { methodName, params } = timerData.method || {};
+
+        // regular old string fallback
+        if (!methodName) methodName = timerData.method;
+
+        if (methodName) {
+          if (!exports[methodName]) {
+            console.warn(
+              'WTF, missing callback methodName?',
+              exports,
+              methodName,
+              timerData
+            );
+          } else {
+            // handle parameters: array, object, none.
+            if (params instanceof Array) {
+              exports[methodName](...params);
+            } else if (params) {
+              exports[methodName](params);
+            } else {
+              exports[methodName]();
+            }
+          }
+        }
+
+        timerData.methodFired = true;
+      }
+    },
+
+    /**
+     * Modern serializable, state-based timer functionality.
+     * 
+     * @param method String: function to call by name, OR,
+     * object: { methodName: 'foo', params: { bar: 'biff' }}, OR,
+     * null / undefined for no-op.
+     */
+    set: (method, delayMsec, useGameSpeed = true) => {
+      // `timerData` structure
+      return {
+        method,
+        frameCount: 0,
+        // e.g., msec = 1000 -> frameInterval = 60
+        frameInterval: parseInt(
+          (delayMsec / FRAMERATE) * (useGameSpeed ? 1 / GAME_SPEED : 1),
+          10
+        ),
+        methodFired: false,
+        useGameSpeed,
+        didReset: false
+      };
+    },
+
+    setFixed: (method, delayMsec, useGameSpeed = false) =>
+      common.frameTimeout.set(method, delayMsec, useGameSpeed),
+
+    reset: (timerData) => {
+      if (!timerData) return;
+      // similar to clearTimeout()
+      timerData.didReset = true;
+    },
+
+    restart: (timerData) => {
+      // effectively, "rewind timer"
+      if (!timerData) return;
+      timerData.frameCount = 0;
+      timerData.didReset = false;
+    }
+  },
+
   setFrameTimeout: (callback, delayMsec, useGameSpeed = true) => {
     /**
      * a frame-counting-based setTimeout() implementation.
