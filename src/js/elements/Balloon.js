@@ -79,7 +79,6 @@ const Balloon = (options = {}) => {
       height,
       halfWidth,
       halfHeight,
-      deadTimer: null,
       // centering balloon over bunker (half-bunker minus half-balloon widths)
       leftOffset,
       // centering balloon on radar (which expects x to line up with bunker x)
@@ -96,7 +95,8 @@ const Balloon = (options = {}) => {
         startVelocity: 10 + rndInt(15),
         spread: 360
       },
-      cpuCanTarget: rngBool(options.type)
+      cpuCanTarget: rngBool(options.type),
+      timers: {}
     },
     options
   );
@@ -123,6 +123,7 @@ const Balloon = (options = {}) => {
     data,
     detachFromBunker: () => detachFromBunker(exports),
     die: (dieOptions) => die(exports, dieOptions),
+    dieComplete: () => dieComplete(exports),
     dom,
     // hack - see below.
     domCanvas,
@@ -334,12 +335,7 @@ function die(exports, dieOptions = {}) {
   // the parent (i.e., this) balloon's `data.dead` before hiding.
   radarItem.die();
 
-  data.deadTimer = common.setFrameTimeout(() => {
-    data.deadTimer = null;
-    domCanvas.dieExplosion = null;
-    // sanity check: don't hide if already respawned
-    if (!data.dead) return;
-  }, 1000);
+  data.timers.deadTimer = common.frameTimeout.set('dieComplete', 1000);
 
   zones.leaveAllZones(exports);
 
@@ -351,6 +347,14 @@ function die(exports, dieOptions = {}) {
   if (game.objects.editor) {
     sprites.removeNodes(exports?.dom);
   }
+}
+
+function dieComplete(exports) {
+  let { data, domCanvas } = exports;
+
+  domCanvas.dieExplosion = null;
+  // sanity check: don't hide if already respawned
+  if (!data.dead) return;
 }
 
 function isOnScreenChange(exports) {
@@ -433,7 +437,7 @@ function animate(exports) {
     domCanvas?.dieExplosion?.animate();
 
     // explosion underway: move, accounting for scroll
-    if (data.deadTimer) {
+    if (data.timers.deadTimer) {
       sprites.moveWithScrollOffset(exports);
       return;
     }
@@ -441,7 +445,7 @@ function animate(exports) {
     // allow balloon to be "GCed" only when free-floating, separated from bunker
     return (
       data.dead &&
-      !data.deadTimer &&
+      !data.timers.deadTimer &&
       (!game.objectsById[objects.bunker] ||
         game.objectsById[objects.bunker]?.data?.dead)
     );
@@ -542,9 +546,9 @@ function reset(exports) {
 
   data.canRespawn = false;
 
-  if (data.deadTimer) {
-    data.deadTimer.reset();
-    data.deadTimer = null;
+  if (data.timers.deadTimer) {
+    data.timers.deadTimer = null;
+    delete data.timers.deadTimer;
   }
 
   zones.refreshZone(exports);
@@ -619,7 +623,7 @@ Balloon.radarItemConfig = ({ exports }) => ({
     // don't draw while dead - but may be respawned.
     // when first dead, timer is set - allow blinking.
     // once dead AND the timer has finished, don't draw.
-    if (exports.data.dead && !exports.data.deadTimer) return;
+    if (exports.data.dead && !exports.data.timers.deadTimer) return;
     const left = pos.left(obj.data.left);
     const scaledWidth = pos.width(width);
     const scaledHeight = pos.height(height);
