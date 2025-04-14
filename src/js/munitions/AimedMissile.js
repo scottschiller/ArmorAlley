@@ -54,6 +54,7 @@ const AimedMissile = (options = {}) => {
       damagePoints: 12.5,
       playbackRate: 0.9 + Math.random() * 0.2,
       target: null,
+      timers: {},
       vX: options.vX || 0,
       vXDirection: options.vXDirection !== undefined ? options.vXDirection : 1,
       vY: options.vY !== undefined ? options.vY : 0.1,
@@ -130,6 +131,7 @@ const AimedMissile = (options = {}) => {
   };
 
   exports = {
+    addMissileNapalm,
     animate: () => animate(exports),
     data,
     dom,
@@ -139,6 +141,7 @@ const AimedMissile = (options = {}) => {
     init: () => initAimedMissile(exports),
     launchSound,
     radarItem,
+    removeNodesAndUnlink: () => removeNodesAndUnlink(exports),
     objects
   };
 
@@ -187,6 +190,10 @@ function getNapalmParams(exports) {
   };
 }
 
+function removeNodesAndUnlink(exports) {
+  sprites.removeNodesAndUnlink(exports);
+}
+
 function die(exports, dieOptions = {}) {
   let { data, domCanvas, radarItem } = exports;
 
@@ -219,13 +226,13 @@ function die(exports, dieOptions = {}) {
     }
 
     for (let i = 0; i < napalmCount; i++) {
-      common.setFrameTimeout(
-        () => {
-          game.addObject(TYPES.missileNapalm, {
+      data.timers[`napalm${i}`] = common.frameTimeout.set(
+        {
+          methodName: 'addMissileNapalm',
+          params: {
             ...napalmParams,
-            // spread in direction...
             x: napalmParams.x + 22 * data.vXDirection * i
-          });
+          }
         },
         // over the course of a second
         (i / napalmCount / 2) * 1000
@@ -244,9 +251,7 @@ function die(exports, dieOptions = {}) {
     playSound(sounds.genericBoom, game.players.local);
   }
 
-  data.deadTimer = common.setFrameTimeout(() => {
-    sprites.removeNodesAndUnlink(exports);
-  }, 1000);
+  data.timers.deadTimer = common.frameTimeout.set('removeNodesAndUnlink', 1000);
 
   radarItem?.die();
 
@@ -254,6 +259,10 @@ function die(exports, dieOptions = {}) {
   exports.onDie?.();
 
   common.onDie(exports, dieOptions);
+}
+
+function addMissileNapalm(params) {
+  game.addObject(TYPES.missileNapalm, params);
 }
 
 function spark(exports) {
