@@ -223,7 +223,6 @@ const SmartMissile = (options = {}) => {
       // toward end of life, ramp this up to provide the 2X "bust" similar to the original
       speedBurstFactor: 1,
       thrust: 0.5,
-      deadTimer: null,
       trailerCount: 16,
       xHistory: [],
       yHistory: [],
@@ -495,7 +494,7 @@ function setTargetTracking(exports, tracking) {
 function die(exports, dieOptions = {}) {
   let { data, dieSound, launchSound, objects, radarItem } = exports;
 
-  if (data.deadTimer || data.dead) return;
+  if (data.dead) return;
 
   let attacker = dieOptions?.attacker;
 
@@ -541,10 +540,6 @@ function die(exports, dieOptions = {}) {
   } else if (sounds.metalClang) {
     playSound(sounds.metalClang, game.players.local);
   }
-
-  data.deadTimer = common.setFrameTimeout(() => {
-    sprites.removeNodesAndUnlink(exports);
-  }, 1000);
 
   // stop tracking the target.
   setTargetTracking(exports);
