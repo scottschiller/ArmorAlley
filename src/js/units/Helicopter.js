@@ -253,6 +253,7 @@ const Helicopter = (options = {}) => {
       direction: 0,
       defaultDirection: true,
       pilot: true,
+      timers: {},
       xMin: 0,
       xMax: null,
       xMaxOffset: 0,
