@@ -67,8 +67,6 @@ const Base = (options = {}) => {
       // bases don't move, but these are for explosions.
       vX: 0,
       vY: 0,
-      // allow missiles to become more dangerous "if necessary"
-      missileVMax: 8,
       domFetti: {
         colorType: options.isEnemy ? 'grey' : 'green',
         elementCount: 100 + rndInt(100),
@@ -181,14 +179,7 @@ function onSmartMissileDie(exports) {
     320
   );
 
-  // if not within range, reset vX + vY max for next time
-  if (!targetHelicopter) {
-    data.missileVMax = 0;
-    return;
-  }
-
-  // re-load and fire ze missles, now more aggressive!
-  data.missileVMax = Math.min(data.missileVMax, data.missileVMax + 1);
+  if (!targetHelicopter) return;
 
   data.timers.fire = common.frameTimeout.set(
     'fire',
