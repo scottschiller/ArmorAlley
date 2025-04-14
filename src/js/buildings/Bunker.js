@@ -68,7 +68,8 @@ const Bunker = (options = {}) => {
         startVelocity: 20 + rndInt(25),
         spread: 180,
         decay: 0.95
-      }
+      },
+      timers: {}
     },
     options
   );
@@ -159,6 +160,7 @@ const Bunker = (options = {}) => {
     dom,
     domCanvas,
     engineerHit: (target) => engineerHit(exports, target),
+    extinguish: () => extinguish(exports),
     infantryHit: (target) => infantryHit(exports, target),
     init: () => initBunker(exports),
     nullifyChain: () => nullifyChain(exports),
@@ -485,30 +487,11 @@ function die(exports, dieOptions = {}) {
   // burning sprite
   applySpriteURL(exports);
 
-  // start "burning out"...
-  common.setFrameTimeout(() => {
-    // and eventually exinguish.
-    common.setFrameTimeout(() => {
-      data.burninating = false;
-
-      // stop animations
-      domCanvas.animation = null;
-      domCanvas.nukeAnimation = null;
-      data.shadowBlur = 0;
-
-      // apply dead sprite
-      applySpriteURL(exports);
-
-      // re-apply static sprite, dropping animation
-      // hackish: apply positioning
-      deadConfig.target.x = data.x;
-      deadConfig.target.y = data.y;
-
-      // TODO: sort out the offset issue
-      deadConfig.target.yOffset = -8;
-      domCanvas.img = deadConfig;
-    }, burninatingTime);
-  }, 1200);
+  // start "burning out", and eventually extinguish.
+  data.timers.extinguish = common.frameTimeout.set(
+    'extinguish',
+    burninatingTime + 1200
+  );
 
   data.energy = 0;
 
@@ -539,6 +522,29 @@ function die(exports, dieOptions = {}) {
   common.onDie(exports, dieOptions);
 
   radarItem.die();
+}
+
+function extinguish(exports) {
+  let { data, domCanvas, deadConfig } = exports;
+
+  data.burninating = false;
+
+  // stop animations
+  domCanvas.animation = null;
+  domCanvas.nukeAnimation = null;
+  data.shadowBlur = 0;
+
+  // apply dead sprite
+  applySpriteURL(exports);
+
+  // re-apply static sprite, dropping animation
+  // hackish: apply positioning
+  deadConfig.target.x = data.x;
+  deadConfig.target.y = data.y;
+
+  // TODO: sort out the offset issue
+  deadConfig.target.yOffset = -8;
+  domCanvas.img = deadConfig;
 }
 
 function animate(exports) {
