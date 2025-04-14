@@ -84,6 +84,8 @@ const GameLoop = () => {
               common.unlinkObject(gameObjects[item][i]);
               spliceArgs[0] = i;
               Array.prototype.splice.apply(gameObjects[item], spliceArgs);
+            } else {
+              updateTimers(gameObjects[item][i]);
             }
           }
         } else {
@@ -104,6 +106,8 @@ const GameLoop = () => {
               // object is dead - take it out.
               common.unlinkObject(gameObjects[item]);
               gameObjects[item] = undefined;
+            } else {
+              updateTimers(gameObjects[item]);
             }
           }
         }
@@ -128,6 +132,33 @@ const GameLoop = () => {
     // finally: post-increment, since this frame is "done."
     if (game.data.started) {
       data.frameCount++;
+    }
+  }
+
+  function updateTimers(obj) {
+    // update all setTimeout()-style FrameTimeout() instances.
+    if (!obj?.data?.timers) return;
+
+    // define here, not inside for() and save some memory?
+    let t;
+
+    for (t in obj.data.timers) {
+      // timer may be null after completing, not {}.
+      if (obj.data.timers[t]) {
+        /**
+         * HACK: account for old _isLegacyTimer instances sneaking into here -
+         * e.g., from helicopter.timers. :P
+         */
+        if (obj.data.timers[t]._isLegacyTimer) continue;
+
+        // run the timer, remove when complete.
+        let finished = common.frameTimeout.animate(obj, obj.data.timers[t]);
+
+        if (finished) {
+          obj.data.timers[t] = null;
+          delete obj.data.timers[t];
+        }
+      }
     }
   }
 
