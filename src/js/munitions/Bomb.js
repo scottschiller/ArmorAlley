@@ -58,6 +58,8 @@ const Bomb = (options = {}) => {
       bottomAlign: false,
       angle: 0,
       scale: null,
+      shadowColor: null,
+      shadowBlur: 0,
       timers: {},
       domFetti: {
         colorType: 'bomb',
