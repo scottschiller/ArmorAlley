@@ -760,7 +760,8 @@ function enemyHelicopterNearby(data, triggerDistance = 512, useCircleMath) {
 
 function recycleTest(obj) {
   // did a unit reach the other side? destroy the unit, and reward the player with credits.
-  let isEnemy, costObj, refund, type;
+  let isEnemy;
+
   const oData = obj.data;
 
   isEnemy = oData.isEnemy;
@@ -779,43 +780,66 @@ function recycleTest(obj) {
 
   obj?.radarItem?.recycle?.();
 
-  common.setFrameTimeout(() => {
-    // if object was killed at the last second, no refund! ;)
-    if (oData.dead) return;
+  // just in case: ensure `timers = {}` exists.
+  oData.timers = oData.timers || {};
 
-    // die silently, and go away.
-    obj.die({ silent: true, recycled: true });
+  // HACK: tack method onto object exports for reference by timer.
+  obj.checkRefund = (params) => checkRefund(params);
 
-    // tank, infantry etc., or special-case: engineer.
-    type = oData.role ? oData.roles[oData.role] : oData.type;
+  oData.timers.checkRefund = common.frameTimeout.set(
+    { methodName: 'checkRefund', params: { id: oData.id } },
+    2000
+  );
+}
 
-    // special case: infantry may have been dropped by player, or when helicopter exploded.
-    // exclude those from being "refunded" at all, given player was involved in their move.
-    // minor: players could collect and drop infantry near enemy base, and collect refunds.
-    if (type === TYPES.infantry && !oData.unassisted) return;
+function checkRefund(params) {
+  let { id } = params;
 
-    costObj = COSTS[TYPES[type]];
+  let obj = game.objectsById[id];
 
-    // reward player for their good work. 100% return on "per-item" cost.
-    // e.g., tank cost = 4 credits, return = 4. for 5 infantry, 5 credits.
-    refund = costObj.funds / (costObj.count || 1);
+  if (!obj?.data) return;
 
-    let endBunker = game.objects[TYPES.endBunker][isEnemy ? 1 : 0];
+  let { data } = obj;
 
-    endBunker.data.funds += refund;
-    endBunker.data.fundsRefunded += refund;
+  let isEnemy = data.isEnemy;
 
-    if (game.players.local.data.isEnemy === isEnemy) {
-      // notify player that a unit has been recycled?
-      game.objects.notifications.add(
-        `+${refund} 💰: recycled ${type} <span class="no-emoji-substitution">♻️</span>`
-      );
-      game.objects.funds.setFunds(
-        game.objects[TYPES.endBunker][oData.isEnemy ? 1 : 0].data.funds
-      );
-      game.objects.view.updateFundsUI();
-    }
-  }, 2000);
+  // if object was killed at the last second, no refund! ;)
+  if (data.dead) return;
+
+  // die silently, and go away.
+  obj.die({ silent: true, recycled: true });
+
+  let costObj, refund, type;
+
+  // tank, infantry etc., or special-case: engineer.
+  type = data.role ? data.roles[data.role] : data.type;
+
+  // special case: infantry may have been dropped by player, or when helicopter exploded.
+  // exclude those from being "refunded" at all, given player was involved in their move.
+  // minor: players could collect and drop infantry near enemy base, and collect refunds.
+  if (type === TYPES.infantry && !data.unassisted) return;
+
+  costObj = COSTS[TYPES[type]];
+
+  // reward player for their good work. 100% return on "per-item" cost.
+  // e.g., tank cost = 4 credits, return = 4. for 5 infantry, 5 credits.
+  refund = costObj.funds / (costObj.count || 1);
+
+  let endBunker = game.objects[TYPES.endBunker][isEnemy ? 1 : 0];
+
+  endBunker.data.funds += refund;
+  endBunker.data.fundsRefunded += refund;
+
+  if (game.players.local.data.isEnemy === isEnemy) {
+    // notify player that a unit has been recycled?
+    game.objects.notifications.add(
+      `+${refund} 💰: recycled ${type} <span class="no-emoji-substitution">♻️</span>`
+    );
+    game.objects.funds.setFunds(
+      game.objects[TYPES.endBunker][data.isEnemy ? 1 : 0].data.funds
+    );
+    game.objects.view.updateFundsUI();
+  }
 }
 
 function countSides(objectType, includeDead) {
