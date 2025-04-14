@@ -130,7 +130,8 @@ const Turret = (options = {}) => {
         elementCount: 20 + rndInt(20),
         startVelocity: 8 + rndInt(8),
         spread: 90
-      }
+      },
+      timers: {}
     },
     options
   );
@@ -221,6 +222,7 @@ const Turret = (options = {}) => {
 
   exports = {
     animate: () => animate(exports),
+    bulletShellSound: () => bulletShellSound(exports),
     collisionItems: null,
     css,
     data,
@@ -236,6 +238,7 @@ const Turret = (options = {}) => {
     radarItem,
     refreshCollisionItems: () => refreshCollisionItems(exports),
     resize: () => resize(exports),
+    resetDieExplosion: () => resetDieExplosion(exports),
     repair: (engineer, complete) => repair(exports, engineer, complete),
     targets: null,
     turretBase,
@@ -422,10 +425,8 @@ function fire(exports) {
         data.fireCount % data.shellCasingInterval === 0
       ) {
         // shell casing?
-        common.setFrameTimeout(
-          () => {
-            playSound(sounds.bulletShellCasing, exports);
-          },
+        data.timers[`bs${data.frameCount}`] = common.frameTimeout.set(
+          'bulletShellSound',
           250 + rnd(250)
         );
       }
@@ -434,6 +435,10 @@ function fire(exports) {
 
   // target the enemy
   data.angle = angle;
+}
+
+function bulletShellSound(exports) {
+  playSound(sounds.bulletShellCasing, exports);
 }
 
 function setFiring(exports, isFiring) {
@@ -543,9 +548,10 @@ function die(exports, dieOptions = {}) {
       }
     }
 
-    common.setFrameTimeout(() => {
-      domCanvas.dieExplosion = null;
-    }, 1500);
+    data.timers.resetExplosion = common.frameTimeout.set(
+      'resetDieExplosion',
+      1500
+    );
 
     effects.inertGunfireExplosion({ exports, count: 4 + rndInt(4) });
 
@@ -574,6 +580,10 @@ function die(exports, dieOptions = {}) {
   sprites.updateEnergy(exports);
 
   common.onDie(exports, dieOptions);
+}
+
+function resetDieExplosion(exports) {
+  exports.domCanvas.dieExplosion = null;
 }
 
 function restore(exports) {
