@@ -1088,6 +1088,104 @@
                   </button>
                 </p>
 
+                <fieldset id="game-fps-pref" class="sync-over-network">
+                  <legend>
+                    Performance + Graphics<span class="network-icon"></span>
+                  </legend>
+
+                  <p class="non-indented hide-if-network more-bottom-spacing">
+                    By default, the game will try to pick the best supported
+                    frame rate.
+                  </p>
+
+                  <p class="non-indented network more-bottom-spacing">
+                    The frame rate setting applies to all players.<br />
+                    <span class="no-emoji-substitution">⚠️</span> Network games
+                    at 60 fps are experimental.
+                  </p>
+
+                  <p class="non-indented compact options-heading">
+                    <b>Frame Rate</b>
+                  </p>
+
+                  <ul class="less-bottom-spacing">
+                    <li class="hide-if-network">
+                      <input
+                        type="checkbox"
+                        id="radio_game_fps_auto"
+                        name="game_fps_auto"
+                        value="1"
+                        checked />
+                      <label for="radio_game_fps_auto">Choose best</label>
+                    </li>
+                    <li>
+                      <input
+                        type="radio"
+                        id="radio_game_fps_30"
+                        name="game_fps"
+                        value="30" />
+                      <label for="radio_game_fps_30">30 fps</label>
+                    </li>
+                    <li>
+                      <input
+                        type="radio"
+                        id="radio_game_fps_60"
+                        name="game_fps"
+                        value="60"
+                        checked />
+                      <label for="radio_game_fps_60">60 fps</label>
+                    </li>
+                  </ul>
+
+                  <p class="non-indented more-top-spacing">
+                    ⚠️ The following options may degrade game performance on
+                    older devices.
+                  </p>
+
+                  <p class="non-indented more-top-spacing options-heading">
+                    <b>Hi-DPI Graphics</b>
+                  </p>
+
+                  <p class="non-indented">
+                    Use 2x+ scale for sharpest graphics. On by default @ 60 fps.
+                  </p>
+
+                  <ul class="less-bottom-spacing">
+                    <li>
+                      <input
+                        type="checkbox"
+                        id="cb_gfx_hi_dpi"
+                        name="gfx_hi_dpi"
+                        value="1"
+                        checked />
+                      <label for="cb_gfx_hi_dpi"
+                        >High-DPI ("Retina") support</label
+                      >
+                    </li>
+                  </ul>
+
+                  <p class="non-indented more-top-spacing options-heading">
+                    <b>"Extra Fancy" Effects</b>
+                  </p>
+
+                  <ul class="less-bottom-spacing">
+                    <li>
+                      <label for="cb_radar_enhanced_fx">
+                        <input
+                          type="checkbox"
+                          id="cb_radar_enhanced_fx"
+                          name="radar_enhanced_fx"
+                          value="1" />
+                        <span class="label-text">Film grain + particles</span>
+                        <p class="non-indented">
+                          Smoke on radar, and subtle screen noise for radar
+                          jamming and the home menu.
+                        </p>
+                      </label>
+                    </li>
+                  </ul>
+                </fieldset>
+
                 <fieldset>
                   <legend>Controls</legend>
 
@@ -1273,52 +1371,6 @@
                           <i>The Girl From Ipanema.</i>
                         </p>
                       </label>
-                    </li>
-                  </ul>
-                </fieldset>
-
-                <fieldset id="game-fps-pref" class="sync-over-network">
-                  <legend>Frame Rate<span class="network-icon"></span></legend>
-                  <p class="non-indented">
-                    <span class="hide-if-network"
-                      >By default, the game will try to pick the best-performing
-                      option.
-                    </span>
-                    60 fps is recommended, motion is very smooth. Try 30 fps for
-                    a more “retro” feel, or if there are performance issues. The
-                    original game ran at perhaps 12-15 fps.
-                  </p>
-                  <p class="non-indented network">
-                    The frame rate setting applies to all players.<br />
-                    <span class="no-emoji-substitution">⚠️</span> Network games
-                    at 60 fps are experimental.
-                  </p>
-                  <ul class="less-bottom-spacing">
-                    <li class="hide-if-network">
-                      <input
-                        type="checkbox"
-                        id="radio_game_fps_auto"
-                        name="game_fps_auto"
-                        value="1"
-                        checked />
-                      <label for="radio_game_fps_auto">Choose best</label>
-                    </li>
-                    <li>
-                      <input
-                        type="radio"
-                        id="radio_game_fps_30"
-                        name="game_fps"
-                        value="30" />
-                      <label for="radio_game_fps_30">30 fps</label>
-                    </li>
-                    <li>
-                      <input
-                        type="radio"
-                        id="radio_game_fps_60"
-                        name="game_fps"
-                        value="60"
-                        checked />
-                      <label for="radio_game_fps_60">60 fps</label>
                     </li>
                   </ul>
                 </fieldset>
@@ -1827,23 +1879,6 @@
                   <legend>Radar</legend>
 
                   <ul>
-                    <li style="padding-top: 1px">
-                      <label for="cb_radar_enhanced_fx">
-                        <input
-                          type="checkbox"
-                          id="cb_radar_enhanced_fx"
-                          name="radar_enhanced_fx"
-                          value="1" />
-                        <span class="label-text"
-                          >“Extra Fancy” Radar FX 📡</span
-                        >
-                        <p class="non-indented">
-                          Smoke particles on radar, film grain-style noise on
-                          radar jamming + home screen.
-                        </p>
-                      </label>
-                    </li>
-
                     <li>
                       <label for="cb_radar_scaling">
                         <input
