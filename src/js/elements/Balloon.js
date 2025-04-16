@@ -14,7 +14,8 @@ import {
   GAME_SPEED_RATIOED,
   isSafari,
   rngBool,
-  FPS
+  FPS,
+  isMobile
 } from '../core/global.js';
 import { playSound, sounds } from '../core/sound.js';
 import { zones } from '../core/zones.js';
@@ -657,14 +658,20 @@ Balloon.radarItemConfig = ({ exports }) => ({
       let targetX = left;
       let targetY = obj.data.top - scaledHeight / 2;
 
-      const renderedWidth =
+      let renderedWidth =
         ((radarItemImg.target.width || radarItemImg.source.width / 2) / 2) *
         (data.facing === 0 ? 0.9 : 0.78);
 
       // TODO: WTF with Safari vs. everyone else on canvas height? :X
-      const renderedHeight =
+      let renderedHeight =
         (radarItemImg.target.height || radarItemImg.source.height / 2) *
         (isSafari ? 0.5 : 4);
+
+      // TODO: check if mobile Chrome on Android needs this, too.
+      if (isMobile) {
+        renderedWidth *= 0.5;
+        renderedHeight *= 0.5;
+      }
 
       ctx.drawImage(
         radarItemImg.src,
