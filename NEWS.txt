@@ -1,6 +1,14 @@
 `The latest and greatest: April 2025 Edition 🗞️`
 This is a summary of work in progress. For code-level details, see the changelog section below.
 
+`Graphics / Performance`
+
+· Hi-DPI / "Retina" screen support for 2x+ resolution rendering, sharp graphics. May impact performance on older devices.
+
+· New preferences panel for 30 / 60 fps and graphics options, hi-DPI and enhanced radar FX.
+
+· If the game switches automatically to 30 fps due to performance, hi-DPI and enhanced radar FX will be disabled. Un-check "choose best" to override.
+
 `UI miscellany`
 
 · Fixed shrapnel and "sparks" embedding in targets on impact, and fading out.
