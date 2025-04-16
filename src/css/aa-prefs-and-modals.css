@@ -646,7 +646,7 @@ body.is_iphone #game-prefs-modal button {
 
 .mac-classic ul li {
   margin-bottom: 8px;
-  margin-top: 2px;
+  margin-top: 4px;
 }
 
 .mac-classic ul.partial-bottom-spacing li {
@@ -707,12 +707,11 @@ body.is_iphone #game-prefs-modal button {
 .mac-classic ul li p,
 .mac-classic ul.real-list li {
   margin-bottom: 0;
-  margin-left: 19px;
+  margin-left: 21px;
 }
 
 .mac-classic ul.real-list li {
   display: list-item;
-  margin-left: 19px;
 }
 
 .mac-classic .indented {
@@ -746,8 +745,8 @@ body.is_iphone #game-prefs-modal button {
 
 .mac-classic ul ul.keycap-list li {
   margin-left: 14px;
-  padding-top: 2px;
-  padding-bottom: 2px;
+  padding-top: 1px;
+  padding-bottom: 1px;
 }
 
 .inline-key,
@@ -794,7 +793,7 @@ b.gamepad-button,
 
 .mac-classic input,
 .mac-classic label {
-  vertical-align: middle;
+  vertical-align: top;
 }
 
 .mac-classic label.full-width {
@@ -881,18 +880,19 @@ b.gamepad-button,
   font: inherit;
   height: 15px;
   /* Not removed via appearance */
-  margin: -0.5px 0 0 -2px;
+  margin: 0;
   padding: 0;
   /* vertical align w/text */
   position: relative;
-  transform: translateY(-0.5px);
+  /* hackish: fix radio dot positioning */
+  transform: translateY(-0.01px);
   width: 15px;
 }
 
 #game-prefs-modal .battle-list input[type='radio'] {
   /* battle list tweaks */
   margin: 0px;
-  transform: translateX(2px);
+  transform: translate(2px, 1.5px);
 }
 
 body.is_firefox .mac-classic input[type='checkbox'] {
