@@ -7,7 +7,6 @@ import {
   FPS,
   GAME_SPEED,
   TYPES,
-  demo,
   isSafari,
   noRadar,
   rng,
@@ -19,30 +18,40 @@ import { PREFS, gamePrefs } from './preferences.js';
 
 const debugCanvas = searchParams.get('debugCanvas');
 
-const canvasConfig = [
-  // dom ID vs. object name / reference - e.g., `dom.o.battlefield` / `dom.ctx.battlefield`
-  {
-    id: 'radar-canvas',
-    name: 'radar',
-    ctxOptions: { imageSmoothingEnabled: true, useDevicePixelRatio: true }
-  },
-  {
-    id: 'battlefield-canvas',
-    name: 'battlefield',
-    ctxArgs: { alpha: true },
-    ctxOptions: { imageSmoothingEnabled: false, useDevicePixelRatio: false }
-  }
-];
+let canvasConfig = [];
+let ctxOptionsById = {};
 
-const ctxOptionsById = {};
-canvasConfig.forEach((item) => (ctxOptionsById[item.id] = item.ctxOptions));
+let battlefield = 'battlefield';
+let radar = 'radar';
+
+function refreshCanvasConfig() {
+  canvasConfig = [
+    // dom ID vs. object name / reference - e.g., `dom.o.battlefield` / `dom.ctx.battlefield`
+    {
+      id: `${radar}-canvas`,
+      name: radar,
+      ctxOptions: { imageSmoothingEnabled: true, useDevicePixelRatio: true }
+    },
+    {
+      id: `${battlefield}-canvas`,
+      name: battlefield,
+      ctxOptions: {
+        imageSmoothingEnabled: false,
+        useDevicePixelRatio: !!gamePrefs.gfx_hi_dpi
+      }
+    }
+  ];
+
+  ctxOptionsById = {};
+  canvasConfig.forEach((item) => (ctxOptionsById[item.id] = item.ctxOptions));
+}
 
 // certain objects render in certain places.
 const ctxByType = {
-  'default': 'battlefield',
-  'radar-item': 'radar',
+  'default': battlefield,
+  'radar-item': radar,
   // special generic case
-  'on-radar': 'radar'
+  'on-radar': radar
 };
 
 const pos = {
@@ -377,9 +386,7 @@ const DomCanvas = () => {
     ctx.setTransform(1, 0, 0, 1, 0, 0);
 
     // restore scale, too.
-    if (ctx.ctxScale) {
-      ctx.scale(ctx.ctxScale, ctx.ctxScale);
-    }
+    ctx.scale(ctx.ctxScale || 1, ctx.ctxScale || 1);
   }
 
   function rotate(
@@ -712,8 +719,6 @@ const DomCanvas = () => {
 
     // update
     exports.data._drawFrame = game.objects.gameLoop.data.frameCount;
-
-    const ss = game.objects.view.data.screenScale;
 
     // determine target canvas by type - specified by object, type, or default.
     const ctx =
@@ -1103,7 +1108,7 @@ const DomCanvas = () => {
     fillStyle = false,
     text = ''
   ) {
-    const ctx = dom.ctx['battlefield'];
+    const ctx = dom.ctx[battlefield];
     ctx.beginPath();
     ctx.rect(cx(x), cy(y), cw(w), ch(h));
     ctx.strokeStyle = color;
@@ -1224,11 +1229,9 @@ const DomCanvas = () => {
         ? window.devicePixelRatio || 1
         : 1;
 
-      if (ctxScale > 1) {
-        // reset to natural width, for measurement and scaling
-        dom.o[name].style.width = '';
-        dom.o[name].style.height = '';
-      }
+      // reset to natural width, for measurement and scaling
+      dom.o[name].style.width = '';
+      dom.o[name].style.height = '';
 
       // measure the "natural" width
       const width = dom.o[name].offsetWidth;
@@ -1244,29 +1247,29 @@ const DomCanvas = () => {
         height: height * ctxScale
       };
 
-      // assign the "natural" width
+      // assign the scaled width
       dom.o[name].width = data.ctxLayout[name].width;
       dom.o[name].height = data.ctxLayout[name].height;
 
-      if (ctxScale > 1) {
-        // resize the canvas to 1x size, but render at (e.g.,) 2x pixel density.
-        dom.o[name].style.width = `${data.canvasLayout[name].width}px`;
-        dom.o[name].style.height = `${data.canvasLayout[name].height}px`;
+      // resize the canvas to 1x size, but render at (e.g.,) 2x pixel density if scale applies.
+      dom.o[name].style.width = `${data.canvasLayout[name].width}px`;
+      dom.o[name].style.height = `${data.canvasLayout[name].height}px`;
 
-        // reset and restore transform origin + scale.
-        dom.ctx[name].setTransform(1, 0, 0, 1, 0, 0);
+      // reset and restore transform origin + scale.
+      dom.ctx[name].setTransform(1, 0, 0, 1, 0, 0);
 
-        // hackish: tack on a reference
-        dom.ctx[name].ctxScale = ctxScale;
+      // hackish: tack on a reference
+      dom.ctx[name].ctxScale = ctxScale;
 
-        dom.ctx[name].scale(ctxScale, ctxScale);
-      }
+      dom.ctx[name].scale(ctxScale, ctxScale);
 
       applyCtxOptions();
     }
   }
 
   function init() {
+    // initial values - may change once preferences are read and/or updated.
+    refreshCanvasConfig();
     initCanvas();
     resize();
   }
@@ -1283,6 +1286,11 @@ const DomCanvas = () => {
     drawDebugRect,
     drawTrailers,
     init,
+    onGFXHiDPIChange: () => {
+      // gfx_hi_dpi preference update
+      refreshCanvasConfig();
+      init();
+    },
     resize,
     rotate,
     unrotate
@@ -1291,4 +1299,4 @@ const DomCanvas = () => {
   return exports;
 };
 
-export { pos, DomCanvas };
+export { ctxOptionsById, pos, DomCanvas };

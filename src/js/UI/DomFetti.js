@@ -1,5 +1,6 @@
 import { game } from '../core/Game.js';
 import { FPS, GAME_SPEED, TYPES, isiPhone } from '../core/global.js';
+import { ctxOptionsById } from './DomCanvas.js';
 
 // "DOMFetti" experiment - 09/2018
 // Refactored 12/2023 to render to <canvas>
@@ -10,9 +11,25 @@ let is60FPS = false;
 // e.g., 66% of #ccc
 const BACK_SIDE_COLOR = 2 / 3;
 
-var context = document
-  .getElementById('battlefield-canvas')
-  .getContext('2d', { alpha: true });
+let context;
+
+let id = 'battlefield-canvas';
+
+function checkContext() {
+  // sanity check.
+  if (context) return;
+  updateDomFettiContext();
+}
+
+function updateDomFettiContext() {
+  context = document.getElementById(id).getContext('2d', {
+    alpha: true,
+    imageSmoothingEnabled: true,
+    useDevicePixelRatio: !!ctxOptionsById[id].useDevicePixelRatio
+  });
+}
+
+// go based on prefs
 
 let activeBooms = 0;
 
@@ -509,6 +526,8 @@ function confetti(
     });
   }
 
+  checkContext();
+
   const fettis = createElements(elementCount, colors, backColors).map((o) => ({
     colors: o.colors,
     physics: o.physics
@@ -520,6 +539,8 @@ function confetti(
 
 function domFettiBoom(source, target, x, y) {
   if (!source?.data) return;
+
+  checkContext();
 
   is60FPS = FPS === 60;
 
@@ -634,4 +655,4 @@ function screenBoom() {
   });
 }
 
-export { configureColors, domFettiBoom, screenBoom };
+export { domFettiBoom, screenBoom, updateDomFettiContext };

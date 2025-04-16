@@ -47,6 +47,7 @@ import {
 import { snowStorm } from '../lib/snowstorm.js';
 import { aaLoader } from '../core/aa-loader.js';
 import { gamepad } from './gamepad.js';
+import { updateDomFettiContext } from './DomFetti.js';
 
 const prefs = {
   gameType: 'game_type'
@@ -1867,6 +1868,11 @@ function PrefsManager() {
         } else {
           gamepad.disable();
         }
+      },
+
+      gfx_hi_dpi: () => {
+        common?.domCanvas?.onGFXHiDPIChange();
+        updateDomFettiContext();
       },
 
       ground_unit_traffic_control: (isActive) => {
