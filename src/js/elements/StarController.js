@@ -1,3 +1,4 @@
+import { ctxOptionsById } from '../UI/DomCanvas.js';
 import { gamePrefs } from '../UI/preferences.js';
 import { game } from '../core/Game.js';
 import {
@@ -242,9 +243,9 @@ const StarController = () => {
 
   function resize() {
     // if there are stars, scale them relative to the new coords.
-    // Note: $$$
     if (!dom.o) return;
 
+    // Note: $$$
     let newWidth = dom.o.offsetWidth;
     let newHeight = dom.o.offsetHeight;
 
@@ -253,19 +254,25 @@ const StarController = () => {
     data.width = newWidth;
     data.height = newHeight;
 
-    dom.o.width = data.width;
-    dom.o.height = data.height;
-
-    // scale, or randomize depending on the device.
+    /**
+     * Ensure screen is filled with stars, after resizing.
+     * Scale, or randomize depending on the device.
+     */
     refreshStarCoords();
 
     // force immediate redraw.
     animate();
   }
 
+  let id = 'battlefield-canvas';
+
   function initDOM() {
-    dom.o = document.getElementById('battlefield-canvas');
-    dom.ctx = dom.o.getContext('2d', { alpha: false });
+    dom.o = document.getElementById(id);
+    dom.ctx = dom.o.getContext('2d', {
+      imageSmoothingEnabled: true,
+      alpha: false,
+      useDevicePixelRatio: !!ctxOptionsById[id].useDevicePixelRatio
+    });
   }
 
   function initStars() {
