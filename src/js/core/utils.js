@@ -757,7 +757,11 @@ const utils = {
       }
     }
 
-    let parallel = 5;
+    /**
+     * Be nice; older machines e.g., 2018 Intel Mac Mini can
+     * take up to 100 msec for a single image under load. :P
+     */
+    let parallel = 1;
 
     // start pre-fetch, in parallel
     for (let x = 0; x < parallel; x++) {
