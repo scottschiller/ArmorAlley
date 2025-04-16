@@ -18,6 +18,7 @@ import { snowStorm } from '../lib/snowstorm.js';
 import { effects } from './effects.js';
 import { keyboardMonitor, prefsManager } from '../aa.js';
 import { score } from './scores.js';
+import { utils } from './utils.js';
 
 const GameLoop = () => {
   const searchParams = new URLSearchParams(window.location.search);
@@ -348,11 +349,32 @@ const GameLoop = () => {
           FPS === 60 &&
           data.fpsAverage / FPS < 0.8
         ) {
-          game.objects.notifications.add(`🐌 Slow? Switching to 30 FPS.`);
-          gamePrefs.game_fps = 30;
-          prefsManager.events.onPrefChange['game_fps']?.(gamePrefs.game_fps);
-          // force-update FPS pref, too.
+          game.objects.notifications.add(
+            `🐌 Slow? Switching to 30 fps.\nSee "options" for more.`
+          );
+
+          let overrides = {
+            game_fps: 30,
+            radar_enhanced_fx: false,
+            gfx_hi_dpi: false
+          };
+
+          for (let o in overrides) {
+            gamePrefs[o] = overrides[o];
+            // fire change
+            prefsManager.events.onPrefChange[o]?.(overrides[o]);
+          }
+
+          // force-update prefs, too.
           prefsManager.writePrefsToStorage();
+
+          // take note.
+          utils.log({
+            info: {
+              event: 'FPS_AUTO_30',
+              fpsAverage: data.fpsAverage
+            }
+          });
         }
         data.canTestFPS = false;
       }
