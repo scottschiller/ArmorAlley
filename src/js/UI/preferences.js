@@ -70,6 +70,7 @@ const defaultPrefs = {
   'game_fps_auto': 1,
   'game_speed': 1,
   'game_speed_pitch': false,
+  'gfx_hi_dpi': true,
   'game_type': 'easy', // [easy|hard|extreme|armorgeddon]
   'gamepad': true,
   'net_game_level': '',
