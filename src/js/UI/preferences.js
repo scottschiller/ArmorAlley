@@ -1962,6 +1962,7 @@ function PrefsManager() {
       },
 
       radar_enhanced_fx: (isActive) => {
+        effects.updateNoiseOverlay(isActive);
         utils.css.addOrRemove(document.body, isActive, 'radar_enhanced_fx');
       },
 

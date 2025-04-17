@@ -500,6 +500,30 @@ const effects = {
     });
   },
 
+  updateNoiseOverlay: (enabled) => {
+    const o = document.getElementById('world-noise-overlay');
+
+    if (!o?.style) return;
+
+    if (!enabled) {
+      if (noiseOverlay) {
+        noiseOverlay.canvas = null;
+        noiseOverlay = null;
+      }
+      // reset to default CSS value, empty GIF
+      o.style.setProperty('--noise-url', '');
+      return;
+    }
+
+    noiseOverlay = makeCanvasNoise(createCanvas(256, 256));
+    noiseOverlay.animate();
+
+    o.style.setProperty(
+      '--noise-url',
+      `url(${noiseOverlay.canvas.toDataURL('image/png')})`
+    );
+  },
+
   spark: () => ({
     src: utils.image.getImageObject(
       oneOf(['explosion-spark.png', 'explosion-spark-2.png'])
@@ -584,5 +608,65 @@ const effects = {
     snowStorm.mouseMove({ clientX, clientY });
   }
 };
+
+function makeCanvasNoise(c) {
+  let alpha = true;
+
+  /**
+   * Hat tip:
+   * https://stackoverflow.com/a/22003901
+   */
+  let w = c.width;
+  let h = c.height;
+
+  let bufferCanvas = document.createElement('canvas');
+
+  // buffer 200%, give room for "random movement."
+  bufferCanvas.width = w * 2;
+  bufferCanvas.height = h * 2;
+
+  let bufferCtx = bufferCanvas.getContext('2d', { alpha });
+
+  let idata = bufferCtx.createImageData(
+    bufferCanvas.width,
+    bufferCanvas.height
+  );
+
+  let buffer32 = new Uint32Array(idata.data.buffer);
+
+  let len = buffer32.length - 1;
+
+  while (len--) {
+    buffer32[len] = Math.random() < 0.5 ? 0 : -1 >> 0;
+  }
+
+  // write to buffer
+  bufferCtx.putImageData(idata, 0, 0);
+
+  let ctx = c.getContext('2d', { alpha });
+
+  function animate() {
+    // force integer values
+    let x = (w * Math.random()) | 0;
+    let y = (h * Math.random()) | 0;
+
+    // draw noise from buffer with random offset
+    ctx.drawImage(bufferCanvas, -x, -y);
+  }
+
+  return {
+    canvas: c,
+    animate
+  };
+}
+
+function createCanvas(width, height) {
+  let c = document.createElement('canvas');
+  c.width = width;
+  c.height = height;
+  return c;
+}
+
+let noiseOverlay;
 
 export { effects };

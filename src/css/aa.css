@@ -66,6 +66,11 @@
   --monospace-bold: 'Iosevka Custom Bold', 'Fira Code', monospace;
 }
 
+#world-noise-overlay {
+  /* just so the HTML node isn't ugly in Chrome Dev Tools, frankly... */
+  --noise-url: 'data:image/gif;base64,R0lGODdhAQABAIAAAP///////ywAAAAAAQABAAACAkQBADs=';
+}
+
 b {
   font-family: var(--monospace-bold) !important;
   font-weight: 500;
@@ -305,7 +310,7 @@ body:not(.is_firefox) #radar {
    * A little nicer blend for overlapping scan-range bits.
    * Not for Firefox, however, given pink video compositing issue.
    */
-  mix-blend-mode: screen;
+  mix-blend-mode: overlay;
 }
 
 body.loaded #radar {
@@ -326,7 +331,7 @@ body.is_firefox.game-started.radar_enhanced_fx.radar_interference_blur
    * 11/2024: This breaks video rendering in Firefox on the home menu (at least on macOS?), solid pink.
    * In-game (BnB) videos seem to be OK.
    */
-  mix-blend-mode: soft-light;
+  mix-blend-mode: overlay;
 }
 
 body:not(.radar_interference_blur) #radar-container .interference {
@@ -369,7 +374,7 @@ body.radar_interference_blur
   #radar-container.interference
   .interference
   .noise {
-  background: url(../../assets/image/UI/noise-tv.webp) 0 0/128px 128px;
+  background: var(--noise-url) 0 0/128px 128px;
   bottom: 0;
   image-rendering: optimizeSpeed;
   left: -500px;
@@ -392,15 +397,18 @@ body.radar_interference_blur
   .interference
   .noise {
   /* "enhanced" version - also composited with a blend-mode filter. */
-  background-color: rgba(0, 0, 0, 0.25);
   animation: 1s steps(15) infinite both noise;
-  opacity: 0.65;
+  opacity: 0.66;
+}
+
+body:not(.game-started).radar_enhanced_fx #world-noise-overlay .noise {
+  /* less opacity on home menu. */
+  opacity: 0.35;
 }
 
 #world-noise-overlay {
   position: absolute;
-  /* initial radar offset for home screen / game menu */
-  top: 8%;
+  top: 0;
   bottom: 0;
   left: 0;
   right: 0;
@@ -426,6 +434,8 @@ body:not(.game-started).is_firefox.radar_enhanced_fx
 body.game-started:not(.radar_interference_blur) #world-noise-overlay {
   /* once started (and not flag-specific jamming / interference mode), cover radar. */
   top: 0;
+  /* and only radar. */
+  height: 8%;
 }
 
 /* special case: home screen, game menu. */
