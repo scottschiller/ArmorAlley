@@ -528,7 +528,7 @@ const effects = {
 
         for (var i = 0; i < patternPixelDataLength; i += 4) {
           // note: not full brightness e.g., 255
-          value = (Math.random() * 180) | 0;
+          value = (Math.random() * 160) | 0;
 
           patternData.data[i] = value;
           patternData.data[i + 1] = value;
