@@ -3,7 +3,6 @@ import { utils } from './core/utils.js';
 import { game } from './core/Game.js';
 import { KeyboardMonitor } from './UI/KeyboardMonitor.js';
 import { prefs, PrefsManager } from './UI/preferences.js';
-import { GameHistory } from './core/GameHistory.js';
 /**
  ╭────────────────────────────────────────────────────────────────────╮
  │                                                                    │
