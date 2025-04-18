@@ -66,7 +66,7 @@
   --monospace-bold: 'Iosevka Custom Bold', 'Fira Code', monospace;
 }
 
-#world-noise-overlay {
+#world-noise-overlay .noise {
   /* just so the HTML node isn't ugly in Chrome Dev Tools, frankly... */
   --noise-url: 'data:image/gif;base64,R0lGODdhAQABAIAAAP///////ywAAAAAAQABAAACAkQBADs=';
 }

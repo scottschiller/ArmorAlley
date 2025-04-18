@@ -567,8 +567,9 @@ const effects = {
 
   updateNoiseOverlay: (enabled) => {
     const o = document.getElementById('world-noise-overlay');
+    const oNoise = o.querySelector('.noise');
 
-    if (!o?.style) return;
+    if (!o?.style || !oNoise?.style) return;
 
     if (!enabled) {
       if (noiseOverlay) {
@@ -576,14 +577,14 @@ const effects = {
         noiseOverlay = null;
       }
       // reset to default CSS value, empty GIF
-      o.style.setProperty('--noise-url', '');
+      oNoise.style.setProperty('--noise-url', '');
       return;
     }
 
     noiseOverlay = makeCanvasNoise(createCanvas(256, 256));
     noiseOverlay.animate();
 
-    o.style.setProperty(
+    oNoise.style.setProperty(
       '--noise-url',
       `url(${noiseOverlay.canvas.toDataURL('image/png')})`
     );
