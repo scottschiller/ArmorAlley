@@ -1,18 +1,42 @@
 ## **Armor Alley: Remastered**
 
 ```
-                            ▄██▀
-                          ▄█▀
-          ▄████▄▄▄▄▄▄▄▄▄ █▀▄▄▄▄▄▄▄▄▄▄▄
-                      ▄█████▄▄▄▄  ▀▀▀
-      ▄         ▄████████████████▄
-      ██       ▀████████████████████▄
-      ▀███    ▄██████████████████████
-       ████▄▄███████████████████████▀
-      ████████▀▀▀▀▀▀▀▀████▀█▀▀▀▀█▀
-       ██▀              ██▘▘ ██▘▘
-
- A R M O R  A L L E Y :: R E M A S T E R E D
+ ╭────────────────────────────────────────────────────────────────────╮
+ │                                                                    │
+ │                                     ▄██▀                           │
+ │                                   ▄█▀                              │
+ │                   ▄████▄▄▄▄▄▄▄▄▄ █▀▄▄▄▄▄▄▄▄▄▄▄                     │
+ │                               ▄█████▄▄▄▄  ▀▀▀                      │
+ │               ▄          ▄████████████████▄                        │
+ │               ██        ▀████████████████████▄                     │
+ │               ▀███     ▄██████████████████████                     │
+ │               ████▄▄███████████████████████▀                       │
+ │               ████████▀▀▀▀▀▀▀▀████▀█▀▀▀▀█▀                         │
+ │               ██▀              ██▘▘ ██▘▘                           │
+ │                                                                    │
+ │      ████▙   ▀████▌████▙  ▀█████   █████▀ ▄██████▄ ▀████▌████▙     │
+ │     ▕█████▏   ████▌ ████▌  ▐████▌  ████▌ ████▎▐███▊ ████▌ ████▌    │
+ │     ▐▐████▎   ████▌ ████▌   █████ ▌████▌▐███▊  ████▏████▌ ████▌    │
+ │     █▌████▋   ████▌▗████▘   ▌█████▌████▌████▊  ████▌████▌▗████▘    │
+ │    ▐█▌▐████   ████▌████▘    ▌█████▌████▌████▊  ████▌████▌████▘     │
+ │    ██ ▄████▎  ████▌▝███▙    █▐████ ████▌████▊  ████▌████▌▝███▙     │
+ │   ▐█▌██████▌  ████▌ ████▌  ▕█ ███▌ ████▌▐███▊  ████ ████▌ ████▌    │
+ │   ███  ▐████  ████▌ ████▌▗▋▐█ ▐██  ████▌ ████▎▐███▊ ████▌ ████▌▗▋  │
+ │  ▄███▄ ▄████▌▄█████▄▀████▀▄██▄ █▌ ▄█████▄ ▀██████▀ ▄█████▄▀████▀   │
+ │                                                                    │
+ │       ████▙   ▀█████▀    ▀█████▀     ▀████▐███▋▀█████▀ ▀█████▀ TM  │
+ │       █████▏   █████      █████       ████ ▝██▋ ▝████   ▐███▘      │
+ │      ▐▐████▎   █████      █████       ████   ▝▋  ▝███▙ ▗███▘       │
+ │      █▌████▋   █████      █████       ████ ▗█▌    ▝███▙▝█▘         │
+ │     ▐█▌▐████   █████      █████       ████▐██▌     ▐████▌          │
+ │     ██ ▄████▎  █████      █████       ████ ▝█▌     ▐████▌          │
+ │    ▐█▌██████▌  █████    ▗▋█████    ▗▋ ████   ▗▋    ▐████▌          │
+ │    ███  ▐████  █████  ▗██▌█████  ▗██▌ ████ ▗██▌    ▐████▌          │
+ │   ▄███▄ ▄████▌▄█████▐████▌█████▌████▌▄████▐███▌   ▄██████▄         │
+ │                                                                    │
+ │                     [  R E M A S T E R E D  ]                      │
+ │                                                                    │
+ ╰────────────────────────────────────────────────────────────────────╯
 ```
 
 A browser-based interpretation of the Macintosh + MS-DOS releases of Armor Alley.
@@ -33,7 +57,7 @@ https://en.wikipedia.org/wiki/Armor_alley
 
 * History, review, tutorial, demos, "Midnight Oasis" walk-through: (1h 12m 55s): https://youtu.be/6wEMcssFJ-E
 
-- [Original article about building "V1.0"](https://www.schillmania.com/content/entries/2013/armor-alley-web-prototype/) (from 2013)
+- [Original article about building "V1.0"](https://schillmania.com/content/entries/2013/armor-alley-web-prototype/) (from 2013)
 
 - 2022 Demo, features and walk-through of "extreme" mode (55 minutes): https://youtu.be/9BQ62c7u2JM
 
@@ -42,6 +66,10 @@ https://en.wikipedia.org/wiki/Armor_alley
 For running the game locally and JS + CSS build instructions, see [src/README.md](src/README.md).
 
 ## **Changelog / Revision History**
+
+## **V3.00.2025xxxx: 2025 Work In Progress**
+
+60 fps, improved performance, revamped game logic and enemy "AI", improved mobile + touch screen support, tons of new details and effects.
 
 ## **V2.01.20230520: 10th Anniversary "Remastered" Edition Addendum**
 

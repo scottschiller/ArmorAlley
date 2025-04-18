@@ -3,25 +3,47 @@ import { utils } from './core/utils.js';
 import { game } from './core/Game.js';
 import { KeyboardMonitor } from './UI/KeyboardMonitor.js';
 import { prefs, PrefsManager } from './UI/preferences.js';
-/*
+import { GameHistory } from './core/GameHistory.js';
+/**
+ ╭────────────────────────────────────────────────────────────────────╮
+ │                                                                    │
+ │                                       ▄██▀                         │
+ │                                     ▄█▀                            │
+ │                     ▄████▄▄▄▄▄▄▄▄▄ █▀▄▄▄▄▄▄▄▄▄▄▄                   │
+ │                                 ▄█████▄▄▄▄  ▀▀▀                    │
+ │                 ▄          ▄████████████████▄                      │
+ │                 ██        ▀████████████████████▄                   │
+ │                 ▀███     ▄██████████████████████                   │
+ │                 ████▄▄███████████████████████▀                     │
+ │                 ████████▀▀▀▀▀▀▀▀████▀█▀▀▀▀█▀                       │
+ │                 ██▀              ██▘▘ ██▘▘                         │
+ │                                                                    │
+ │                                                                    │
+ │      ████▙   ▀████▌████▙  ▀█████   █████▀ ▄██████▄ ▀████▌████▙     │
+ │     ▕█████▏   ████▌ ████▌  ▐████▌  ████▌ ████▎▐███▊ ████▌ ████▌    │
+ │     ▐▐████▎   ████▌ ████▌   █████ ▌████▌▐███▊  ████▏████▌ ████▌    │
+ │     █▌████▋   ████▌▗████▘   ▌█████▌████▌████▊  ████▌████▌▗████▘    │
+ │    ▐█▌▐████   ████▌████▘    ▌█████▌████▌████▊  ████▌████▌████▘     │
+ │    ██ ▄████▎  ████▌▝███▙    █▐████ ████▌████▊  ████▌████▌▝███▙     │
+ │   ▐█▌██████▌  ████▌ ████▌  ▕█ ███▌ ████▌▐███▊  ████ ████▌ ████▌    │
+ │   ███  ▐████  ████▌ ████▌▗▋▐█ ▐██  ████▌ ████▎▐███▊ ████▌ ████▌▗▋  │
+ │  ▄███▄ ▄████▌▄█████▄▀████▀▄██▄ █▌ ▄█████▄ ▀██████▀ ▄█████▄▀████▀   │
+ │                                                                    │
+ │       ████▙   ▀█████▀    ▀█████▀     ▀████▐███▋▀█████▀ ▀█████▀ TM  │
+ │       █████▏   █████      █████       ████ ▝██▋ ▝████   ▐███▘      │
+ │      ▐▐████▎   █████      █████       ████   ▝▋  ▝███▙ ▗███▘       │
+ │      █▌████▋   █████      █████       ████ ▗█▌    ▝███▙▝█▘         │
+ │     ▐█▌▐████   █████      █████       ████▐██▌     ▐████▌          │
+ │     ██ ▄████▎  █████      █████       ████ ▝█▌     ▐████▌          │
+ │    ▐█▌██████▌  █████    ▗▋█████    ▗▋ ████   ▗▋    ▐████▌          │
+ │    ███  ▐████  █████  ▗██▌█████  ▗██▌ ████ ▗██▌    ▐████▌          │
+ │   ▄███▄ ▄████▌▄█████▐████▌█████▌████▌▄████▐███▌   ▄██████▄         │
+ │                                                                    │
+ │                     [  R E M A S T E R E D  ]                      │
+ │                                                                    │
+ ╰────────────────────────────────────────────────────────────────────╯
 
-                                         ████▙   ▀████▌████▙  ▀█████   █████▀ ▄██████▄ ▀████▌████▙         ████▙   ▀█████▀    ▀█████▀     ▀████▐███▋▀█████▀ ▀█████▀ TM
-                        ▄██▀            ▕█████▏   ████▌ ████▌  ▐████▌  ████▌ ████▎▐███▊ ████▌ ████▌        █████▏   █████      █████       ████ ▝██▋ ▝████   ▐███▘
-                      ▄█▀               ▐▐████▎   ████▌ ████▌   █████ ▌████▌▐███▊  ████▏████▌ ████▌       ▐▐████▎   █████      █████       ████   ▝▋  ▝███▙ ▗███▘
-      ▄████▄▄▄▄▄▄▄▄▄ █▀▄▄▄▄▄▄▄▄▄▄▄      █▌████▋   ████▌▗████▘   ▌█████▌████▌████▊  ████▌████▌▗████▘       █▌████▋   █████      █████       ████ ▗█▌    ▝███▙▝█▘
-                  ▄█████▄▄▄▄  ▀▀▀      ▐█▌▐████   ████▌████▘    ▌█████▌████▌████▊  ████▌████▌████▘       ▐█▌▐████   █████      █████       ████▐██▌     ▐████▌
-  ▄          ▄████████████████▄        ██ ▄████▎  ████▌▝███▙    █▐████ ████▌████▊  ████▌████▌▝███▙       ██ ▄████▎  █████      █████       ████ ▝█▌     ▐████▌
-  ██        ▀████████████████████▄    ▐█▌██████▌  ████▌ ████▌  ▕█ ███▌ ████▌▐███▊  ████ ████▌ ████▌     ▐█▌██████▌  █████    ▗▋█████    ▗▋ ████   ▗▋    ▐████▌
-  ▀███     ▄██████████████████████    ███  ▐████  ████▌ ████▌▗▋▐█ ▐██  ████▌ ████▎▐███▊ ████▌ ████▌▗▋   ███  ▐████  █████  ▗██▌█████  ▗██▌ ████ ▗██▌    ▐████▌
-   ████▄▄███████████████████████▀    ▄███▄ ▄████▌▄█████▄▀████▀▄██▄ █▌ ▄█████▄ ▀██████▀ ▄█████▄▀████▀   ▄███▄ ▄████▌▄█████▐████▌█████▌████▌▄████▐███▌   ▄██████▄
-  ████████▀▀▀▀▀▀▀▀████▀█▀▀▀▀█▀
-   ██▀              ██▘▘ ██▘▘
-
-  ---------------------------------------------
-  A R M O R  A L L E Y  ::  R E M A S T E R E D
-  --------- 10th Anniversary Edition ----------
-
-  A browser-based interpretation of the Macintosh + MS-DOS releases of Armor Alley.
+  A browser-based interpretation of the Mac + MS-DOS releases of Armor Alley.
 
   Game, overview, tutorials etc.
   https://armor-alley.net/
@@ -33,22 +55,25 @@ import { prefs, PrefsManager } from './UI/preferences.js';
   https://github.com/scottschiller/ArmorAlley/
 
   Original development and history (2013)
-  https://www.schillmania.com/content/entries/2013/armor-alley-web-prototype/
+  https://schillmania.com/content/entries/2013/armor-alley-web-prototype/
 
   Original game Copyright (C) 1989 - 1991, Information Access Technologies.
   https://en.wikipedia.org/wiki/Armor_alley
 
-  Images, text and other portions of the original game used with permission under an ISC license.
-  Original sound effects could not be re-licensed; modern replacements used from freesound.org.
+  Images, text and other portions of the original game used with permission
+  under an ISC license. Original sound effects could not be re-licensed;
+  modern replacements used from freesound.org.
 
-  New game provided under the Attribution-NonCommercial 3.0 Unported (CC BY-NC 3.0) License:
+  This version of the game is provided under the Attribution-NonCommercial
+  3.0 Unported (CC BY-NC 3.0) License:
   https://creativecommons.org/licenses/by-nc/3.0/
 
-  General disclaimer: This is a fun personal side project. The code could be tightened up a bit.
+  General disclaimer:
+  This is a fun personal side project. The code could be tightened up a bit.
 
-  This release:     V2.01.20230926
-  Previous release: V2.0.20230501
-  Original release: V1.0.20131031
+  This release:     V3.00.2025xxxx (work in progress)
+  Previous release: V2.01.20230810
+  Original release: V1.00.20131031
 
   For revision history, see README.md and CHANGELOG.txt.
 
