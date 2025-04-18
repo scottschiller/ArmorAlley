@@ -25,30 +25,48 @@
  */
 
 function aa(callback) {
-  const logo = [
-    '                           ▄██▀',
-    '                          ▄█▀',
-    '          ▄████▄▄▄▄▄▄▄▄▄ █▀▄▄▄▄▄▄▄▄▄▄▄',
-    '                      ▄█████▄▄▄▄  ▀▀▀',
-    '      ▄         ▄████████████████▄',
-    '      ██       ▀████████████████████▄',
-    '      ▀███    ▄██████████████████████',
-    '       ████▄▄███████████████████████▀',
-    '      ████████▀▀▀▀▀▀▀▀████▀█▀▀▀▀█▀',
-    '       ██▀              ██▘▘ ██▘▘',
-    ''
-  ];
-  const label = 'A R M O R  A L L E Y :: R E M A S T E R E D';
-  // in living color.
-  console.log('\x1b[0m', '');
-  console.log('\x1b[32m', logo.join('\n'));
-  console.log('\x1b[33m', label);
+  /**
+   * Shenanigans: AA "logo" in living (ANSI) color.
+   * Parse out and style the logo for display in terminals.
+   */
+  let start = headerFileContents.indexOf('╭');
+  let end = headerFileContents.indexOf('╯');
+  let header = headerFileContents.substring(start, end + 1);
+
+  // white, green
+  let w = '\x1b[0m';
+  let g = '\x1b[32m';
+
+  // the last wheel on the chopper.
+  let chopperWheel = '██▘▘';
+  let chopperEnd = header.lastIndexOf(chopperWheel) + chopperWheel.length;
+
+  let top = header.substring(0, chopperEnd);
+  let bottom = header.substring(chopperEnd);
+
+  // top border, run until end of line
+  top = top.replace('╭', `${w}╭`);
+
+  // middle
+  top = top.replace(/│/g, `${w}│${g}`);
+
+  // rest of logo is in white.
+  top += w;
+
+  let logo = top + bottom;
+
+  console.log('\x1b[32m', logo);
+
   // reset color
   console.log('\x1b[0m', '');
+
   callback();
 }
 
 const fs = require('fs');
+
+const headerFileName = 'aa_header.txt';
+const headerFileContents = fs.readFileSync(`src/${headerFileName}`, 'utf8');
 
 // npmjs.com/package/[name] unless otherwise specified
 const { src, dest, series, task } = require('gulp');
@@ -171,7 +189,7 @@ const standaloneFiles = [
   `${assetPath}/${audioPath}/wav/danger_zone_midi_doom_style.wav`
 ];
 
-const headerFile = () => root('aa_header.txt');
+const headerFile = () => root(headerFileName);
 const css = (file) => root(`${cssPath}/${file}.css`);
 const js = (file) => root(`${jsPath}/${file}.js`);
 const html = (file) => root(`${htmlPath}/${file}.html`);
@@ -236,12 +254,13 @@ const terserOpts = {
   format: {
     ecma: '2016',
     indent_level: 0,
-    preamble: [
-      `/**`,
-      ` * ARMOR ALLEY 🚁`,
-      ` * Build: ${new Date().toLocaleString()}`,
-      ` */`
-    ].join('\n') + '\n\n' + fs.readFileSync(headerFile(), 'utf8')
+    preamble:
+      [
+        `/**`,
+        ` * ARMOR ALLEY 🚁`,
+        ` * Build: ${new Date().toLocaleString()}`,
+        ` */`
+      ].join('\n') + `\n\n${headerFileContents}`
   }
 };
 
@@ -272,7 +291,6 @@ function minifyJS() {
 }
 
 function headerJS() {
-
   // prepend is no longer needed, done via minify.
   return src(bundleFile()).pipe(dest(dp.js));
   /*
