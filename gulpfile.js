@@ -48,6 +48,8 @@ function aa(callback) {
   callback();
 }
 
+const fs = require('fs');
+
 // npmjs.com/package/[name] unless otherwise specified
 const { src, dest, series, task } = require('gulp');
 const rename = require('gulp-rename');
@@ -215,8 +217,32 @@ const minifyInlineOpts = {
 
 const terserOpts = {
   // https://github.com/terser/terser#minify-options
-  compress: true,
-  ecma: '2016'
+  module: true,
+  ecma: '2016',
+  compress: {
+    passes: 2,
+    unsafe_arrows: true,
+    unsafe_proto: true,
+    unsafe_undefined: true,
+    unsafe_comps: true,
+    unsafe_Function: true,
+    unsafe_methods: true
+  },
+  mangle: {
+    eval: true,
+    module: true,
+    toplevel: true
+  },
+  format: {
+    ecma: '2016',
+    indent_level: 0,
+    preamble: [
+      `/**`,
+      ` * ARMOR ALLEY 🚁`,
+      ` * Build: ${new Date().toLocaleString()}`,
+      ` */`
+    ].join('\n') + '\n\n' + fs.readFileSync(headerFile(), 'utf8')
+  }
 };
 
 const rollupOpts = {
@@ -246,9 +272,14 @@ function minifyJS() {
 }
 
 function headerJS() {
+
+  // prepend is no longer needed, done via minify.
+  return src(bundleFile()).pipe(dest(dp.js));
+  /*
   return src([headerFile(), bundleFile()])
     .pipe(concat(bundleFile()))
     .pipe(dest('.'));
+  */
 }
 
 function headerCSS() {
