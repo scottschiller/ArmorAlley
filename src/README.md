@@ -1,19 +1,44 @@
-**Armor Alley: Remastered**
----
-~~~
-                            ▄██▀      
-                          ▄█▀         
-          ▄████▄▄▄▄▄▄▄▄▄ █▀▄▄▄▄▄▄▄▄▄▄▄
-                      ▄█████▄▄▄▄  ▀▀▀ 
-      ▄         ▄████████████████▄   
-      ██       ▀████████████████████▄
-      ▀███    ▄██████████████████████
-       ████▄▄███████████████████████▀ 
-      ████████▀▀▀▀▀▀▀▀████▀█▀▀▀▀█▀
-       ██▀              ██▘▘ ██▘▘
+## **Armor Alley: Remastered**
 
- A R M O R  A L L E Y :: R E M A S T E R E D
-~~~
+```
+ ╭────────────────────────────────────────────────────────────────────╮
+ │                                                                    │
+ │                                       ▄██▀                         │
+ │                                     ▄█▀                            │
+ │                     ▄████▄▄▄▄▄▄▄▄▄ █▀▄▄▄▄▄▄▄▄▄▄▄                   │
+ │                                 ▄█████▄▄▄▄  ▀▀▀                    │
+ │                 ▄          ▄████████████████▄                      │
+ │                 ██        ▀████████████████████▄                   │
+ │                 ▀███     ▄██████████████████████                   │
+ │                 ████▄▄████████████████████████▀                    │
+ │                 ████████▀▀▀▀▀▀▀▀████▀█▀▀▀▀█▀                       │
+ │                 ██▀               ██▘▘ ██▘▘                        │
+ │                                                                    │
+ │                                                                    │
+ │      ████▙   ▀████▌████▙  ▀█████   █████▀ ▄██████▄ ▀████▌████▙     │
+ │     ▕█████▏   ████▌ ████▌  ▐████▌  ████▌ ████▎▐███▊ ████▌ ████▌    │
+ │     ▐▐████▎   ████▌ ████▌   █████ ▌████▌▐███▊  ████▏████▌ ████▌    │
+ │     █▌████▋   ████▌▗████▘   ▌█████▌████▌████▊  ████▌████▌▗████▘    │
+ │    ▐█▌▐████   ████▌████▘    ▌█████▌████▌████▊  ████▌████▌████▘     │
+ │    ██ ▄████▎  ████▌▝███▙    █▐████ ████▌████▊  ████▌████▌▝███▙     │
+ │   ▐█▌██████▌  ████▌ ████▌  ▕█ ███▌ ████▌▐███▊  ████ ████▌ ████▌    │
+ │   ███  ▐████  ████▌ ████▌▗▋▐█ ▐██  ████▌ ████▎▐███▊ ████▌ ████▌▗▋  │
+ │  ▄███▄ ▄████▌▄█████▄▀████▀▄██▄ █▌ ▄█████▄ ▀██████▀ ▄█████▄▀████▀   │
+ │                                                                    │
+ │       ████▙   ▀█████▀    ▀█████▀     ▀████▐███▋▀█████▀ ▀█████▀ TM  │
+ │       █████▏   █████      █████       ████ ▝██▋ ▝████   ▐███▘      │
+ │      ▐▐████▎   █████      █████       ████   ▝▋  ▝███▙ ▗███▘       │
+ │      █▌████▋   █████      █████       ████ ▗█▌    ▝███▙▝█▘         │
+ │     ▐█▌▐████   █████      █████       ████▐██▌     ▐████▌          │
+ │     ██ ▄████▎  █████      █████       ████ ▝█▌     ▐████▌          │
+ │    ▐█▌██████▌  █████    ▗▋█████    ▗▋ ████   ▗▋    ▐████▌          │
+ │    ███  ▐████  █████  ▗██▌█████  ▗██▌ ████ ▗██▌    ▐████▌          │
+ │   ▄███▄ ▄████▌▄█████▐████▌█████▌████▌▄████▐███▌   ▄██████▄         │
+ │                                                                    │
+ │                     [  R E M A S T E R E D  ]                      │
+ │                                                                    │
+ ╰────────────────────────────────────────────────────────────────────╯
+```
 
 A browser-based interpretation of the Macintosh + MS-DOS releases of Armor Alley.
 
@@ -31,12 +56,11 @@ https://en.wikipedia.org/wiki/Armor_alley
 
 ## Quick links
 
-* 10th Anniversary summary video (3m 45s): https://youtu.be/oYUCUvg02rY
+- 10th Anniversary summary video (3m 45s): https://youtu.be/oYUCUvg02rY
 
-* 2022 Demo, features and walk-through of "extreme" mode (55 minutes): https://youtu.be/9BQ62c7u2JM 
+- 2022 Demo, features and walk-through of "extreme" mode (55 minutes): https://youtu.be/9BQ62c7u2JM
 
-* [Original article about building "V1.0"](https://www.schillmania.com/content/entries/2013/armor-alley-web-prototype/) (from 2013)
-
+- [Original article about building "V1.0"](https://schillmania.com/content/entries/2013/armor-alley-web-prototype/) (from 2013)
 
 ## Developer Notes
 
@@ -54,23 +78,23 @@ The npm `http-server` package is popular and convenient, and supports byte servi
 
 **Install `http-server`**
 
-* Install [npm + nodeJS](https://nodejs.org), if you don't have it yet. On a Mac with homebrew, try `brew install npm`.
+- Install [npm + nodeJS](https://nodejs.org), if you don't have it yet. On a Mac with homebrew, try `brew install npm`.
 
-* From the command prompt, within the Armor Alley directory:
+- From the command prompt, within the Armor Alley directory:
 
-    `npm install http-server`
+  `npm install http-server`
 
-    If all is well, you should now be able to start the server and load Armor Alley.
+  If all is well, you should now be able to start the server and load Armor Alley.
 
 **Start `http-server`**
 
-* `npx http-server`
+- `npx http-server`
 
   At the time of writing, `http-server` uses port 8080 by default. Your OS may prompt you to allow incoming connections on this port.
 
 **Start the game**
 
-* Open a browser, and load up [http://localhost:8080/](http://localhost:8080/).
+- Open a browser, and load up [http://localhost:8080/](http://localhost:8080/).
 
 If everything is working, you should be looking at your local copy of Armor Alley in your browser of choice. If you use uMatrix or other browser security add-ons, you may need to allow JS + CSS for `localhost`.
 
@@ -84,9 +108,9 @@ If everything is working, you should be looking at your local copy of Armor Alle
 
 **Install required dev dependencies**
 
-* Install [npm + nodeJS](https://nodejs.org), if you don't have it yet. On a Mac with homebrew, try `brew install npm`. The AA project uses a variety of npm packages ("libraries") for its build process.
+- Install [npm + nodeJS](https://nodejs.org), if you don't have it yet. On a Mac with homebrew, try `brew install npm`. The AA project uses a variety of npm packages ("libraries") for its build process.
 
-* With `npm` installed, run this command within the AA home directory (which has `package.json`):
+- With `npm` installed, run this command within the AA home directory (which has `package.json`):
 
   `npm install`
 
@@ -98,15 +122,15 @@ If everything is working, you should be looking at your local copy of Armor Alle
 
 **Install required system libraries**
 
-* The build process for Armor Alley includes encoding .WAV audio to .MP3 and .OGG formats via `ffmpeg`, and building spritesheets via `imagemagick`.
+- The build process for Armor Alley includes encoding .WAV audio to .MP3 and .OGG formats via `ffmpeg`, and building spritesheets via `imagemagick`.
 
-* You will need to install `ffmpeg` with `libmp3lame` and `libvorbis` support in order to encode .MP3 and .OGG, respectively. You may be able to obtain a precompiled binary that has these options. Package managers like `brew`, `apt-get` etc. are likely a good place to start. On macOS with "homebrew", Vorbis and lame may be included by default - so `brew install ffmpeg` may work. If not, `brew install ffmpeg --with-theora --with-libvorbis` may be the next thing to try.
+- You will need to install `ffmpeg` with `libmp3lame` and `libvorbis` support in order to encode .MP3 and .OGG, respectively. You may be able to obtain a precompiled binary that has these options. Package managers like `brew`, `apt-get` etc. are likely a good place to start. On macOS with "homebrew", Vorbis and lame may be included by default - so `brew install ffmpeg` may work. If not, `brew install ffmpeg --with-theora --with-libvorbis` may be the next thing to try.
 
-* On Windows, `winget` is available by default; try `winget install "FFmpeg (Essentials Build)"` for a build with MP3 + OGG support. For imagemagick, you can try `winget install ImageMagick.Q8`.
+- On Windows, `winget` is available by default; try `winget install "FFmpeg (Essentials Build)"` for a build with MP3 + OGG support. For imagemagick, you can try `winget install ImageMagick.Q8`.
 
 **Build the JS bundle + minified CSS**
 
-* To build the assets, run this from the CLI in the AA home directory (which has `gulpfile.js`)...
+- To build the assets, run this from the CLI in the AA home directory (which has `gulpfile.js`)...
 
   `gulp`
 
@@ -133,9 +157,11 @@ A "vintage" Apache `.htaccess` file is provided that sets 1-year cache headers o
 By default, the boot loader appends the versioning string to JS + CSS assets in production.
 
 The versioning pattern allows for a ".V" to be appended to a static file, so `aa.css.V123` actually hits `aa.css` on disk.
+
 ```
 RewriteRule (.*)\.(.*)\.[vV]\d+$ $1.$2 [L]
 ```
+
 You may notice a 404 when loading the game, where a JS file fails. In dev, this is not fatal and can be ignored. If your server doesn't grok `.htaccess` files, then the request for e.g. `dist/aa.js.V20240404` will throw a 404 when the actual file on disk is `dist/aa.js`.
 
 If you aren't using Apache in production, then asset versioning will fail and the boot loader will fall back to loading without the versioning. To disable the versioning entirely, comment out the line that assigns `v` the version string, e.g., `v = '.V20240420';` within `index.html`.
