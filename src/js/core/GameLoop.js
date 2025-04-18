@@ -123,6 +123,9 @@ const GameLoop = () => {
     // update all setTimeout()-style FrameTimeout() instances.
     frameTimeoutManager.animate();
 
+    // enhanced jamming FX
+    effects.battlefieldNoise();
+
     // points, bonus, level / difficulty UI
     score.animate();
 

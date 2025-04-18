@@ -500,6 +500,71 @@ const effects = {
     });
   },
 
+  battlefieldNoise: () => {
+    /**
+     * Battlefield noise overlay bits
+     * Hat tip: https://codepen.io/zadvorsky/pen/PwyoMm
+     */
+
+    if (!gamePrefs.radar_enhanced_fx) return;
+
+    if (
+      game.data.started &&
+      common.domCanvas.dom?.o?.battlefield &&
+      game.objects.radar.data.isJammed
+    ) {
+      // first-time create
+      if (!patternCanvas) {
+        patternCanvas = document.createElement('canvas');
+        patternCanvas.width = patternSize;
+        patternCanvas.height = patternSize;
+        patternCtx = patternCanvas.getContext('2d', { alpha: true });
+        patternData = patternCtx.createImageData(patternSize, patternSize);
+      }
+
+      // draw new noise, updating 30 times per second
+      if (FPS === 30 || game.objects.gameLoop.data.frameCount % 2 === 0) {
+        var value;
+
+        for (var i = 0; i < patternPixelDataLength; i += 4) {
+          // note: not full brightness e.g., 255
+          value = (Math.random() * 180) | 0;
+
+          patternData.data[i] = value;
+          patternData.data[i + 1] = value;
+          patternData.data[i + 2] = value;
+          // only show a fraction of noise
+          patternData.data[i + 3] = Math.random() > 0.25 ? patternAlpha : 0;
+        }
+
+        patternCtx.putImageData(patternData, 0, 0);
+      }
+
+      common.domCanvas.dom.ctx.battlefield.fillStyle =
+        common.domCanvas.dom.ctx.battlefield.createPattern(
+          patternCanvas,
+          'repeat'
+        );
+
+      // only draw on existing content - i.e., not on empty battlefield space
+      common.domCanvas.dom.ctx.battlefield.globalCompositeOperation =
+        'source-atop';
+
+      common.domCanvas.dom.ctx.battlefield.fillRect(
+        0,
+        0,
+        common.domCanvas.data.canvasLayout.battlefield.width,
+        common.domCanvas.data.canvasLayout.battlefield.height
+      );
+
+      // restore the default composite mode.
+      common.domCanvas.dom.ctx.battlefield.globalCompositeOperation =
+        'source-over';
+    }
+  },
+
+  makeCanvasNoise,
+
   updateNoiseOverlay: (enabled) => {
     const o = document.getElementById('world-noise-overlay');
 
@@ -668,5 +733,14 @@ function createCanvas(width, height) {
 }
 
 let noiseOverlay;
+
+// battlefield noise bits
+var patternSize = 64,
+  patternAlpha = 72; // 0-255
+
+var patternPixelDataLength = patternSize * patternSize * 4,
+  patternCanvas,
+  patternCtx,
+  patternData;
 
 export { effects };
