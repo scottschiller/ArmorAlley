@@ -127,8 +127,8 @@ body.bnb #game-menu-wrapper.active {
 }
 
 #game-menu-wrapper .logo-overlay-cutout {
-  mask-image: url(../../assets/image/UI/armor-alley-wordmark-white.webp);
-  -webkit-mask-image: url(../../assets/image/UI/armor-alley-wordmark-white.webp);
+  mask-image: url(../../assets/image/UI/armor-alley-wordmark.svg);
+  -webkit-mask-image: url(../../assets/image/UI/armor-alley-wordmark.svg);
   mask-size: contain;
   -webkit-mask-size: contain;
   mask-repeat: no-repeat;
@@ -319,7 +319,7 @@ body.auto-start.is-mobile.loaded.has-gamepad #start-game-mobile-hint {
 
 #logo-image {
   display: block;
-  width: 100%;
+  max-width: 100%;
   visibility: hidden;
 }
 

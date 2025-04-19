@@ -271,7 +271,7 @@ function init() {
     if (!lg) return;
     // wait until image load, then poke the animation again to re-start it.
     lg.style.animationDuration = '99s';
-    utils.image.load('UI/armor-alley-wordmark-white.webp', () => {
+    utils.image.load('UI/armor-alley-wordmark.svg', () => {
       lg.style.animationDuration = '';
       lg = null;
     });
