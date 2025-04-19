@@ -306,15 +306,24 @@ body.is_iphone .mac-classic ul.real-list li {
     font-size: calc(6px * var(--prefs-font-scale));
   }
 
-  body.is_iphone #game-prefs-modal:not(.select-level) ul li ul li label,
+  /**
+   * Insane iOS Safari font size hacks on selective nodes, need WTF debugging.
+   * Bad HTML, render bug, something else?
+   */
+  body.is_iphone
+    #game-prefs-modal:not(.select-level)
+    ul
+    li
+    ul:not(.real-list)
+    li
+    label,
   body.is_iphone
     #game-prefs-modal:not(.select-level)
     fieldset
-    ul
-    li
-    .inline-option {
-    /* fix screwy nested(?) label sizing. invalid HTML? cause unclear. */
-    font-size: calc(9px * var(--prefs-font-scale));
+    ul:not(.real-list)
+    li.inline-option {
+    font-size: calc(9.5px * var(--prefs-font-scale));
+    vertical-align: -webkit-baseline-middle;
   }
 
   body.is_iphone #game-prefs-modal:not(.select-level) fn.disclaimer {
@@ -677,6 +686,13 @@ body.is_iphone #game-prefs-modal button {
 
 .mac-classic ul li:last-of-type {
   margin-bottom: 4px;
+}
+
+@media screen and (orientation: landscape) {
+  body.is-mobile #select-more-info {
+    /* WTF, reset font-size for iOS Safari only in landscape??? */
+    font-size: calc(11px * var(--prefs-font-scale)) !important;
+  }
 }
 
 .mac-classic .more-bottom-spacing,
