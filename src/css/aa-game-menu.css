@@ -818,6 +818,11 @@ body.is-mobile .generic-cta.large {
   top: -2px;
 }
 
+body.is_floppy #start-network-game {
+  /* hide network for floppy disk version */
+  display: none;
+}
+
 @media screen and (max-width: 900px) and (orientation: portrait) {
   /**
    * Special case: On smaller screens, simplify UI.

@@ -871,6 +871,11 @@ let game = (() => {
 
     if (isChrome) bodyCSS.push('is_chrome');
 
+    if (window.aaFloppy) {
+      // 360 or 1200K floppy disk build
+      bodyCSS.push('is_floppy');
+    }
+
     if (isMobile) {
       bodyCSS.push('is-mobile');
 
