@@ -1183,6 +1183,12 @@ body.game-started #network-prompt {
   border-width: 1px;
 }
 
+body.is-mobile.is_safari #network-options > ul > li {
+  /* mobile Safari: double margins for some reason here? :X */
+  margin-top: 0px;
+  margin-bottom: 5px;
+}
+
 #network-options-chat-box {
   border: 0.5px solid #999;
   border-bottom: none;
