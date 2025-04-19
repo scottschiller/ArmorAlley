@@ -272,6 +272,15 @@ body.is_iphone .mac-classic ul.real-list li {
   padding-bottom: 0px;
 }
 
+.mac-classic ul.real-list.double-indent {
+  /* for bulleted lists */
+  margin-left: 14px;
+}
+
+.mac-classic ul.real-list.paragraph-flush-left p {
+  margin-left: 0px;
+}
+
 @media screen and (orientation: landscape) {
   body.is-mobile.is_safari:not(.is_iphone)
     #game-prefs-modal.select-level
