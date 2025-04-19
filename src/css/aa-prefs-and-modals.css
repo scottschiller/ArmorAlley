@@ -42,16 +42,7 @@ body:not(.is_iphone).prefs-modal-open.network #game-prefs-modal {
 
 body.is_iphone #game-prefs-modal {
   /* portrait */
-  top: 51%;
-}
-
-@media screen and (orientation: landscape) {
-  body.is_iphone #game-prefs-modal {
-    top: 52.5%;
-    /* font size + scaling hacks for entire modal */
-    width: 440px;
-    --prefs-font-scale: 0.9;
-  }
+  top: 54%;
 }
 
 body.is_iphone #game-prefs-modal .body {
@@ -60,7 +51,7 @@ body.is_iphone #game-prefs-modal .body {
 }
 
 body.is_iphone #game-prefs-modal #game-prefs-form {
-  max-height: 73.5vh;
+  max-height: 80vh;
 }
 
 /* larger if a standalone / homescreen app */
@@ -70,6 +61,17 @@ body.is_standalone #game-prefs-modal .body {
 
 body.is_standalone #game-prefs-modal #game-prefs-form {
   max-height: 79vh;
+}
+
+@media screen and (orientation: landscape) {
+  body.is_iphone #game-prefs-modal {
+    width: 500px;
+    top: 52.5%;
+  }
+  body.is_iphone #game-prefs-modal #game-prefs-form {
+    /* prevent overflowing radar */
+    max-height: 75vh;
+  }
 }
 
 #game-prefs-submit {
@@ -383,16 +385,12 @@ body.is_iphone .mac-classic ul.real-list li {
   }
   body.is_iphone #game-prefs-modal.select-level .body {
     /* "select level" needs to be a bit smaller. */
-    font-size: calc(8.5px * var(--prefs-font-scale));
+    font-size: calc(9.5px * var(--prefs-font-scale));
   }
   body.is_iphone #game-prefs-modal fieldset {
     /* tighten up modal spacing at large */
     margin: 0px 6px 10px 6px;
     padding: 0px 8px 4px 8px;
-  }
-
-  body.is_iphone #game-prefs-modal .battle-list li {
-    line-height: 1.5em;
   }
 }
 
