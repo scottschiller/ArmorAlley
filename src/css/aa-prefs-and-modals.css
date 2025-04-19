@@ -688,6 +688,11 @@ body.is_iphone #game-prefs-modal button {
   margin-bottom: 4px;
 }
 
+body.is-mobile #select-more-info {
+  /* hackish: indentation for alignment */
+  margin-left: calc(6.5px * var(--prefs-font-scale));
+}
+
 @media screen and (orientation: landscape) {
   body.is-mobile #select-more-info {
     /* WTF, reset font-size for iOS Safari only in landscape??? */
@@ -927,7 +932,6 @@ body.is-mobile.is_safari #game-prefs-modal input[type='checkbox'],
 body.is_safari #game-prefs-modal input[type='radio'] {
   /* desktop Safari + mobile shenanigans */
   vertical-align: top;
-  top: -1px;
 }
 
 #game-prefs-modal .battle-list input[type='radio'] {
