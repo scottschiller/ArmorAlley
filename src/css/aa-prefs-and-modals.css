@@ -898,10 +898,17 @@ b.gamepad-button,
   width: 15px;
 }
 
+body.is-mobile.is_safari #game-prefs-modal input[type='checkbox'],
+body.is_safari #game-prefs-modal input[type='radio'] {
+  /* desktop Safari + mobile shenanigans */
+  vertical-align: top;
+  top: -1px;
+}
+
 #game-prefs-modal .battle-list input[type='radio'] {
   /* battle list tweaks */
   margin: 0px;
-  transform: translate(2px, 1.5px);
+  transform: translate(2px, 1px);
 }
 
 body.is_firefox .mac-classic input[type='checkbox'] {
