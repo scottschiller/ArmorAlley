@@ -680,22 +680,24 @@
                     <li class="allow-in-game-updates">
                       <ul class="less-bottom-spacing">
                         <li>
+                          <input
+                            type="checkbox"
+                            id="cb_lock_step"
+                            name="lock_step"
+                            value="1"
+                            data-allow-in-game-updates="1" />
                           <label for="cb_lock_step">
-                            <input
-                              type="checkbox"
-                              id="cb_lock_step"
-                              name="lock_step"
-                              value="1"
-                              data-allow-in-game-updates="1" />
                             <span class="label-text"
                               >"Lock Step" Game Sync</span
-                            >
-                            <p class="non-indented">
+                            ></label
+                          >
+                          <p class="non-indented">
+                            <label for="cb_lock_step">
                               Trade-off: Clients slow down together, instead of
                               one side skipping frames to stay in sync. Try this
                               option if the game feels unstable or janky.
-                            </p>
-                          </label>
+                            </label>
+                          </p>
                         </li>
                       </ul>
                     </li>
@@ -1170,18 +1172,20 @@
 
                   <ul class="less-bottom-spacing">
                     <li>
+                      <input
+                        type="checkbox"
+                        id="cb_radar_enhanced_fx"
+                        name="radar_enhanced_fx"
+                        value="1" />
                       <label for="cb_radar_enhanced_fx">
-                        <input
-                          type="checkbox"
-                          id="cb_radar_enhanced_fx"
-                          name="radar_enhanced_fx"
-                          value="1" />
                         <span class="label-text">Film grain + particles</span>
-                        <p class="non-indented">
+                      </label>
+                      <p class="non-indented">
+                        <label for="cb_radar_enhanced_fx">
                           Smoke on radar, and subtle screen noise for radar
                           jamming and the home menu.
-                        </p>
-                      </label>
+                        </label>
+                      </p>
                     </li>
                   </ul>
                 </fieldset>
@@ -1248,24 +1252,24 @@
 
                       <ul>
                         <li class="compact">
+                          <input
+                            type="radio"
+                            id="mobile_controls_location_left"
+                            name="mobile_controls_location"
+                            value="left"
+                            checked />
                           <label for="mobile_controls_location_left">
-                            <input
-                              type="radio"
-                              id="mobile_controls_location_left"
-                              name="mobile_controls_location"
-                              value="left"
-                              checked />
                             Left
                           </label>
                         </li>
 
                         <li>
+                          <input
+                            type="radio"
+                            id="mobile_controls_location_right"
+                            name="mobile_controls_location"
+                            value="right" />
                           <label for="mobile_controls_location_right">
-                            <input
-                              type="radio"
-                              id="mobile_controls_location_right"
-                              name="mobile_controls_location"
-                              value="right" />
                             Right
                           </label>
                         </li>
@@ -1274,15 +1278,17 @@
                     <li class="compact">
                       <ul>
                         <li class="compact">
+                          <input
+                            type="checkbox"
+                            id="cb_gamepad"
+                            name="gamepad"
+                            value="1"
+                            checked />
                           <label for="cb_gamepad">
-                            <input
-                              type="checkbox"
-                              id="cb_gamepad"
-                              name="gamepad"
-                              value="1"
-                              checked />
-                            <span class="label-text">Gamepad Support</span>
-                          </label>
+                            <span class="label-text">
+                              Gamepad Support
+                            </span></label
+                          >
                         </li>
                       </ul>
 
@@ -1325,27 +1331,29 @@
 
                   <ul>
                     <li>
+                      <input
+                        type="checkbox"
+                        id="cb_sound"
+                        name="sound"
+                        value="1"
+                        checked />
                       <label for="cb_sound">
-                        <input
-                          type="checkbox"
-                          id="cb_sound"
-                          name="sound"
-                          value="1"
-                          checked />
                         <span class="label-text">Sound Effects + Volume</span>
                       </label>
                       <div>
                         <label for="main_volume">
                           <span class="label-text"></span>
-                          <input
-                            type="range"
-                            id="main_volume"
-                            name="volume"
-                            min="0"
-                            max="10"
-                            value="7"
-                            step="1"
-                            class="range-slider" />
+                        </label>
+                        <input
+                          type="range"
+                          id="main_volume"
+                          name="volume"
+                          min="0"
+                          max="10"
+                          value="7"
+                          step="1"
+                          class="range-slider" />
+                        <label for="main_volume">
                           <span id="volume-value">
                             <!-- "(70%)" rendered here -->
                           </span>
@@ -1358,19 +1366,21 @@
                     </li>
 
                     <li>
-                      <label for="cb_muzak">
-                        <input
-                          type="checkbox"
-                          id="cb_muzak"
-                          name="muzak"
-                          value="1"
-                          checked />
-                        <span class="label-text">Muzak</span>
-                        <p class="non-indented">
+                      <input
+                        type="checkbox"
+                        id="cb_muzak"
+                        name="muzak"
+                        value="1"
+                        checked />
+                      <span class="label-text"
+                        ><label for="cb_muzak">Muzak</label></span
+                      >
+                      <p class="non-indented">
+                        <label for="cb_muzak">
                           Enjoy easy-listening landing pad classics, such as
                           <i>The Girl From Ipanema.</i>
-                        </p>
-                      </label>
+                        </label>
+                      </p>
                     </li>
                   </ul>
                 </fieldset>
@@ -1385,23 +1395,21 @@
 
                   <ul>
                     <li>
-                      <label for="input_game_speed">
-                        <div class="game-speed-icons">
-                          <div class="emoji-turtle">🐢</div>
-                          <div class="emoji-human">🧑</div>
-                          <div class="emoji-rabbit">🐇</div>
-                        </div>
-                        <input
-                          type="range"
-                          id="input_game_speed"
-                          name="game_speed"
-                          min="0.25"
-                          max="2"
-                          value="1"
-                          step="0.05"
-                          class="range-slider" />
-                        <span id="game_speed-value">100% </span>
-                      </label>
+                      <div class="game-speed-icons">
+                        <div class="emoji-turtle">🐢</div>
+                        <div class="emoji-human">🧑</div>
+                        <div class="emoji-rabbit">🐇</div>
+                      </div>
+                      <input
+                        type="range"
+                        id="input_game_speed"
+                        name="game_speed"
+                        min="0.25"
+                        max="2"
+                        value="1"
+                        step="0.05"
+                        class="range-slider" />
+                      <span id="game_speed-value">100% </span>
                       <p class="non-indented">
                         Play the game from 10%, to 200% speed.
                         <span class="mobile-only-block network"
@@ -1415,21 +1423,23 @@
                     </li>
 
                     <li>
+                      <input
+                        type="checkbox"
+                        id="cb_game_speed_pitch"
+                        name="game_speed_pitch"
+                        value="1" />
                       <label for="cb_game_speed_pitch">
-                        <input
-                          type="checkbox"
-                          id="cb_game_speed_pitch"
-                          name="game_speed_pitch"
-                          value="1" />
-                        <span class="label-text">Audio Speed</span>
-                        <p class="non-indented">
+                        <span class="label-text">Audio Speed</span></label
+                      >
+                      <p class="non-indented">
+                        <label for="cb_game_speed_pitch">
                           Play sounds at game speed. Sense of humour
-                          recommended. ;)
-                        </p>
-                        <p class="non-indented compact network">
-                          This setting applies only to you.
-                        </p>
-                      </label>
+                          recommended. :P
+                        </label>
+                      </p>
+                      <p class="non-indented compact network">
+                        This setting applies only to you.
+                      </p>
                     </li>
                   </ul>
                 </fieldset>
@@ -1481,38 +1491,42 @@
                     </li>
 
                     <li style="padding-top: 1px">
+                      <input
+                        type="checkbox"
+                        id="cb_domfetti"
+                        name="domfetti"
+                        value="1"
+                        checked />
                       <label for="cb_domfetti">
-                        <input
-                          type="checkbox"
-                          id="cb_domfetti"
-                          name="domfetti"
-                          value="1"
-                          checked />
                         <span class="label-text"
                           >“Extra Fancy” Explosions 🎉</span
                         >
-                        <p class="non-indented">
+                      </label>
+                      <p class="non-indented">
+                        <label for="cb_domfetti">
                           Confetti-style fragments from explosions and certain
                           collisions.
-                        </p>
-                      </label>
+                        </label>
+                      </p>
                     </li>
 
                     <li style="padding-top: 1px">
+                      <input
+                        type="checkbox"
+                        id="cb_gratuitous_battle_over"
+                        name="gratuitous_battle_over"
+                        value="1" />
                       <label for="cb_gratuitous_battle_over">
-                        <input
-                          type="checkbox"
-                          id="cb_gratuitous_battle_over"
-                          name="gratuitous_battle_over"
-                          value="1" />
                         <span class="label-text"
                           >Gratuitous “Battle Over” Sequence 💥</span
-                        >
-                        <p class="non-indented">
+                        ></label
+                      >
+                      <p class="non-indented">
+                        <label for="cb_gratuitous_battle_over">
                           A series of explosions that even Michael Bay might
                           approve of.
-                        </p>
-                      </label>
+                        </label>
+                      </p>
                     </li>
 
                     <li>
@@ -1646,19 +1660,21 @@
 
                   <ul>
                     <li style="margin-bottom: 2px">
+                      <input
+                        type="checkbox"
+                        id="cb_game_tips"
+                        name="show_game_tips"
+                        value="1"
+                        checked />
                       <label for="cb_game_tips">
-                        <input
-                          type="checkbox"
-                          id="cb_game_tips"
-                          name="show_game_tips"
-                          value="1"
-                          checked />
                         <span class="label-text">Game Tips / Hints</span>
-                        <p class="non-indented">
+                      </label>
+                      <p class="non-indented">
+                        <label for="cb_game_tips">
                           You never know&mdash;you might learn something from
                           these 100+ tips that scroll by.
-                        </p>
-                      </label>
+                        </label>
+                      </p>
                     </li>
 
                     <li class="inline-option">
@@ -1671,35 +1687,35 @@
                       </p>
                       <ul class="less-bottom-spacing">
                         <li>
+                          <input
+                            type="checkbox"
+                            id="cb_inventory"
+                            name="show_inventory"
+                            value="1"
+                            checked />
                           <label for="cb_inventory">
-                            <input
-                              type="checkbox"
-                              id="cb_inventory"
-                              name="show_inventory"
-                              value="1"
-                              checked />
                             <span>Inventory</span>
                           </label>
                         </li>
                         <li>
+                          <input
+                            type="checkbox"
+                            id="cb_weapons_status"
+                            name="show_weapons_status"
+                            value="1"
+                            checked />
                           <label for="cb_weapons_status">
-                            <input
-                              type="checkbox"
-                              id="cb_weapons_status"
-                              name="show_weapons_status"
-                              value="1"
-                              checked />
                             <span>Weapons</span>
                           </label>
                         </li>
                         <li>
+                          <input
+                            type="checkbox"
+                            id="cb_keyboard_labels"
+                            name="show_keyboard_labels"
+                            value="1"
+                            checked />
                           <label for="cb_keyboard_labels">
-                            <input
-                              type="checkbox"
-                              id="cb_keyboard_labels"
-                              name="show_keyboard_labels"
-                              value="1"
-                              checked />
                             <span>Keyboard labels</span>
                           </label>
                         </li>
@@ -1756,47 +1772,47 @@
 
                       <ul style="margin-bottom: -3px">
                         <li class="compact">
+                          <input
+                            type="radio"
+                            id="notifications_location_left"
+                            name="notifications_location"
+                            value="left" />
                           <label for="notifications_location_left">
-                            <input
-                              type="radio"
-                              id="notifications_location_left"
-                              name="notifications_location"
-                              value="left" />
                             Left
                           </label>
                         </li>
 
                         <li>
+                          <input
+                            type="radio"
+                            id="notifications_location_right"
+                            name="notifications_location"
+                            value="right"
+                            checked />
                           <label for="notifications_location_right">
-                            <input
-                              type="radio"
-                              id="notifications_location_right"
-                              name="notifications_location"
-                              value="right"
-                              checked />
                             Right
                           </label>
                         </li>
 
                         <li>
                           +&thinsp;
+                          <input
+                            type="radio"
+                            id="notifications_order_bottom_up"
+                            name="notifications_order_bottom_up"
+                            value="1" />
                           <label for="notifications_order_bottom_up">
-                            <input
-                              type="radio"
-                              id="notifications_order_bottom_up"
-                              name="notifications_order_bottom_up"
-                              value="1" />
                             Bottom-up <b>↑</b>
                           </label>
                         </li>
                         <li>
+                          <input
+                            type="radio"
+                            id="notifications_order_top_down"
+                            name="notifications_order_bottom_up"
+                            value="0"
+                            checked />
                           <label for="notifications_order_top_down">
-                            <input
-                              type="radio"
-                              id="notifications_order_top_down"
-                              name="notifications_order_bottom_up"
-                              value="0"
-                              checked />
                             Top-down <b>↓</b>
                           </label>
                         </li>
@@ -1880,20 +1896,22 @@
 
                   <ul>
                     <li>
+                      <input
+                        type="checkbox"
+                        id="cb_radar_scaling"
+                        name="radar_scaling"
+                        value="1" />
                       <label for="cb_radar_scaling">
-                        <input
-                          type="checkbox"
-                          id="cb_radar_scaling"
-                          name="radar_scaling"
-                          value="1" />
                         <span class="label-text">Radar Scaling</span>
-                        <p class="non-indented">
+                      </label>
+                      <p class="non-indented">
+                        <label for="cb_radar_scaling">
                           Larger radar which scrolls as you move. To toggle
                           scaling, use <b class="keycap">S</b> on a keyboard. On
                           touch-based screens, press and hold a second finger
                           while flying.
-                        </p>
-                      </label>
+                        </label>
+                      </p>
                     </li>
 
                     <li style="margin-bottom: 2px">
@@ -1968,39 +1986,43 @@
                       </p>
                       <ul>
                         <li style="margin-bottom: 1px">
+                          <input
+                            type="radio"
+                            id="radar_theme_classic"
+                            name="radar_theme"
+                            value="classic"
+                            checked />
                           <label for="radar_theme_classic">
-                            <input
-                              type="radio"
-                              id="radar_theme_classic"
-                              name="radar_theme"
-                              value="classic"
-                              checked />
                             <span class="label-text"
                               >Classic: green / white / yellow</span
                             >
-                            <p>
+                          </label>
+                          <p>
+                            <label for="radar_theme_classic">
                               The original: "left" side = green, "right" side
                               (enemy) ground units are white, and enemy bunkers
                               are yellow.
-                            </p>
-                          </label>
+                            </label>
+                          </p>
                         </li>
 
                         <li>
+                          <input
+                            type="radio"
+                            id="radar_theme_red"
+                            name="radar_theme"
+                            value="red" />
                           <label for="radar_theme_red">
-                            <input
-                              type="radio"
-                              id="radar_theme_red"
-                              name="radar_theme"
-                              value="red" />
                             <span class="label-text"
                               >Alternate: green / red</span
                             >
-                            <p>
+                          </label>
+                          <p>
+                            <label for="radar_theme_red">
                               Based on an unreleased 2010 prototype, all "right"
                               forces are in red.
-                            </p>
-                          </label>
+                            </label>
+                          </p>
                         </li>
                       </ul>
                     </li>
@@ -2018,45 +2040,49 @@
 
                   <ul>
                     <li>
+                      <input
+                        type="checkbox"
+                        id="cb_landing_pads_on_radar"
+                        name="landing_pads_on_radar"
+                        value="1"
+                        checked />
                       <label for="cb_landing_pads_on_radar">
-                        <input
-                          type="checkbox"
-                          id="cb_landing_pads_on_radar"
-                          name="landing_pads_on_radar"
-                          value="1"
-                          checked />
                         <span class="label-text">Landing pads on radar*</span>
-                        <p>
+                      </label>
+                      <p>
+                        <label for="cb_landing_pads_on_radar">
                           The original game did not show landing pads on the
                           radar.<br />
                           Some battles have an open landing pad at the
                           mid-point.
-                        </p>
-                        <p class="compact">
-                          <fn class="disclaimer"
-                            >*<i
-                              >Shrubbery sometimes obscures landing pads, making
-                              them invisible to radar.</i
-                            ></fn
-                          >
-                        </p>
-                      </label>
+                        </label>
+                      </p>
+                      <p class="compact">
+                        <fn class="disclaimer"
+                          >*<i
+                            >Shrubbery sometimes obscures landing pads, making
+                            them invisible to radar.</i
+                          ></fn
+                        >
+                      </p>
                     </li>
 
                     <li>
+                      <input
+                        type="checkbox"
+                        id="cb_clouds_on_radar"
+                        name="clouds_on_radar"
+                        value="1"
+                        checked />
                       <label for="cb_clouds_on_radar">
-                        <input
-                          type="checkbox"
-                          id="cb_clouds_on_radar"
-                          name="clouds_on_radar"
-                          value="1"
-                          checked />
                         <span class="label-text">Clouds on radar</span>
-                        <p>
+                      </label>
+                      <p>
+                        <label for="cb_clouds_on_radar">
                           Clouds can be used strategically, but they were not on
                           radar in the original.
-                        </p>
-                      </label>
+                        </label>
+                      </p>
                     </li>
 
                     <li>
@@ -2064,38 +2090,42 @@
                         <b>Radar Interference Style</b>
                       </p>
                       <p class="non-indented">
-                        Some battles have permanent interference; vans still
-                        cause radar to jam fully.
+                        Some battles have permanent interference; vans still jam
+                        radar.
                       </p>
                       <ul>
                         <li style="margin-bottom: 1px">
+                          <input
+                            type="radio"
+                            id="radar_interference_blanking_on"
+                            name="radar_interference_blank"
+                            value="1"
+                            checked />
                           <label for="radar_interference_blanking_on">
-                            <input
-                              type="radio"
-                              id="radar_interference_blanking_on"
-                              name="radar_interference_blank"
-                              value="1"
-                              checked />
                             <span class="label-text">Jamming</span>
-                            <p>
+                          </label>
+                          <p>
+                            <label for="radar_interference_blanking_on">
                               Like the original, radar is permanently jammed -
                               hidden.
-                            </p>
-                          </label>
+                            </label>
+                          </p>
                         </li>
 
                         <li>
+                          <input
+                            type="radio"
+                            id="radar_interference_blanking_off"
+                            name="radar_interference_blank"
+                            value="0" />
                           <label for="radar_interference_blanking_off">
-                            <input
-                              type="radio"
-                              id="radar_interference_blanking_off"
-                              name="radar_interference_blank"
-                              value="0" />
                             <span class="label-text">Blurry</span>
-                            <p>
-                              Radar visuals are permanently "impaired" - fuzzy.
-                            </p>
                           </label>
+                          <p>
+                            <label for="radar_interference_blanking_off">
+                              Radar visuals are permanently "impaired" - fuzzy.
+                            </label>
+                          </p>
                         </li>
                       </ul>
                     </li>
@@ -2113,99 +2143,113 @@
 
                   <ul>
                     <li>
+                      <input
+                        type="checkbox"
+                        id="cb_unlimited_lives"
+                        name="unlimited_lives"
+                        value="1"
+                        checked />
                       <label for="cb_unlimited_lives">
-                        <input
-                          type="checkbox"
-                          id="cb_unlimited_lives"
-                          name="unlimited_lives"
-                          value="1"
-                          checked />
                         <span class="label-text"
                           >Unlimited Lives 🚁 &infin;</span
                         >
-                        <p>
+                      </label>
+                      <p>
+                        <label for="cb_unlimited_lives">
                           The original game had four choppers to start,
                           <b class="keycap">H</b> for more at 20 funds each. The
                           original was famously difficult, so "unlimited" is the
                           default. For an extra challenge, try disabling this
                           setting. Changes will apply to the next battle.
-                        </p>
-                        <p class="compact">
-                          <fn class="network disclaimer"
-                            >*<i
-                              >Note: network games presently support "unlimited"
-                              only.</i
-                            ></fn
-                          >
-                        </p>
-                      </label>
+                        </label>
+                      </p>
+                      <p class="compact">
+                        <fn class="network disclaimer"
+                          >*<i
+                            >Note: network games presently support "unlimited"
+                            only.</i
+                          ></fn
+                        >
+                      </p>
                     </li>
 
                     <li class="hide-if-network">
+                      <input
+                        type="checkbox"
+                        id="cb_unlimited_inventory"
+                        name="unlimited_inventory"
+                        value="1" />
                       <label for="cb_unlimited_inventory">
-                        <input
-                          type="checkbox"
-                          id="cb_unlimited_inventory"
-                          name="unlimited_inventory"
-                          value="1" />
                         <span class="label-text"
                           >Unlimited Inventory 🚚 &infin;</span
                         >
-                        <p>
+                      </label>
+                      <p>
+                        <label for="cb_unlimited_inventory">
                           The original game has limits on active units by type.
                           If you see "quota exceeded" trying to order one more
                           tank, for example, this is why.
-                        </p>
+                        </label>
+                      </p>
 
-                        <p>
+                      <p>
+                        <label for="cb_unlimited_inventory">
                           <b>Limits:</b> 15 Tanks, 6 Missile Launchers, 10 Vans,
                           30 "Men."
-                        </p>
+                        </label>
+                      </p>
 
-                        <p>
+                      <p>
+                        <label for="cb_unlimited_inventory">
                           This setting does not currently apply to CPU players.
-                        </p>
-                      </label>
+                        </label>
+                      </p>
                     </li>
 
                     <li>
+                      <input
+                        type="checkbox"
+                        id="cb_alt_smart_missiles"
+                        name="alt_smart_missiles"
+                        value="1"
+                        checked />
                       <label for="cb_alt_smart_missiles">
-                        <input
-                          type="checkbox"
-                          id="cb_alt_smart_missiles"
-                          name="alt_smart_missiles"
-                          value="1"
-                          checked />
                         <span class="label-text"
                           >Heat-seeking rubber chicken + smart banana
                           missiles</span
-                        >
-                        <p>
+                        ></label
+                      >
+                      <p>
+                        <label for="cb_alt_smart_missiles">
                           Two alternate smart missile designs, not in the
                           original game.
-                        </p>
-                      </label>
+                        </label>
+                      </p>
                     </li>
 
                     <li>
+                      <input
+                        type="checkbox"
+                        id="cb_modern_smart_missiles"
+                        name="modern_smart_missiles"
+                        value="1"
+                        checked />
                       <label for="cb_modern_smart_missiles">
-                        <input
-                          type="checkbox"
-                          id="cb_modern_smart_missiles"
-                          name="modern_smart_missiles"
-                          value="1"
-                          checked />
                         <span class="label-text">Smart Missile upgrades</span>
-                        <ul class="real-list double-indent paragraph-flush-left">
-                          <li>
-                            <p>
+                      </label>
+                      <ul class="real-list double-indent paragraph-flush-left">
+                        <li>
+                          <p>
+                            <label for="cb_modern_smart_missiles">
                               <b>Targeting UI</b>: know before firing. Red
                               underline on radar, white halo on target in range,
                               red halo on active target.
-                            </p>
-                          </li>
-                          <li>
-                            <p>
+                            </label>
+                          </p>
+                        </li>
+                        <li>
+                          <p>
+                            <label for="cb_modern_smart_missiles">
                               <b>Retargeting ability</b>: find a new target if
                               original is destroyed or "lost."
                               <span
@@ -2215,17 +2259,21 @@
                               >
                               Missiles would previously "expire," become hostile
                               and fall.
-                            </p>
-                          </li>
-                          <li>
-                            <p>
+                            </label>
+                          </p>
+                        </li>
+                        <li>
+                          <p>
+                            <label for="cb_modern_smart_missiles">
                               <b>Decoy risk</b>: within 0.5s of launch, missiles
                               can be "distracted"<br />
                               by a newly-deployed paratrooper.
-                            </p>
-                          </li>
-                          <li>
-                            <p>
+                            </label>
+                          </p>
+                        </li>
+                        <li>
+                          <p>
+                            <label for="cb_modern_smart_missiles">
                               <b>Safety delay</b>: Missiles take 0.66s to become
                               armed after launch.<br />This can be both a
                               challenge, and a strategy. [<a
@@ -2234,110 +2282,120 @@
                                 target="_blank"
                                 >YouTube</a
                               >.]
-                            </p>
-                          </li>
-                        </ul>
-                      </label>
+                            </label>
+                          </p>
+                        </li>
+                      </ul>
                     </li>
 
                     <li>
+                      <input
+                        type="checkbox"
+                        id="cb_super_bunker_arrows"
+                        name="super_bunker_arrows"
+                        value="1"
+                        checked />
                       <label for="cb_super_bunker_arrows">
-                        <input
-                          type="checkbox"
-                          id="cb_super_bunker_arrows"
-                          name="super_bunker_arrows"
-                          value="1"
-                          checked />
                         <span class="label-text"
                           >Super Bunker status*
                           <span class="no-emoji-substitution">◀▲▶</span></span
                         >
-                        <p>
+                      </label>
+                      <p>
+                        <label for="cb_super_bunker_arrows">
                           Super bunkers can be owned, or neutral (and hostile)
                           to all helicopters.<br />
                           In the original game, super bunkers didn't have status
                           flags.<br />
                           Neutral super bunkers now show an upward arrow. ▲<br />
                           On radar, a diagonal pinstripe pattern is shown. ▨
-                        </p>
-                        <p class="compact">
-                          <fn class="disclaimer">
-                            *<i
-                              >End Bunkers will show neutral status on radar,
-                              too.</i
-                            >
-                          </fn>
-                        </p>
-                      </label>
+                        </label>
+                      </p>
+                      <p class="compact">
+                        <fn class="disclaimer">
+                          *<i
+                            >End Bunkers will show neutral status on radar,
+                            too.</i
+                          >
+                        </fn>
+                      </p>
                     </li>
 
                     <li>
+                      <input
+                        type="checkbox"
+                        id="cb_engineers_can_repair_bunkers"
+                        name="engineers_repair_bunkers"
+                        value="1"
+                        checked />
                       <label for="cb_engineers_can_repair_bunkers">
-                        <input
-                          type="checkbox"
-                          id="cb_engineers_can_repair_bunkers"
-                          name="engineers_repair_bunkers"
-                          value="1"
-                          checked />
                         <span class="label-text"
                           >Engineers can repair bunkers</span
                         >
-                        <p>
+                      </label>
+                      <p>
+                        <label for="cb_engineers_can_repair_bunkers">
                           Engineers originally had limited roles, interacting
                           only with turrets.
-                        </p>
-                      </label>
+                        </label>
+                      </p>
                     </li>
 
                     <li>
+                      <input
+                        type="checkbox"
+                        id="cb_engineers_can_rob_the_bank"
+                        name="engineers_rob_the_bank"
+                        value="1"
+                        checked />
                       <label for="cb_engineers_can_rob_the_bank">
-                        <input
-                          type="checkbox"
-                          id="cb_engineers_can_rob_the_bank"
-                          name="engineers_rob_the_bank"
-                          value="1"
-                          checked />
                         <span class="label-text"
                           >Engineers can “rob the bank”</span
-                        >
-                        <p>
+                        ></label
+                      >
+                      <p>
+                        <label for="cb_engineers_can_rob_the_bank">
                           Infantry can capture up to 20 funds from an enemy end
                           bunker. <br />This allows engineers to capture
                           <i>all</i> funds, as a reward for their risk.
-                        </p>
-                      </label>
+                        </label>
+                      </p>
                     </li>
 
                     <li>
+                      <input
+                        type="checkbox"
+                        id="cb_tank_gunfire_miss_bunkers"
+                        name="tank_gunfire_miss_bunkers"
+                        value="1"
+                        checked />
                       <label for="cb_tank_gunfire_miss_bunkers">
-                        <input
-                          type="checkbox"
-                          id="cb_tank_gunfire_miss_bunkers"
-                          name="tank_gunfire_miss_bunkers"
-                          value="1"
-                          checked />
                         <span class="label-text"
                           >Tank gunfire / bunker pass-thru</span
                         >
-                        <p>
+                      </label>
+                      <p>
+                        <label for="cb_tank_gunfire_miss_bunkers">
                           Allow tanks to fire through bunkers (and neutral super
                           bunkers) at units other than helicopters or tanks.
                           Previously, tanks could destroy a bunker while trying
                           to fire at infantry.
-                        </p>
-                      </label>
+                        </label>
+                      </p>
                     </li>
 
                     <li>
+                      <input
+                        type="checkbox"
+                        id="cb_auto_flip"
+                        name="auto_flip"
+                        value="1"
+                        checked />
                       <label for="cb_auto_flip">
-                        <input
-                          type="checkbox"
-                          id="cb_auto_flip"
-                          name="auto_flip"
-                          value="1"
-                          checked />
                         <span class="label-text">Helicopter auto-flip</span>
-                        <p>
+                      </label>
+                      <p>
+                        <label for="cb_auto_flip">
                           Flip L/R based on direction, <i>or</i>,
                           <span class="hide-on-mobile">click</span
                           ><span class="mobile-only">
@@ -2349,25 +2407,27 @@
                             >, or double-click</span
                           ><span class="mobile-only"> or double-tap</span>
                           to toggle while playing.
-                        </p>
-                      </label>
+                        </label>
+                      </p>
                     </li>
 
                     <li>
+                      <input
+                        type="checkbox"
+                        id="cb_weapons_interval_classic"
+                        name="weapons_interval_classic"
+                        value="1" />
                       <label for="cb_weapons_interval_classic">
-                        <input
-                          type="checkbox"
-                          id="cb_weapons_interval_classic"
-                          name="weapons_interval_classic"
-                          value="1" />
                         <span class="label-text"
                           >"Classic" helicopter controls</span
                         >
-                        <p>
+                      </label>
+                      <p>
+                        <label for="cb_weapons_interval_classic">
                           Slower helicopter gunfire, bombing and other actions
                           based on the original.
-                        </p>
-                      </label>
+                        </label>
+                      </p>
                     </li>
                   </ul>
                 </fieldset>
@@ -2384,42 +2444,46 @@
 
                   <ul>
                     <li class="allow-in-game-updates">
+                      <input
+                        type="radio"
+                        id="ground_unit_traffic_control_classic"
+                        name="ground_unit_traffic_control"
+                        value="0"
+                        data-allow-in-game-updates="1" />
                       <label for="ground_unit_traffic_control_classic">
-                        <input
-                          type="radio"
-                          id="ground_unit_traffic_control_classic"
-                          name="ground_unit_traffic_control"
-                          value="0"
-                          data-allow-in-game-updates="1" />
                         <span class="label-text"
                           >Allow overlapping (original game style)</span
                         >
-                        <p>
+                      </label>
+                      <p>
+                        <label for="ground_unit_traffic_control_classic">
                           Tanks are the only vehicles that stop to fire at
                           things. This can cause "pile-ups," where multiple
                           tanks can overlap and appear as one.
-                        </p>
-                      </label>
+                        </label>
+                      </p>
                     </li>
 
                     <li class="allow-in-game-updates">
+                      <input
+                        type="radio"
+                        id="ground_unit_traffic_control_enable"
+                        name="ground_unit_traffic_control"
+                        value="1"
+                        checked
+                        data-allow-in-game-updates="1" />
                       <label for="ground_unit_traffic_control_enable">
-                        <input
-                          type="radio"
-                          id="ground_unit_traffic_control_enable"
-                          name="ground_unit_traffic_control"
-                          value="1"
-                          checked
-                          data-allow-in-game-updates="1" />
                         <span class="label-text"
                           >Reduce overlapping, "tanks first"</span
                         >
-                        <p>
+                      </label>
+                      <p>
+                        <label for="ground_unit_traffic_control_enable">
                           Vehicles will "park" behind each other. Tanks stop
                           only for other tanks, and will tend to head up
                           convoys. Infantry and engineers don't wait for anyone.
-                        </p>
-                      </label>
+                        </label>
+                      </p>
                     </li>
                   </ul>
                 </fieldset>
@@ -2429,43 +2493,43 @@
 
                   <ul>
                     <li>
+                      <input type="checkbox" id="cb_bnb" name="bnb" value="1" />
                       <label for="cb_bnb">
-                        <input
-                          type="checkbox"
-                          id="cb_bnb"
-                          name="bnb"
-                          value="1" />
                         <span class="label-text"
                           >Beavis and Butt-Head in “Armor Alley”</span
-                        >
-                        <p>
+                        ></label
+                      >
+                      <p>
+                        <label for="cb_bnb">
                           Play the game &quot;with&quot; two unruly, unlicensed*
-                          teenagers.
-                        </p>
-                        <p class="compact">
-                          <fn class="disclaimer"
-                            >*<i
-                              >Mike Judge's “Beavis and Butt-Head” are copyright
-                              of their respective owners.</i
-                            ></fn
-                          >
-                        </p>
-                      </label>
+                          teenagers.</label
+                        >
+                      </p>
+                      <p class="compact">
+                        <fn class="disclaimer"
+                          >*<i
+                            >Mike Judge's “Beavis and Butt-Head” are copyright
+                            of their respective owners.</i
+                          ></fn
+                        >
+                      </p>
                     </li>
 
                     <li>
+                      <input
+                        type="checkbox"
+                        id="cb_bnb_tv"
+                        name="bnb_tv"
+                        value="1"
+                        checked />
                       <label for="cb_bnb_tv">
-                        <input
-                          type="checkbox"
-                          id="cb_bnb_tv"
-                          name="bnb_tv"
-                          value="1"
-                          checked />
                         <span class="label-text">Virtual TV 📺</span>
-                        <p>
-                          Occasional music video clips and animation sequences.
-                        </p>
                       </label>
+                      <p>
+                        <label for="cb_bnb_tv">
+                          Occasional music video clips and animation sequences.
+                        </label>
+                      </p>
                     </li>
                   </ul>
                 </fieldset>
