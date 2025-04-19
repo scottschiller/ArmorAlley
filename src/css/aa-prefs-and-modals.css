@@ -400,6 +400,8 @@ body.is_iphone .mac-classic ul.real-list li {
 }
 
 #game-prefs-modal p {
+  /* reasonable line height? */
+  line-height: 1.35em;
   padding-top: 3px;
 }
 
@@ -604,7 +606,14 @@ body.is_iphone #game-prefs-modal button {
 .mac-classic ul li {
   margin: 0;
   padding: 0;
-  line-height: 1rem;
+}
+
+.mac-classic ul li {
+  line-height: 120%;
+}
+
+.mac-classic .battle-list li {
+  line-height: 100%;
 }
 
 .mac-classic ul.monospace {
@@ -613,7 +622,7 @@ body.is_iphone #game-prefs-modal button {
 
 .mac-classic ul.monospace li {
   display: block;
-  margin-top: 2px;
+  margin-top: 4px;
 }
 
 .mac-classic ul.monospace li label pre b {
@@ -629,7 +638,7 @@ body.is_iphone #game-prefs-modal button {
 
 .mac-classic ul.monospace li pre {
   display: inline-block;
-  margin: 1px 0px;
+  margin: 3px 0px 0px 0px;
 }
 
 .mac-classic ul.monospace li pre.header {
@@ -654,8 +663,8 @@ body.is_iphone #game-prefs-modal button {
 }
 
 .mac-classic ul li {
-  margin-bottom: 8px;
-  margin-top: 4px;
+  margin-bottom: 10px;
+  margin-top: 5px;
 }
 
 .mac-classic ul.partial-bottom-spacing li {
@@ -667,7 +676,7 @@ body.is_iphone #game-prefs-modal button {
 }
 
 .mac-classic ul li:last-of-type {
-  margin-bottom: 2px;
+  margin-bottom: 4px;
 }
 
 .mac-classic .more-bottom-spacing,
@@ -777,7 +786,7 @@ body.is_iphone #game-prefs-modal button {
   float: left;
   font-size: 300%;
   line-height: 100%;
-  margin-right: 0.15em;
+  margin-right: 0.25em;
   margin-top: 0px;
   vertical-align: top;
 }
