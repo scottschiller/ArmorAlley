@@ -680,6 +680,7 @@ body.is_iphone #game-prefs-modal button {
   margin-bottom: 4px;
 }
 
+.mac-classic .no-bottom-spacing,
 .mac-classic ul.less-bottom-spacing li {
   margin-bottom: 0;
 }
