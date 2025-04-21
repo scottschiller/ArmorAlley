@@ -9,6 +9,8 @@ This is a summary of work in progress. For code-level details, see the changelog
 
 · If the game switches automatically to 30 fps due to performance, hi-DPI and enhanced radar FX will be disabled. Un-check "choose best" to override.
 
+· Turret + missile launcher scan nodes now drawn on `<canvas>` instead of HTML + CSS. Much more efficient. GPU RAM use from 400+ MB down to 40 MB (@ full-screen 4K retina resolution) with many missile launchers on screen.
+
 `UI miscellany`
 
 · Fixed shrapnel and "sparks" embedding in targets on impact, and fading out.
