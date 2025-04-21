@@ -420,7 +420,7 @@ const common = {
 
     /**
      * Modern serializable, state-based timer functionality.
-     * 
+     *
      * @param method String: function to call by name, OR,
      * object: { methodName: 'foo', params: { bar: 'biff' }}, OR,
      * null / undefined for no-op.
@@ -1069,37 +1069,6 @@ const common = {
   },
 
   resetGUID,
-
-  resizeScanNode(exports, radarItem) {
-    if (!exports) return;
-
-    const { dom, data } = exports;
-
-    // don't resize to 0x0; handled by CSS.
-    if (data.dead) return;
-
-    const radarScanNode = radarItem?.dom?.oScanNode;
-
-    const scanNode = dom.oScanNode;
-
-    const distance = data.dead ? 0 : data.scanDistance;
-
-    radarItem?.updateScanNode(distance);
-
-    common.updateScanNode(exports, distance);
-
-    // allow transition if launcher was just ordered, rising up from below.
-    if (!data.orderComplete) return;
-
-    common.setFrameTimeout(() => {
-      if (scanNode) {
-        scanNode.style.transition = '';
-      }
-      if (radarScanNode) {
-        radarScanNode.style.transition = '';
-      }
-    }, FPS * 10);
-  },
 
   updateScanNode(exports, radius = 0) {
     if (!exports) return;

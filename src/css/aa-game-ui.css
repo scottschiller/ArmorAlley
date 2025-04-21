@@ -713,55 +713,6 @@ body.original_missile_mode ul.stats-bar .missiles .divider {
   opacity: 0;
 }
 
-/* self-destructing missile launchers + exploding turrets */
-#battlefield .sprite.destroyed .scan-node,
-#battlefield .sprite.exploding .scan-node,
-#battlefield .sprite.placeholder.engineer-interacting .scan-node,
-#radar .radar-item.dying .scan-node,
-#radar .scan-node.destroyed,
-#radar .scan-node.engineer-interacting {
-  transition-property: transform, opacity;
-}
-
-/* self-destructing missile launchers */
-#radar .radar-item.dying .scan-node,
-#radar .scan-node.destroyed,
-#radar .scan-node.exploding,
-#radar .sprite.destroyed .scan-node {
-  transform: translate3d(-50%, -100%, 0) scale3d(0, 0, 1);
-  transform-origin: 50% 100%;
-  transition-duration: calc(1s * var(--gs-frac));
-  box-shadow: none;
-}
-
-#battlefield .scan-node.destroyed,
-#battlefield .scan-node.exploding,
-#battlefield .sprite.placeholder.destroyed .scan-node,
-#battlefield .sprite.placeholder.exploding .scan-node {
-  transition-property: transform, opacity;
-  /* NOTE: shenanigans - additional 18px on bottom for battlefield items. */
-  transform: translate3d(-50%, calc(-100% + 18px), 0) scale3d(0, 0, 1);
-  transform-origin: 50% 100%;
-  transition-duration: calc(1s * var(--gs-frac));
-}
-
-#battlefield .sprite.placeholder .scan-node {
-  /* hack: positioning offset for scan node within e.g., turret placeholder node. */
-  /* shift slightly left to align with center of turret, and pull down to align with battlefield. */
-  transform: translate3d(calc(-50% + 5px), calc(-100% + 18px), 0);
-}
-
-#battlefield .scan-node {
-  border: 0.5px solid rgba(0, 255, 0, 0.1);
-  box-shadow: inset 0 15px 15px 0 rgba(0, 255, 0, 0.075);
-}
-
-#battlefield .scan-node.enemy,
-#battlefield .sprite.enemy .scan-node {
-  border-color: rgba(255, 255, 255, 0.1);
-  box-shadow: inset 0 15px 15px 0 rgba(255, 255, 255, 0.075);
-}
-
 #stats-endgame {
   display: none;
   left: 50%;
@@ -1702,19 +1653,13 @@ body.is_firefox #queue .queue-item.has-counter .fraction-wrapper {
 .sprite.dead .target-ui,
 .sprite.exploding .target-ui,
 .target-ui.disabled,
-body.game-over .target-ui,
-body.radar_jammed .scan-node {
+body.game-over .target-ui {
   opacity: 0;
 }
 
 body.radar_jammed .target-marker {
   /* need to override inline style :X */
   opacity: 0 !important;
-}
-
-body.radar_jammed .scan-node {
-  /* fade out, relatively quickly */
-  transition-duration: 0.5s;
 }
 
 /* end of battle (campaign mode) medals */

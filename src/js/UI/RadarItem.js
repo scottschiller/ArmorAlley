@@ -181,8 +181,7 @@ function RadarItem(options) {
   css = {
     radarItem: 'radar-item',
     dying: 'dying',
-    dead: 'dead',
-    scanNode: 'scan-node'
+    dead: 'dead'
   };
 
   data = {

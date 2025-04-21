@@ -41,8 +41,7 @@ const MissileLauncher = (options = {}) => {
 
   css = common.inheritCSS({
     className: 'missile-launcher',
-    exploding: 'exploding',
-    scanNode: 'scan-node'
+    exploding: 'exploding'
   });
 
   data = common.inheritData(
@@ -118,10 +117,11 @@ const MissileLauncher = (options = {}) => {
     dieComplete: () => dieComplete(exports),
     friendlyNearby,
     init: () => initMissileLauncher(options, exports),
-    // radarItem,
-    maybeResize: () => maybeResize(exports),
     refreshSprite: () => refreshSprite(exports),
-    resize: () => resize(exports),
+    resize: () => {
+      // HACK: force redraw of radial gradient
+      exports.radialGradient = null;
+    },
     resume: () => resume(exports),
     stop: () => stop(exports)
   };
@@ -192,7 +192,7 @@ function die(exports, dieOptions = {}) {
       effects.damageExplosion(exports);
     }
 
-    // account for .scan-node transition time
+    // account for scan-node transition time
     data.timers.dieComplete = common.frameTimeout.set('dieComplete', 1100);
 
     if (!dieOptions.firingMissile) {
@@ -219,8 +219,6 @@ function die(exports, dieOptions = {}) {
 
   data.dead = true;
 
-  resize(exports);
-
   radarItem.die(dieOptions);
 
   common.onDie(exports, dieOptions);
@@ -239,7 +237,9 @@ function fire(exports) {
   // is an enemy helicopter nearby?
   targetHelicopter = enemyHelicopterNearby(
     data,
-    data.scanDistance + MISSILE_LAUNCHER_SCAN_BUFFER,
+    data.scanDistance +
+      MISSILE_LAUNCHER_SCAN_BUFFER +
+      data.halfWidth * (data.isEnemy ? -1 : 1),
     data.hasScanNode
   );
 
@@ -343,6 +343,8 @@ function animate(exports) {
     sprites.moveWithScrollOffset(exports);
   }
 
+  effects.drawScanNode(exports);
+
   domCanvas?.dieExplosion?.animate();
 
   if (data.dead) return !dom.o;
@@ -394,19 +396,6 @@ function animate(exports) {
   return data.dead && !dom.o;
 }
 
-function maybeResize(exports) {
-  if (exports.data.dead) return;
-  resize(exports);
-}
-
-function resize(exports) {
-  return common.resizeScanNode(
-    exports,
-    exports.radarItem,
-    exports.css.className
-  );
-}
-
 function initDOM(exports) {
   let { css, data, dom } = exports;
   dom.o = sprites.create({
@@ -425,7 +414,7 @@ function initDOM(exports) {
 function initMissileLauncher(options, exports) {
   if (options.noInit) return;
 
-  let { data, dom } = exports;
+  let { data } = exports;
 
   initDOM(exports);
 
@@ -433,16 +422,7 @@ function initMissileLauncher(options, exports) {
 
   data.timers.orderActive = common.frameTimeout.set(null, 2000);
 
-  data.timers.maybeResize = common.frameTimeout.set('maybeResize', 150); 
-
-  exports.radarItem = game.objects.radar.addItem(
-    exports,
-    game.objects.editor
-      ? dom.o.className
-      : data.isEnemy
-        ? 'scan-node enemy'
-        : 'scan-node'
-  );
+  exports.radarItem = game.objects.radar.addItem(exports);
 
   // missile launchers also get a scan node.
   exports.radarItem.initScanNode();

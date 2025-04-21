@@ -1432,20 +1432,6 @@ function PrefsManager() {
     }
   }
 
-  function handleScanUIBattlefieldPrefChange(value, pref) {
-    // toggle "disabled" CSS, e.g., scan_ui_battlefield_friendly_disabled
-    utils.css.addOrRemove(game.dom.battlefield, !value, `${pref}_disabled`);
-  }
-
-  function handleScanUIRadarPrefChange(value, pref) {
-    // toggle "disabled" CSS, e.g., scan_ui_battlefield_friendly_disabled
-    utils.css.addOrRemove(
-      game.objects.radar.dom.radar,
-      !value,
-      `${pref}_disabled`
-    );
-  }
-
   function updateGravestones(isActive, pref) {
     const items = game.objects[TYPES.terrainItem];
     let item;
@@ -1982,11 +1968,6 @@ function PrefsManager() {
           endBunker.onNeutralHiddenChange?.(isActive);
         });
       },
-
-      scan_ui_battlefield_enemy: handleScanUIBattlefieldPrefChange,
-      scan_ui_battlefield_friendly: handleScanUIBattlefieldPrefChange,
-      scan_ui_radar_enemy: handleScanUIRadarPrefChange,
-      scan_ui_radar_friendly: handleScanUIRadarPrefChange,
 
       weather: (type) => {
         if (!snowStorm) return;

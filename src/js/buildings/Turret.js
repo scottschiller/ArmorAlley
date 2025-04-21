@@ -51,8 +51,7 @@ const Turret = (options = {}) => {
 
   css = common.inheritCSS({
     className: TYPES.turret,
-    destroyed: 'destroyed',
-    scanNode: 'scan-node'
+    destroyed: 'destroyed'
   });
 
   let fireModulusMap = {
@@ -238,9 +237,12 @@ const Turret = (options = {}) => {
     objects,
     radarItem,
     refreshCollisionItems: () => refreshCollisionItems(exports),
-    resize: () => resize(exports),
     resetDieExplosion: () => resetDieExplosion(exports),
     repair: (engineer, complete) => repair(exports, engineer, complete),
+    resize: () => {
+      // HACK: force redraw of radial gradient
+      exports.radialGradient = null;
+    },
     targets: null,
     turretBase,
     turretGun,
@@ -532,12 +534,6 @@ function setFiring(exports, isFiring) {
   }
 }
 
-function resize(exports) {
-  let { radarItem } = exports;
-
-  return common.resizeScanNode(exports, radarItem);
-}
-
 function die(exports, dieOptions = {}) {
   let { css, data, dom, domCanvas, objects, radarItem } = exports;
 
@@ -631,8 +627,6 @@ function die(exports, dieOptions = {}) {
   utils.css.add(radarItem.dom.o, css.destroyed);
   utils.css.add(radarItem.dom.oScanNode, css.destroyed);
 
-  resize(exports);
-
   sprites.updateEnergy(exports);
 
   common.onDie(exports, dieOptions);
@@ -690,7 +684,6 @@ function repair(exports, engineer, complete) {
 
         playSound(sounds.turretEnabled, exports);
 
-        resize(exports);
         if (data.isEnemy === game.players.local.data.isEnemy) {
           game.objects.notifications.add('You re-enabled a turret 🎯');
         } else {
@@ -965,6 +958,8 @@ function animate(exports) {
 
   data.frameCount++;
 
+  effects.drawScanNode(exports);
+
   if (!data.dead) {
     fire(exports);
   } else {
@@ -1083,10 +1078,6 @@ function initDOM(exports) {
     isEnemy
   });
 
-  dom.oScanNode = document.createElement('div');
-  dom.oScanNode.className = css.scanNode;
-  dom.o.appendChild(dom.oScanNode);
-
   sprites.setTransformXY(
     exports,
     dom.o,
@@ -1117,14 +1108,7 @@ function initTurret(exports, options) {
   }
 
   if (!noRadar) {
-    radarItem = game.objects.radar.addItem(
-      exports,
-      game.objects.editor
-        ? dom.o.className
-        : data.isEnemy
-          ? 'scan-node enemy'
-          : 'scan-node'
-    );
+    radarItem = game.objects.radar.addItem(exports);
 
     // turrets also get a scan node.
     radarItem.initScanNode();
@@ -1133,8 +1117,6 @@ function initTurret(exports, options) {
   // "dead on arrival"
   if (options.DOA) {
     die(exports, { silent: true });
-  } else {
-    resize(exports);
   }
 }
 

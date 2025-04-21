@@ -500,6 +500,114 @@ const effects = {
     });
   },
 
+  drawScanNode: (exports) => {
+    // as seen on turrets and missile launchers
+    if (exports.data.dead) return;
+
+    // TODO: sort out on screen + buffer scroll?
+    if (!exports.data.isOnScreen) return;
+
+    let { data } = exports;
+
+    // TODO: handle radar
+    if (data.isEnemy) {
+      if (!gamePrefs.scan_ui_battlefield_enemy) return;
+      // if (!gamePrefs.scan_ui_radar_enemy) return;
+    } else {
+      if (!gamePrefs.scan_ui_battlefield_friendly) return;
+      // if (!gamePrefs.scan_ui_radar_friendly) return;
+    }
+
+    let x = data.x + data.halfWidth;
+    let y =
+      data.y -
+      data.height +
+      (exports.data.type === TYPES.missileLauncher ? 3 : 0);
+
+    common.domCanvas.dom.ctx.battlefield.beginPath();
+
+    let startX =
+      (x - game.objects.view.data.battleField.scrollLeft) *
+      game.objects.view.data.screenScale;
+
+    let startY = y * game.objects.view.data.screenScale;
+
+    // TODO: animate opacity etc. on destruct and rebuild / restore
+    let radius =
+      data.scanDistance *
+      game.objects.view.data.screenScale *
+      (data?.stepOffset !== undefined ? data.stepOffset : 1);
+
+    common.domCanvas.dom.ctx.battlefield.arc(
+      startX,
+      startY,
+      radius,
+      // clockwise semicircle
+      Math.PI,
+      0
+    );
+
+    // TODO: create one shared object between enemy + non-enemy, destroy on resize.
+    // don't cache object(s) while summoning via `stepOffset`
+    let radialGradient =
+      data.stepOffset === undefined || data.stepOffset === 1
+        ? exports.radialGradient
+        : null;
+
+    if (!radialGradient) {
+      // gradient fill
+      let fill = `rgba(${data.isEnemy ? '255, 255, 255, 0.08' : '0, 255, 0, 0.08'})`;
+
+      let c = document.createElement('canvas');
+
+      c.width = radius * 2;
+      c.height = radius;
+
+      // guard: don't render empty canvas (while summoning)
+      if (c.width < 1 || c.height < 1) return;
+
+      radialGradient =
+        common.domCanvas.dom.ctx.battlefield.createRadialGradient(
+          // x1, y1, r1, x2, y2, r2
+          // first circle: center / bottom, no circle
+          radius,
+          radius,
+          radius * 0,
+          // second circle: center / bottom, full size
+          radius,
+          radius,
+          radius
+        );
+
+      radialGradient.addColorStop(0, 'rgba(0, 0, 0, 0)');
+      radialGradient.addColorStop(0.9, 'rgba(0, 0, 0, 0)');
+      radialGradient.addColorStop(0.999, fill);
+      radialGradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+
+      let ctx = c.getContext('2d', { alpha: true });
+
+      ctx.fillStyle = radialGradient;
+      ctx.fillRect(0, 0, radius * 2, radius);
+
+      exports.radialGradient = c;
+      radialGradient = c;
+    }
+
+    common.domCanvas.dom.ctx.battlefield.drawImage(
+      radialGradient,
+      startX - radius,
+      startY - radius
+    );
+
+    common.domCanvas.dom.ctx.battlefield.strokeStyle = data.isEnemy
+      ? 'rgba(255, 255, 255, 0.1)'
+      : 'rgba(0, 255, 0, 0.1)';
+
+    radialGradient = null;
+
+    common.domCanvas.dom.ctx.battlefield.stroke();
+  },
+
   battlefieldNoise: () => {
     /**
      * Battlefield noise overlay bits

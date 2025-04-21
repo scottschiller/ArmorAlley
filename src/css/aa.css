@@ -649,71 +649,6 @@ body:not(.edit-mode) #top-bar {
   z-index: 2;
 }
 
-#battlefield .scan-node,
-#radar .scan-node {
-  /* visual illustrations of "scanning range" for missile launchers + turrets. */
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  width: 0;
-  height: 0;
-  transform: translate3d(-50%, -100%, 0);
-  overflow: hidden;
-  /* account for border */
-  margin-left: -0.5px;
-  box-shadow: inset 0 15px 15px 0 rgba(0, 255, 0, 0.025);
-  border: 0.5px solid rgba(0, 255, 0, 0.075);
-  /* this will be set and updated via JS */
-  border-radius: 100%;
-  transition-duration: calc(1s * var(--gs-frac));
-  transition-timing-function: ease-in-out;
-  transition-property: opacity, box-shadow, border-color, width, height;
-  z-index: -2;
-  pointer-events: none;
-  will-change: transform;
-}
-
-#battlefield .scan-node {
-  background-color: transparent;
-}
-
-#radar .scan-node {
-  /* bottom-align? */
-  left: 0;
-  border-width: calc(0.5px * var(--gs));
-  overflow: visible;
-  contain: style;
-}
-
-#radar .radar-item.missile-launcher .scan-node {
-  /* center scan node around missile launcher */
-  margin-left: calc(2.5px * var(--rs));
-}
-
-#radar .radar-item.turret .scan-node {
-  /* likewise, for turrets */
-  margin-left: calc(0.5px * var(--rs));
-}
-
-/* TODO: fix this repetition / nesting. */
-#radar .radar-item.scan-node,
-#radar .radar-item.scan-node .scan-node {
-  will-change: transform;
-  contain: style;
-}
-
-#radar .scan-node.enemy .scan-node,
-#radar .sprite.enemy .scan-node {
-  box-shadow: inset 0 15px 15px 0 rgba(255, 255, 255, 0.025);
-  background-color: transparent;
-  border-color: rgba(255, 255, 255, 0.05);
-}
-
-body:not(.game-started) .scan-node {
-  /* no transitions while showing level previews */
-  transition-duration: 0s !important;
-}
-
 #editor-window,
 #editor-window-help,
 #game-paused,
@@ -1022,17 +957,8 @@ ul.inline-list li:not(:first-of-type) {
   top: 0;
 }
 
-/* various cases for disabling scan range UI */
 #battle-over-letter,
-#battlefield.scan_ui_battlefield_enemy_disabled .placeholder.enemy .scan-node,
-#battlefield.scan_ui_battlefield_friendly_disabled
-  .placeholder:not(.enemy)
-  .scan-node,
-#letters-from-the-old-tanker,
-#radar.scan_ui_radar_enemy_disabled > .scan-node.enemy,
-#radar.scan_ui_radar_enemy_disabled > .sprite.enemy .scan-node,
-#radar.scan_ui_radar_friendly_disabled > .scan-node:not(.enemy),
-#radar.scan_ui_radar_friendly_disabled > .sprite:not(.enemy) .scan-node {
+#letters-from-the-old-tanker {
   display: none;
 }
 
@@ -1131,15 +1057,9 @@ body.game-started canvas {
   opacity: 1;
 }
 
-body.radar_interference_blur #radar-container.interference canvas,
-body.radar_interference_blur #radar-container.interference .scan-node {
+body.radar_interference_blur #radar-container.interference canvas {
   /* on some levels, "jamming" means radar is fuzzy */
   filter: blur(3px);
-}
-
-body.radar_interference_blur #radar-container.interference .scan-node {
-  /* reduce scan nodes a bit */
-  opacity: 0.75;
 }
 
 body.is-mobile .hide-on-mobile,
