@@ -498,14 +498,14 @@ MissileLauncher.radarItemConfig = ({ data }) => ({
 
     ctx.beginPath();
 
-    let alpha = 0.015;
+    let alpha = 0.02;
 
     // TODO: review and use all theme colors consistently.
     ctx.fillStyle = data?.isEnemy
       ? gamePrefs?.radar_theme === 'red'
         ? ENEMY_UNIT_COLOR_RGBA
         : `rgba(255, 255, 255, ${alpha})`
-      : `rgba(23, 160, 7, ${alpha})`;
+      : `rgba(23, 160, 7, ${alpha * 2})`;
 
     ctx.strokeStyle = data?.isEnemy
       ? gamePrefs?.radar_theme === 'red'
