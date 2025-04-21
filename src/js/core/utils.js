@@ -385,7 +385,7 @@ const utils = {
 
       // simple case, already in cache: callback and return, no queue etc.
       if (imageObjects[url]) {
-        // yield, because outer function may not have returned object yet.
+        // yield, because outer function may not have returned the object yet.
         // also, this feels like an antipattern and should be refactored.
         if (onload) {
           window.requestAnimationFrame(() => onload(imageObjects[url]));
