@@ -8,7 +8,8 @@ import {
   getTypes,
   rndInt,
   rubberChickenMode,
-  TYPES
+  TYPES,
+  worldHeight
 } from '../core/global.js';
 import { gamePrefs } from '../UI/preferences.js';
 import {
@@ -86,7 +87,7 @@ const MissileLauncher = (options = {}) => {
   };
 
   domCanvas = {
-    radarItem: MissileLauncher.radarItemConfig(),
+    radarItem: MissileLauncher.radarItemConfig({ data }),
     img: {
       src: null,
       source: {
@@ -447,7 +448,7 @@ function initMissileLauncher(options, exports) {
   exports.radarItem.initScanNode();
 }
 
-MissileLauncher.radarItemConfig = () => ({
+MissileLauncher.radarItemConfig = ({ data }) => ({
   width: 4,
   height: 2.5,
   excludeFillStroke: true,
@@ -494,6 +495,65 @@ MissileLauncher.radarItemConfig = () => ({
 
     ctx.fill();
     ctx.stroke();
+
+    // TODO: effects.drawRadarScanNode() for turret and missile launcher.
+
+    // scan node UI
+    if (data.dead) return;
+
+    /**
+     * Relative to radar height, and scaled a bit.
+     * TODO: review precise alignment w/helicopter etc.
+     * ALso, animate in.
+     */
+    let radius =
+      (MISSILE_LAUNCHER_SCAN_RADIUS / worldHeight) *
+      (game.objects.radar.data.height * 1.15) *
+      (data?.stepOffset !== undefined ? data.stepOffset : 1);
+
+    ctx.beginPath();
+
+    let alpha = 0.015;
+
+    // TODO: review and use all theme colors consistently.
+    ctx.fillStyle = data?.isEnemy
+      ? gamePrefs?.radar_theme === 'red'
+        ? ENEMY_UNIT_COLOR_RGBA
+        : `rgba(255, 255, 255, ${alpha})`
+      : `rgba(23, 160, 7, ${alpha})`;
+
+    ctx.strokeStyle = data?.isEnemy
+      ? gamePrefs?.radar_theme === 'red'
+        ? ENEMY_UNIT_COLOR_RGBA
+        : `rgba(255, 255, 255, ${alpha * 2})`
+      : `rgba(23, 160, 7, ${alpha * 4})`;
+
+    let startX = left + scaledWidth / 2;
+
+    /**
+     * NOTE: slight -ve offset to pull arcs down a bit, not quite
+     * touching top of radar and still reasonable on X axis.
+     */
+    let startY = pos.bottomAlign(-1);
+
+    // radar item is elliptical, not necessarily circular.
+    let rotation = 0;
+
+    /**
+     * Relative scan node size...
+     * Scan radius * radar scale (zoom), relative to screen and world.
+     * (Note: browser.screenWidth, not browser.width.)
+     */
+    let radiusX =
+      MISSILE_LAUNCHER_SCAN_RADIUS *
+      game.objects.radar.data.scale *
+      (game.objects.view.data.browser.screenWidth / 8192) *
+      (data?.stepOffset !== undefined ? data.stepOffset : 1);
+
+    ctx.ellipse(startX, startY, radiusX, radius, rotation, Math.PI, 0);
+
+    ctx.stroke();
+    ctx.fill();
   }
 });
 
