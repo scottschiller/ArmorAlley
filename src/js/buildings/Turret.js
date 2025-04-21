@@ -14,7 +14,8 @@ import {
   rngInt,
   soundManager,
   tutorialMode,
-  TYPES
+  TYPES,
+  worldHeight
 } from '../core/global.js';
 import {
   playSound,
@@ -305,6 +306,61 @@ Turret.radarItemConfig = ({ data }) => ({
     common.domCanvas.unrotate(ctx);
 
     ctx.fill();
+    ctx.stroke();
+
+    // TODO: cache and redraw on resize.
+
+    // scan node UI
+    if (data.dead) return;
+
+    /**
+     * Relative to radar height, and scaled a bit.
+     * TODO: review precise alignment w/helicopter etc.
+     */
+    let radius =
+      (TURRET_SCAN_RADIUS / worldHeight) *
+      (game.objects.radar.data.height * 1.15);
+
+    ctx.beginPath();
+
+    let alpha = 0.015;
+
+    // TODO: review and use all theme colors consistently.
+    ctx.fillStyle = data?.isEnemy
+      ? gamePrefs?.radar_theme === 'red'
+        ? ENEMY_UNIT_COLOR_RGBA
+        : `rgba(255, 255, 255, ${alpha})`
+      : `rgba(23, 160, 7, ${alpha})`;
+
+    ctx.strokeStyle = data?.isEnemy
+      ? gamePrefs?.radar_theme === 'red'
+        ? ENEMY_UNIT_COLOR_RGBA
+        : `rgba(255, 255, 255, ${alpha * 2})`
+      : `rgba(23, 160, 7, ${alpha * 4})`;
+
+    let startX = left + scaledWidth / 2;
+
+    /**
+     * NOTE: slight -ve offset to pull arcs down a bit, not quite
+     * touching top of radar and still reasonable on X axis.
+     */
+    let startY = pos.bottomAlign(-1);
+
+    // radar item is elliptical, not necessarily circular.
+    let rotation = 0;
+
+    /**
+     * Relative scan node size...
+     * Scan radius * radar scale (zoom), relative to screen and world.
+     * (Note: browser.screenWidth, not browser.width.)
+     */
+    let radiusX =
+      TURRET_SCAN_RADIUS *
+      game.objects.radar.data.scale *
+      (game.objects.view.data.browser.screenWidth / 8192);
+
+    ctx.ellipse(startX, startY, radiusX, radius, rotation, Math.PI, 0);
+
     ctx.stroke();
   }
 });
