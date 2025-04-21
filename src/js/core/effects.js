@@ -504,7 +504,6 @@ const effects = {
     // as seen on turrets and missile launchers
     if (exports.data.dead) return;
 
-    // TODO: sort out on screen + buffer scroll?
     if (!exports.data.isOnScreen) return;
 
     let { data } = exports;
@@ -524,8 +523,6 @@ const effects = {
       data.height +
       (exports.data.type === TYPES.missileLauncher ? 3 : 0);
 
-    common.domCanvas.dom.ctx.battlefield.beginPath();
-
     let startX =
       (x - game.objects.view.data.battleField.scrollLeft) *
       game.objects.view.data.screenScale;
@@ -538,6 +535,8 @@ const effects = {
       game.objects.view.data.screenScale *
       (data?.stepOffset !== undefined ? data.stepOffset : 1);
 
+    common.domCanvas.dom.ctx.battlefield.beginPath();
+
     common.domCanvas.dom.ctx.battlefield.arc(
       startX,
       startY,
@@ -549,25 +548,36 @@ const effects = {
 
     // TODO: create one shared object between enemy + non-enemy, destroy on resize.
     // don't cache object(s) while summoning via `stepOffset`
-    let radialGradient =
-      data.stepOffset === undefined || data.stepOffset === 1
-        ? exports.radialGradient
-        : null;
 
-    if (!radialGradient) {
-      // gradient fill
-      let fill = `rgba(${data.isEnemy ? '255, 255, 255, 0.08' : '0, 255, 0, 0.08'})`;
+    if (!gamePrefs.radar_enhanced_fx) {
+      // simple fill
 
-      let c = document.createElement('canvas');
+      common.domCanvas.dom.ctx.battlefield.fillStyle = data.isEnemy
+        ? 'rgba(255, 255, 255, 0.015)'
+        : 'rgba(0, 255, 0, 0.015)';
 
-      c.width = radius * 2;
-      c.height = radius;
+      common.domCanvas.dom.ctx.battlefield.fill();
+    } else {
+      let radialGradient =
+        data.stepOffset === undefined || data.stepOffset === 1
+          ? exports.radialGradient
+          : null;
 
-      // guard: don't render empty canvas (while summoning)
-      if (c.width < 1 || c.height < 1) return;
+      if (!radialGradient) {
+        // gradient fill
+        let fill = `rgba(${data.isEnemy ? '255, 255, 255, 0.08' : '0, 255, 0, 0.08'})`;
 
-      radialGradient =
-        common.domCanvas.dom.ctx.battlefield.createRadialGradient(
+        let c = document.createElement('canvas');
+
+        c.width = radius * 2;
+        c.height = radius;
+
+        // guard: don't render empty canvas (while summoning)
+        if (c.width < 1 || c.height < 1) return;
+
+        let ctx = c.getContext('2d', { alpha: true });
+
+        radialGradient = ctx.createRadialGradient(
           // x1, y1, r1, x2, y2, r2
           // first circle: center / bottom, no circle
           radius,
@@ -579,31 +589,31 @@ const effects = {
           radius
         );
 
-      radialGradient.addColorStop(0, 'rgba(0, 0, 0, 0)');
-      radialGradient.addColorStop(0.9, 'rgba(0, 0, 0, 0)');
-      radialGradient.addColorStop(0.999, fill);
-      radialGradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        radialGradient.addColorStop(0, transparent);
+        radialGradient.addColorStop(0.9, transparent);
+        radialGradient.addColorStop(0.999, fill);
+        radialGradient.addColorStop(1, transparent);
 
-      let ctx = c.getContext('2d', { alpha: true });
+        ctx.fillStyle = radialGradient;
+        ctx.fillRect(0, 0, radius * 2, radius);
 
-      ctx.fillStyle = radialGradient;
-      ctx.fillRect(0, 0, radius * 2, radius);
+        exports.radialGradient = c;
+        radialGradient = c;
+      }
 
-      exports.radialGradient = c;
-      radialGradient = c;
+      // gradient vs. simple fill
+      common.domCanvas.dom.ctx.battlefield.drawImage(
+        radialGradient,
+        startX - radius,
+        startY - radius
+      );
+
+      radialGradient = null;
     }
 
-    common.domCanvas.dom.ctx.battlefield.drawImage(
-      radialGradient,
-      startX - radius,
-      startY - radius
-    );
-
     common.domCanvas.dom.ctx.battlefield.strokeStyle = data.isEnemy
-      ? 'rgba(255, 255, 255, 0.1)'
-      : 'rgba(0, 255, 0, 0.1)';
-
-    radialGradient = null;
+      ? 'rgba(255, 255, 255, 0.25)'
+      : 'rgba(0, 255, 0, 0.25)';
 
     common.domCanvas.dom.ctx.battlefield.stroke();
   },
@@ -851,5 +861,8 @@ var patternPixelDataLength = patternSize * patternSize * 4,
   patternCanvas,
   patternCtx,
   patternData;
+
+// for scan node gradients
+let transparent = 'rgba(0, 0, 0, 0)';
 
 export { effects };
