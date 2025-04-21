@@ -117,6 +117,11 @@ const MissileLauncher = (options = {}) => {
     dieComplete: () => dieComplete(exports),
     friendlyNearby,
     init: () => initMissileLauncher(options, exports),
+    isOnScreenChange: (isOnScreen) => {
+      // delete cached canvas if going off-screen
+      if (isOnScreen) return;
+      exports.radialGradient = null;
+    },
     refreshSprite: () => refreshSprite(exports),
     resize: () => {
       // HACK: force redraw of radial gradient
