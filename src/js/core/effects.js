@@ -527,7 +527,7 @@ const effects = {
           );
         }
       } else {
-        data.scanDistanceScale = data.stepOffset || 0;
+        data.scanDistanceScale = Math.max(0, Math.min(data.stepOffset || 0, 1));
       }
     }
   },
@@ -570,6 +570,12 @@ const effects = {
       data.scanDistance *
       data.scanDistanceScale *
       game.objects.view.data.screenScale;
+
+    // guard
+    if (radius <= 0) {
+      data.scanDistanceScale = 0;
+      return;
+    }
 
     common.domCanvas.dom.ctx.battlefield.beginPath();
 
