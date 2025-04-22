@@ -738,10 +738,11 @@ const common = {
     }
 
     // callback-style methods
+    let attackerParent = game.objectsById[attacker?.data?.parent];
 
-    if (attacker?.data?.parent?.onKill) {
+    if (attackerParent?.onKill) {
       // e.g., helicopter shot target with gunfire
-      attacker.data.parent.onKill(target);
+      attackerParent.onKill(target);
     }
 
     if (attacker?.onKill) {
