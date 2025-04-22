@@ -563,7 +563,7 @@ const effects = {
           ? exports.radialGradient
           : null;
 
-      if (!radialGradient) {
+      if (!exports.radialGradient) {
         // gradient fill
         let fill = `rgba(${data.isEnemy ? '255, 255, 255, 0.08' : '0, 255, 0, 0.08'})`;
 
@@ -577,7 +577,7 @@ const effects = {
 
         let ctx = c.getContext('2d', { alpha: true });
 
-        radialGradient = ctx.createRadialGradient(
+        let radialGradient = ctx.createRadialGradient(
           // x1, y1, r1, x2, y2, r2
           // first circle: center / bottom, no circle
           radius,
@@ -598,17 +598,14 @@ const effects = {
         ctx.fillRect(0, 0, radius * 2, radius);
 
         exports.radialGradient = c;
-        radialGradient = c;
       }
 
       // gradient vs. simple fill
       common.domCanvas.dom.ctx.battlefield.drawImage(
-        radialGradient,
+        exports.radialGradient,
         startX - radius,
         startY - radius
       );
-
-      radialGradient = null;
     }
 
     common.domCanvas.dom.ctx.battlefield.strokeStyle = data.isEnemy
