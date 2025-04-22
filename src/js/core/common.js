@@ -734,7 +734,7 @@ const common = {
     }
 
     if (dieOptions.recycled) {
-      game.objects.stats.recycle(target, dieOptions);
+      game.objects.stats.recycle(target);
     }
 
     // callback-style methods

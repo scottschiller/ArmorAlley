@@ -142,7 +142,7 @@ function Stats() {
     }
   }
 
-  function recycle(obj, options) {
+  function recycle(obj) {
     // exclude during level previews, and battle-over destruction sequences
     if (!game.data.started || game.data.battleOver) return;
 
