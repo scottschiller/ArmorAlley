@@ -582,7 +582,7 @@ function die(exports, dieOptions = {}) {
           // infantry - specifically, dropped or released from helicopter
           const infantryAttacker =
             attacker?.parentType === TYPES.infantry &&
-            attacker.parent.data.unassisted === false;
+            game.objectsById[attacker.parent]?.data?.unassisted === false;
 
           // likewise, from helicopter
           const smartMissileAttacker =
