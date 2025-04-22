@@ -503,6 +503,14 @@ const effects = {
   refreshScanDistanceScale: (data) => {
     if (!data) return;
 
+    /**
+     * Game not started / level preview: scan nodes always @ 1X.
+     */
+    if (!game.data.started) {
+      data.scanDistanceScale = 1;
+      return;
+    }
+
     if (data.dead) {
       // collapse, fairly quickly.
       data.scanDistanceScale = Math.max(
