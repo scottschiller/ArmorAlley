@@ -92,6 +92,7 @@ const Turret = (options = {}) => {
       hasButthead: false,
       isSinging: false,
       scanDistance: TURRET_SCAN_RADIUS,
+      scanDistanceScale: 0,
       hasScanNode: true,
       claimModulus,
       claimModulus1X: claimModulus,
@@ -310,10 +311,8 @@ Turret.radarItemConfig = ({ data }) => ({
     ctx.fill();
     ctx.stroke();
 
-    // TODO: cache and redraw on resize.
-
-    // scan node UI
-    if (data.dead) return;
+    // TODO: effects.drawRadarScanNode() for turret and missile launcher.
+    // TODO: cache and redraw on resize?
 
     /**
      * Relative to radar height, and scaled a bit.
@@ -360,6 +359,12 @@ Turret.radarItemConfig = ({ data }) => ({
       TURRET_SCAN_RADIUS *
       game.objects.radar.data.scale *
       (game.objects.view.data.browser.screenWidth / 8192);
+
+    effects.refreshScanDistanceScale(data);
+
+    // expand/collapse
+    radiusX *= data.scanDistanceScale;
+    radius *= data.scanDistanceScale;
 
     ctx.ellipse(startX, startY, radiusX, radius, rotation, Math.PI, 0);
 

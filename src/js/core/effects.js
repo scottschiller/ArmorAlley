@@ -1,4 +1,4 @@
-import { FPS, oneOf, rng, worldHeight } from '../core/global.js';
+import { FPS, GAME_SPEED, oneOf, rng, worldHeight } from '../core/global.js';
 import { game } from '../core/Game.js';
 import { domFettiBoom } from '../UI/DomFetti.js';
 import { gamePrefs } from '../UI/preferences.js';
@@ -500,10 +500,32 @@ const effects = {
     });
   },
 
+  refreshScanDistanceScale: (data) => {
+    if (!data) return;
+
+    if (data.dead) {
+      // collapse, fairly quickly.
+      data.scanDistanceScale = Math.max(
+        0,
+        data.scanDistanceScale - (1.5 / FPS) * GAME_SPEED
+      );
+    } else {
+      // expand while being "summoned" - or if a turret, when restored.
+      if (data.stepOffset === undefined) {
+        if (data.scanDistanceScale < 1) {
+          data.scanDistanceScale = Math.min(
+            1,
+            (data.scanDistanceScale || 0) + (0.5 / FPS) * GAME_SPEED
+          );
+        }
+      } else {
+        data.scanDistanceScale = data.stepOffset || 0;
+      }
+    }
+  },
+
   drawScanNode: (exports) => {
     // as seen on turrets and missile launchers
-    if (exports.data.dead) return;
-
     if (!exports.data.isOnScreen) return;
 
     let { data } = exports;
@@ -529,11 +551,17 @@ const effects = {
 
     let startY = y * game.objects.view.data.screenScale;
 
-    // TODO: animate opacity etc. on destruct and rebuild / restore
+    // ensure "cache" is not used while scaling.
+    if (gamePrefs.radar_enhanced_fx && data.scanDistanceScale < 1) {
+      exports.radialGradient = null;
+    }
+
+    effects.refreshScanDistanceScale(data);
+
     let radius =
       data.scanDistance *
-      game.objects.view.data.screenScale *
-      (data?.stepOffset !== undefined ? data.stepOffset : 1);
+      data.scanDistanceScale *
+      game.objects.view.data.screenScale;
 
     common.domCanvas.dom.ctx.battlefield.beginPath();
 
@@ -558,10 +586,7 @@ const effects = {
 
       common.domCanvas.dom.ctx.battlefield.fill();
     } else {
-      let radialGradient =
-        data.stepOffset === undefined || data.stepOffset === 1
-          ? exports.radialGradient
-          : null;
+      // only use "cache" if full-size / scale; otherwise, draw every frame.
 
       if (!exports.radialGradient) {
         // gradient fill

@@ -62,6 +62,7 @@ const MissileLauncher = (options = {}) => {
       height,
       halfHeight: height / 2,
       scanDistance: MISSILE_LAUNCHER_SCAN_RADIUS,
+      scanDistanceScale: 0,
       state: 0,
       stateMax: 3,
       stateModulus: 38,
@@ -482,9 +483,7 @@ MissileLauncher.radarItemConfig = ({ data }) => ({
     ctx.stroke();
 
     // TODO: effects.drawRadarScanNode() for turret and missile launcher.
-
-    // scan node UI
-    if (data.dead) return;
+    // TODO: cache and redraw on resize?
 
     /**
      * Relative to radar height, and scaled a bit.
@@ -534,6 +533,12 @@ MissileLauncher.radarItemConfig = ({ data }) => ({
       game.objects.radar.data.scale *
       (game.objects.view.data.browser.screenWidth / 8192) *
       (data?.stepOffset !== undefined ? data.stepOffset : 1);
+
+    effects.refreshScanDistanceScale(data);
+
+    // expand/collapse
+    radiusX *= data.scanDistanceScale;
+    radius *= data.scanDistanceScale;
 
     ctx.ellipse(startX, startY, radiusX, radius, rotation, Math.PI, 0);
 
