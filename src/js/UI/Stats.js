@@ -427,7 +427,7 @@ function Stats() {
     }
 
     // the object responsible for killing the target
-    let attacker = game.objectsById[target.data?.attacker]?.data;
+    let attacker = target.data?.attacker?.data;
 
     // this should not be common, save for a few units - e.g., a missile launcher that is self-destructing.
     if (!attacker) return;
