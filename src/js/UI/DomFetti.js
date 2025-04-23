@@ -449,7 +449,7 @@ function animateFetti(fettis, decay, callback) {
 
     /**
      * if running at 30FPS, big hack: do this again,
-     * running the math twice but updating CSS only once.
+     * running the math twice but drawing only once.
      */
     return update();
   }
@@ -548,7 +548,7 @@ function domFettiBoom(source, target, x, y) {
 
   const bottomAligned = !!source?.data?.bottomAligned;
 
-  // hack: subtract radar height, because the canvas does not include this offset.
+  // hack: subtract radar height, canvas does not include this offset.
   y -= 32;
 
   let elementCount = 25 + rnd(25);
@@ -561,9 +561,12 @@ function domFettiBoom(source, target, x, y) {
   let targetType = target?.data?.domFetti?.colorType;
 
   /**
-   * Hackish: if source is a munition - gunfire, bomb or smart missile - have it inherit the target's colour.
-   * i.e., gunfire fragments become yellow on bunkers, green on human helicopter, grey on CPU.
-   * This covers the source / target (attacker) case where gunfire calls this method, but it hit e.g., the helicopter.
+   * Hackish: if source is a munition - gunfire, bomb or smart missile -
+   * have it inherit the target's colour i.e., gunfire fragments become
+   * yellow on bunkers, green on human helicopter, grey on CPU.
+   *
+   * This covers the source / target (attacker) case where gunfire
+   * calls this method, but it hit e.g., the helicopter.
    */
   if (munitionTypes[source?.data?.type]) {
     colorType = targetType || sourceType;
@@ -571,7 +574,7 @@ function domFettiBoom(source, target, x, y) {
     colorType = sourceType || targetType;
   }
 
-  // special case: certain smart missiles cause more colourful target explosions.
+  // special case: some smart missiles cause more colourful target explosions.
   if (source?.data?.type) {
     if (
       source.data.type === TYPES.smartMissile &&
@@ -591,8 +594,11 @@ function domFettiBoom(source, target, x, y) {
   const extraParams = {
     angle: undefined,
     decay: bottomAligned ? 0.935 : 0.8 + rnd(0.15),
-    // sprite X is 0 - 8192px, based on battlefield and scroll.
-    // confetti is shown as a full-screen overlay, not scaled; so, account for scroll and scale so things line up.
+    /**
+     * Sprite X is 0 - 8192px, based on battlefield and scroll.
+     * Confetti is shown as a full-screen overlay, not scaled; so, account for
+     * scroll and scale so things line up.
+     */
     originX: (x - game.objects.view.data.battleField.scrollLeft) * screenScale,
     originY: y * screenScale,
     scrollLeft: game.objects.view.data.battleField.scrollLeft || 0,

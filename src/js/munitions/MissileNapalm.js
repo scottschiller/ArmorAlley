@@ -20,7 +20,7 @@ const MissileNapalm = (options = {}) => {
       parent: options.parent?.data?.id || null,
       parentType: options.parentType || null,
       isEnemy: options.isEnemy,
-      hostile: true, // for collision logic, dangerous to all infantry and engineers.
+      hostile: true, // for collision: dangerous to all infantry and engineers.
       frameCount: 0,
       expireFrameCount: Math.floor((FPS * 1) / GAME_SPEED),
       width,
@@ -105,13 +105,22 @@ const MissileNapalm = (options = {}) => {
       source: exports,
       targets: undefined,
       useLookAhead: true,
-      // hackish: each flame jumps forward, so use lookahead to catch the "tweens" until the last frame.
+      /**
+       * Hackish: each flame jumps forward, so use lookahead
+       * to catch the "tweens" until the last frame.
+       */
+      //
       xLookAhead: width,
       checkTweens: true,
       hit(target) {
         if (data.damagePoints) {
-          // special case: missile napalm doesn't burn friendly helicopters in the original, but can hurt the opposing team's choppers.
-          // collision logic brings us here because flame is hostile and dangerous to both, hence this special check.
+          /**
+           * Special case: missile napalm doesn't burn friendly helicopters
+           * in the original, but can hurt the opposing team's choppers.
+           *
+           * Collision logic brings us here because flame is hostile and
+           * dangerous to both, hence this special check.
+           */
           if (
             target.data.type === TYPES.helicopter &&
             game.objectsById[data.parent]?.data?.isEnemy === target.data.isEnemy
@@ -122,8 +131,10 @@ const MissileNapalm = (options = {}) => {
         }
       }
     },
-    // if unspecified, use default list of items which napalm can hit.
-    // note: "flame burns both sides."
+    /**
+     * If unspecified, use default list of items which napalm can hit.
+     * Note: "flame burns both sides."
+     */
     items:
       options.collisionItems ||
       getTypes(

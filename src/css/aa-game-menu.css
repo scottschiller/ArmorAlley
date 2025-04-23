@@ -55,7 +55,10 @@ body:not(.is_firefox) #game-menu-wrapper {
   transition-property: transform, opacity, filter;
   transform: scale3d(1, 1, 1) translate3d(-50%, -50%, 0);
   transform-origin: 0 0;
-  /* important: remove filter completely, vs. filter: blur(0px); this is key to backdrop-filter working in Chrome. */
+  /**
+   * Important: remove filter completely, vs. filter: blur(0px);
+   * This is key to backdrop-filter working in Chrome.
+   */
   filter: none;
   opacity: 1;
 }
@@ -67,10 +70,7 @@ body.bnb #game-menu-wrapper.active {
 
 @media screen and (max-height: 780px) and (orientation: landscape) {
   #game-menu-wrapper {
-    /**
-     * HACK: restrict the logo width on smaller (short) screens.
-     * TODO: make the home screen more responsive to vertical height restrictions.
-     */
+    /* HACK: restrict the logo width on smaller (short) screens. */
     width: 155vh;
     margin-top: 0;
     min-width: 350px;
@@ -326,8 +326,9 @@ body.auto-start.is-mobile.loaded.has-gamepad #start-game-mobile-hint {
 #logo {
   position: relative;
   /**
-   * 12/2023: Firefox Nightly renders this element quite tall without display: flex.
-   * I'm sure I'm doing something wrong, here be dragons etc.
+   * 12/2023: Firefox Nightly renders this element quite tall
+   * without display: flex. I'm sure I'm doing something wrong,
+   * here be dragons etc.
    */
   display: flex;
   margin: 0 auto;
@@ -691,7 +692,10 @@ body.game-started #home-video-wrapper {
 }
 
 body.is_firefox #home-video-wrapper {
-  /* 11/2024: opacity transition seems to trigger pink video rendering issue in Firefox. */
+  /**
+   * 11/2024: opacity transition seems to trigger pink video
+   * rendering issue in Firefox.
+   */
   transition: none !important;
 }
 
@@ -785,7 +789,7 @@ body.is-mobile .generic-cta.large {
     padding-right: 0;
   }
 
-  /* pull video left on narrow screens, show helicopter on-screen more often. */
+  /* pull video left on narrow screens, show chopper on-screen more often. */
   #home-menu-video {
     margin-left: -45%;
   }
