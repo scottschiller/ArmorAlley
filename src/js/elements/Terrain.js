@@ -1,5 +1,6 @@
 import { gamePrefs } from '../UI/preferences.js';
 import { game } from '../core/Game.js';
+import { common } from '../core/common.js';
 import { FPS, GAME_SPEED, worldHeight } from '../core/global.js';
 import { TYPES } from '../core/global.js';
 import { sprites } from '../core/sprites.js';
@@ -143,7 +144,7 @@ const terrainItems = {
 };
 
 function addItem(className, x, options = {}) {
-  let data, dom, id, /*width, height, inCache, */ exports;
+  let data, dom, id, exports;
 
   id = `terrain_item_${game.objects[TYPES.terrainItem].length}`;
 
@@ -231,6 +232,10 @@ function addItem(className, x, options = {}) {
     domCanvas.img.src = getSpriteURL();
   }
 
+  let css = {
+    className: `${className} terrain-item`
+  };
+
   data = Object.assign(
     {
       type: className,
@@ -243,8 +248,7 @@ function addItem(className, x, options = {}) {
       stepFrames: null,
       stepOffset: undefined,
       x,
-      // note: legacy, will be updated within animate()
-      y: worldHeight - height + 4,
+      y: worldHeight,
       width,
       height,
       isOnScreen: null,
@@ -275,6 +279,7 @@ function addItem(className, x, options = {}) {
   // basic structure for a terrain item
   exports = {
     animate,
+    css,
     data,
     dom,
     domCanvas,
@@ -287,10 +292,13 @@ function addItem(className, x, options = {}) {
   game.objects[TYPES.terrainItem].push(exports);
   game.objectsById[data.id] = exports;
 
-  // only track zones while editing.
   common.initDOM(exports);
 
   if (game.objects.editor) {
+    // HACK: re-align terrain placeholder node, not quite right.
+    dom.o.style.marginTop = `${-data.height + 4}px`;
+
+    // only track zones while editing.
     zones.refreshZone(exports);
   }
 
