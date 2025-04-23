@@ -160,14 +160,17 @@ function Envelope() {
       dom.o.style.display = 'block';
       addGlows();
 
+      let to = common.setFrameTimeout;
+      let add = utils.css.add;
+
       // activate, simulate mouse down / up, open.
-      common.setFrameTimeout(() => {
-        utils.css.add(dom.o, css.active);
-        common.setFrameTimeout(() => {
-          utils.css.add(dom.o, 'mousedown');
-          common.setFrameTimeout(() => {
+      to(() => {
+        add(dom.o, css.active);
+        to(() => {
+          add(dom.o, 'mousedown');
+          to(() => {
             utils.css.remove(dom.o, 'mousedown');
-            common.setFrameTimeout(() => {
+            to(() => {
               open();
               addEvents();
             }, 150);
