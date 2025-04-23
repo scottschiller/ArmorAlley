@@ -1279,27 +1279,30 @@ const View = () => {
   }
 
   function initDOM() {
-    dom.worldWrapper = sprites.getWithStyle('world-wrapper');
-    dom.aa = document.getElementById('aa');
-    dom.battleField = sprites.getWithStyle('battlefield');
-    dom.gameMenu = document.getElementById('game-menu-wrapper');
-    dom.logo = document.getElementById('logo');
-    dom.topBar = sprites.getWithStyle('top-bar');
-    dom.gameTips = sprites.getWithStyle('game-tips');
-    dom.gameTipsList = sprites.getWithStyle('game-tips-list');
-    dom.gameAnnouncements = sprites.getWithStyle('game-announcements');
-    dom.messageBox = document.getElementById('message-box');
-    dom.messageForm = document.getElementById('message-form');
-    dom.messageInput = document.getElementById('message-form-input');
+    // DRY
+    let byId = (id) => document.getElementById(id);
+
+    dom.worldWrapper = byId('world-wrapper');
+    dom.aa = byId('aa');
+    dom.battleField = byId('battlefield');
+    dom.gameMenu = byId('game-menu-wrapper');
+    dom.logo = byId('logo');
+    dom.topBar = byId('top-bar');
+    dom.gameTips = byId('game-tips');
+    dom.gameTipsList = byId('game-tips-list');
+    dom.gameAnnouncements = byId('game-announcements');
+    dom.messageBox = byId('message-box');
+    dom.messageForm = byId('message-form');
+    dom.messageInput = byId('message-form-input');
     dom.root = document.querySelector(':root');
 
     // one more trick: set up controls, then start.
-    const placeholder = document.getElementById('mobile-controls-placeholder');
+    const placeholder = byId('mobile-controls-placeholder');
 
     if (!placeholder.hasChildNodes()) {
       aaLoader.loadHTML('mobile-controls.html', (response) => {
         placeholder.innerHTML = response;
-        dom.mobileControls = document.getElementById('mobile-controls');
+        dom.mobileControls = byId('mobile-controls');
         updateMobileInventory();
       });
     }
