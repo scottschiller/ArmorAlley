@@ -531,7 +531,6 @@ function reset(exports) {
   let { css, data, domCanvas, radarItem } = exports;
 
   // respawn can actually happen now
-
   data.energy = data.energyMax;
 
   // restore default vertical

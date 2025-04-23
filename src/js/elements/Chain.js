@@ -71,6 +71,7 @@ const Chain = (options = {}) => {
 
       const left = obj.data.lastX;
       const top = pos.top(obj.data.y - 32);
+
       // if bunker is present, don't draw chain atop bunker.
       const adjustedHeight = game.objectsById[obj.objects.bunker]?.data?.height
         ? worldHeight -
@@ -78,6 +79,7 @@ const Chain = (options = {}) => {
           (game.objectsById[obj.objects.bunker]?.data?.height || 0) +
           3.75
         : height;
+
       ctx.rect(
         (left - game.objects.view.data.battleField.scrollLeft) *
           game.objects.view.data.screenScale,
@@ -85,6 +87,7 @@ const Chain = (options = {}) => {
         width * game.objects.view.data.screenScale,
         Math.max(0, adjustedHeight) * game.objects.view.data.screenScale
       );
+
       ctx.fill();
     }
   };
