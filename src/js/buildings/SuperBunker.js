@@ -503,14 +503,6 @@ function refreshNearbyItems(exports) {
 function updateArrowState(exports) {
   let { arrowConfig, data } = exports;
 
-  // TODO: DRY / utility function
-  function dropOff(x) {
-    // x from 0 to 1 returns from 1 to 0, with in-out easing.
-    // https://stackoverflow.com/questions/30007853/simple-easing-function-in-javascript/30007935#30007935
-    // Wolfram alpha graph: http://www.wolframalpha.com/input/?i=plot%20%28cos%28pi*x%29%20%2B%201%29%20%2F%202%20for%20x%20in%20%280%2C1%29
-    return (Math.cos(Math.PI * x) + 1) / 2;
-  }
-
   function makeArrowFrames(angleDelta) {
     const duration = FPS * 0.5 * (1 / GAME_SPEED);
 
@@ -519,7 +511,7 @@ function updateArrowState(exports) {
     for (let i = 0; i <= duration; i++) {
       // 1/x, up to 1
       data.arrowFrames[i] =
-        arrowConfig.target.angle + dropOff(i / duration) * angleDelta;
+        arrowConfig.target.angle + common.dropOff(i / duration) * angleDelta;
     }
     // we want 0 to 1.
     data.arrowFrames.reverse();

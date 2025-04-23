@@ -244,6 +244,14 @@ let videoActive;
 
 const common = {
   domCanvas: DomCanvas(),
+  dropOff: (x) => {
+    /**
+     * x from 0 to 1 returns from 1 to 0, with in-out easing.
+     * https://stackoverflow.com/questions/30007853/simple-easing-function-in-javascript/30007935#30007935
+     * Graph: http://wolframalpha.com/input/?i=plot%20%28cos%28pi*x%29%20%2B%201%29%20%2F%202%20for%20x%20in%20%280%2C1%29
+     */
+    return (Math.cos(Math.PI * x) + 1) / 2;
+  },
   hexToRgb,
   initDOM: (exports) => {
     if (!exports) return;
