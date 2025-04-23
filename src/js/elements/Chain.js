@@ -118,11 +118,7 @@ const Chain = (options = {}) => {
 };
 
 function applyHeight(exports) {
-  let { data, dom } = exports;
-
-  dom?.o?._style?.setProperty('height', `${data.height}px`);
-
-  data.appliedHeight = data.height;
+  exports.data.appliedHeight = exports.data.height;
 }
 
 function attachBalloon(exports, balloon = null) {
