@@ -594,7 +594,7 @@ let game = (() => {
 
     if (data.paused) return;
 
-    // good time to process the queue - prune the DOM, etc.
+    // it's a good time to process the queue.
     if (objects.queue) {
       objects.queue.process();
     }
@@ -1260,7 +1260,6 @@ const logEvents = {
   }
 };
 
-export { game, gameType, screenScale };
 // quick global runtime error handler
 window.addEventListener('error', (e) => {
   try {
@@ -1285,3 +1284,5 @@ window.addEventListener('error', (e) => {
     return;
   }
 });
+
+export { game, gameType, screenScale };

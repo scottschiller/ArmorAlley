@@ -187,11 +187,6 @@ if (GAME_SPEED_PARAM) {
 // special cases: handling The Notch, etc.
 const isiPhone = !!ua.match(/iphone/i);
 
-// whether off-screen elements are forcefully removed from the DOM.
-// may be expensive up front, and/or cause style recalcs while
-// scrolling the world. the fastest nodes are the ones that aren't there.
-const useDOMPruning = !searchParams.get('noDomPruning');
-
 const debug = searchParams.get('debug');
 
 const debugCollision = searchParams.get('debugCollision');
@@ -534,7 +529,6 @@ export {
   isMobile,
   isiPhone,
   isMac,
-  useDOMPruning,
   debug,
   debugCollision,
   DEFAULT_VOLUME,

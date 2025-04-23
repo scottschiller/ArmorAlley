@@ -8,7 +8,6 @@ import {
   GAME_SPEED_RATIOED,
   isChrome,
   rnd,
-  useDOMPruning,
   winloc
 } from '../core/global.js';
 import { game } from './Game.js';
@@ -19,7 +18,8 @@ const useTranslate3d = !winloc.match(/noTranslate3d/i);
 
 const sprites = {
   create: (options = {}) => {
-    const o = sprites.withStyle(document.createElement('div'));
+    // NOTE: now only used by level editor.
+    const o = document.createElement('div');
 
     // note: `isEnemy` value may not be 'enemy', but 'facing-left' (e.g., for balloons.)
     o.className = `sprite ${options.className}${
@@ -29,6 +29,11 @@ const sprites = {
     // editor case
     if (game.objects.editor && options.id) {
       o.dataset.id = options.id; // data-id = ...
+    }
+
+    // first-time append, first time on-screen - if a valid node.
+    if (o?.nodeType) {
+      game.dom.battlefield.appendChild(o);
     }
 
     return o;
@@ -119,7 +124,8 @@ const sprites = {
       common.domCanvas.draw(exports);
     }
 
-    if (!o) return;
+    // for now, lots of objects have o = {}.
+    if (!o?.nodeType) return;
 
     // ignore if off-screen and a real DOM node, and editor is not active.
     if (
@@ -169,12 +175,6 @@ const sprites = {
   },
 
   removeNode: (node) => {
-    // DOM pruning safety check: object dom references may include object -> parent node for items that died
-    // while they were off-screen (e.g., infantry) and removed from the DOM, if pruning is enabled.
-    // normally, all nodes would be removed as part of object clean-up. however, we don't want to remove
-    // the battlefield under any circumstances. ;)
-    if (useDOMPruning && node === game.objects.view.dom.battleField) return;
-
     if (!node) return;
 
     node.remove?.();
@@ -249,7 +249,7 @@ const sprites = {
   },
 
   updateIsOnScreen: (o, forceUpdate) => {
-    if (!o?.data || !useDOMPruning) return;
+    if (!o?.data) return;
 
     if (forceUpdate || sprites.isOnScreen(o)) {
       // exit if not already updated
@@ -263,52 +263,10 @@ const sprites = {
       // restore position, including battlefield scroll offset
       sprites.moveWithScrollOffset(o);
 
-      if (o.dom._oRemovedParent) {
-        zones.debugZone(o);
-
-        // previously removed: re-append to DOM
-        o.dom._oRemovedParent.appendChild(o.dom.o);
-        o.dom._oRemovedParent = null;
-      } else {
-        if (o.dom.o.parentNode) {
-          // likely a "preserved" node left in the DOM intentionally
-          // (e.g., local helicopter) and does not need to be re-appended.
-          if (!o.data.preserveOffscreenDOM) {
-            console.warn(
-              'updateIsOnScreen(): WTF, on-screen node already appended?',
-              o.data.type,
-              o
-            );
-          }
-        } else {
-          zones.debugZone(o);
-
-          // first-time append, first time on-screen - if a valid node.
-          if (o.dom.o?.nodeType) {
-            game.dom.battlefield.appendChild(o.dom.o);
-            if (isChrome) {
-              // hackish: annoying render / paint fix for first-append items, specific to Chrome.
-              // here be dragons, etc.
-              o.dom.o.style.outline = `1px solid transparent`;
-            }
-          }
-        }
-      }
-
       // callback, if defined
       o.isOnScreenChange?.(o.data.isOnScreen);
     } else if (o.data.isOnScreen !== false) {
       o.data.isOnScreen = false;
-
-      // only do work if detaching node from live DOM
-      // special case: preseve local helicopter in DOM - for respawn, CSS animation purposes.
-      if (!o.data.preserveOffscreenDOM && o.dom?.o?.parentNode) {
-        // detach, retaining parent node, for later re-append
-        o.dom._oRemovedParent = o.dom.o.parentNode;
-        o.dom.o.remove();
-
-      }
-
       // callback, if defined
       if (o.isOnScreenChange) {
         o.isOnScreenChange(o.data.isOnScreen);

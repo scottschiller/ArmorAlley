@@ -211,7 +211,6 @@ const Helicopter = (options = {}) => {
         { firingRates },
         'parachutingDelayLanded'
       ),
-      preserveOffscreenDOM: !!options.isLocal,
       ignoreMouseEvents: !!game.objects.editor,
       fuel: 100,
       maxFuel: 100,
