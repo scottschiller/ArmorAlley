@@ -97,7 +97,7 @@ const Helicopter = (options = {}) => {
 
     dom.o = {};
 
-    dom.fuelLine = sprites.getWithStyle('fuel-line');
+    dom.fuelLine = document.getElementById('fuel-line');
 
     dom.oSpinner = document.getElementById('spinner');
 

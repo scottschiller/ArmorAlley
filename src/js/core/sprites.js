@@ -18,24 +18,6 @@ import { zones } from './zones.js';
 const useTranslate3d = !winloc.match(/noTranslate3d/i);
 
 const sprites = {
-  withStyle: (node) => {
-    // experimental: decorate a DOM node with shortcuts, perhaps reducing style "access"
-    if (node && !node._style) {
-      // this may be no different vs. direct access(?)
-      // node._style = node.style;
-
-      // this may be faster, at least in Chrome.
-      node._style = {
-        getPropertyValue: node.style.getPropertyValue.bind(node.style),
-        setProperty: node.style.setProperty.bind(node.style)
-      };
-    }
-
-    return node;
-  },
-
-  getWithStyle: (id) => sprites.withStyle(document.getElementById(id)),
-
   create: (options = {}) => {
     const o = sprites.withStyle(document.createElement('div'));
 
@@ -167,25 +149,15 @@ const sprites = {
       x = `${x}px`;
     }
 
-    // TODO: review
-    // a pooled node may have just been released; ignore if no `_style`.
-    if (!o._style) {
-      if (!exports?.data?.domCanvas && !exports?.domCanvas) {
-        console.warn('setTransformXY(): WTF no o._style?', o);
-        debugger;
-      }
-      return;
-    }
-
     if (useTranslate3d) {
-      o._style.setProperty('transform', `translate3d(${x}, ${y}, 0px)`);
+      o.style.transform = `translate3d(${x}, ${y}, 0px)`;
     } else {
-      o._style.setProperty('transform', `translate(${x}, ${y})`);
+      o.style.transform = `translate(${x}, ${y})`;
     }
 
     if (debug) {
       // show that this element was moved
-      // o._style.setProperty('outline', `1px solid #${rndInt(9)}${rndInt(9)}${rndInt(9)}`);
+      // o.style.outline = `1px solid #${rndInt(9)}${rndInt(9)}${rndInt(9)}`;
       game.objects.gameLoop.incrementTransformCount();
     }
   },
@@ -206,7 +178,6 @@ const sprites = {
     if (!node) return;
 
     node.remove?.();
-    node._style = null;
     node = null;
   },
 
@@ -217,7 +188,6 @@ const sprites = {
       // TESTING: Does manually-removing transform before node removal help with GC? (apparently not.)
       // Chrome issue: https://code.google.com/p/chromium/issues/detail?id=304689
       nodeArray[i].remove();
-      nodeArray[i]._style = null;
       nodeArray[i] = null;
     }
 
@@ -337,15 +307,6 @@ const sprites = {
         o.dom._oRemovedParent = o.dom.o.parentNode;
         o.dom.o.remove();
 
-        let transform = o.dom.o._style.getPropertyValue('transform');
-
-        // manually remove x/y transform, will be restored when on-screen.
-        if (transform) {
-          // 'none' might be considered a type of transform per Chrome Dev Tools,
-          // and thus incur an "inline transform" cost vs. an empty string.
-          // notwithstanding, transform has a "value" and can be detected when restoring elements on-screen.
-          o.dom.o._style.setProperty('transform', 'none');
-        }
       }
 
       // callback, if defined
@@ -353,21 +314,6 @@ const sprites = {
         o.isOnScreenChange(o.data.isOnScreen);
       }
     }
-  },
-
-  applyRandomRotation: (node) => {
-    if (!node) return;
-
-    /**
-     * Here be dragons: this should only be applied once, given concatenation,
-     * and might cause bugs and/or performance problems if it isn't. :D
-     */
-    node._style.setProperty(
-      'transform',
-      `${node._style.getPropertyValue('transform')} rotate3d(0, 0, 1, ${rnd(
-        360
-      )}deg)`
-    );
   },
 
   maybeFade: (exports) => {
