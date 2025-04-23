@@ -49,11 +49,6 @@ let transitionScaleFrames = [];
 let transitionScaleDuration;
 const tsDuration = 1;
 
-const scanNodeTypes = {
-  [TYPES.turret]: TURRET_SCAN_RADIUS,
-  [TYPES.missileLauncher]: MISSILE_LAUNCHER_SCAN_RADIUS
-};
-
 const ignoreLayoutTypes = {
   [TYPES.balloon]: true,
   [TYPES.helicopter]: true
@@ -201,10 +196,7 @@ const Radar = () => {
 
     itemObject = RadarItem({
       // special case: null-ish for domCanvas, provided there no scan node.
-      o:
-        item.domCanvas && !scanNodeTypes[item.data.type]
-          ? {}
-          : sprites.withStyle(document.createElement('div')),
+      o: {},
       parentType: item.data.type,
       className,
       // note: live parent (object, not ID) reference, for RadarItem().
@@ -796,13 +788,6 @@ const Radar = () => {
         if (data.isStale && oParent?.resize) {
           oParent.resize(nextScale);
         }
-
-        // hack: resize scan nodes manually for level previews
-        if (!game.data.started) {
-          if (scanNodeTypes[oParent.data.type]) {
-            objects.items[i].updateScanNode(scanNodeTypes[oParent.data.type]);
-          }
-        }
       }
     }
 
@@ -1062,4 +1047,4 @@ const Radar = () => {
   return exports;
 };
 
-export { scanNodeTypes, Radar };
+export { Radar };
