@@ -37,8 +37,6 @@ function RadarItem(options) {
     if (dieOptions?.silent) {
       // prevent blink, continue showing while stepping down etc.
       data.alwaysDraw = true;
-    } else {
-      utils.css.add(dom.o, css.dying);
     }
 
     data.dead = true;
@@ -51,22 +49,11 @@ function RadarItem(options) {
       } else {
         common.setFrameTimeout(dieComplete, 2000);
       }
-    } else {
-      // balloon, etc.
-      common.setFrameTimeout(() => {
-        // only do this if the parent (balloon) is still dead.
-        // it may have respawned almost immediately by passing infantry.
-        if (!game.objectsById[oParent]?.data?.dead) return;
-        utils.css.add(dom.o, css.dead);
-      }, 1000);
     }
   }
 
   function reset() {
     if (!data.dead) return;
-
-    utils.css.remove(dom.o, css.dying);
-    utils.css.remove(dom.o, css.dead);
     data.dead = false;
 
     // ensure visibility, reset blink state
@@ -137,35 +124,6 @@ function RadarItem(options) {
     }
   }
 
-  function initRadarItem() {
-    // string -> array as params
-    if (!options.className) return;
-    const classNames = options.className.split(' ');
-    utils.css.add(dom.o, css.radarItem, ...classNames);
-  }
-
-  function updateScanNode(radius = 0) {
-    // special case: some radar items also get a "scan range" node.
-    const { oScanNode } = dom;
-
-    if (!oScanNode) return;
-
-    // size "scan radius" according to browser width, because vertical resizing does not affect spacing of radar layout.
-    oScanNode.style.width = `${
-      (radius / worldWidth) *
-      // interimScale set by JS animation transition
-      (game.objects.radar.data.interimScale || game.objects.radar.data.scale) *
-      game.objects.view.data.browser.screenWidth *
-      2
-    }px`;
-
-    const height = (radius / worldHeight) * game.objects.radar.data.height;
-    // height is always fixed.
-    oScanNode.style.height = `${height}px`;
-
-    oScanNode.style.borderRadius = `${height}px ${height}px 0 0`;
-  }
-
   css = {
     radarItem: 'radar-item',
     dying: 'dying',
@@ -191,12 +149,10 @@ function RadarItem(options) {
   };
 
   dom = {
-    o: options.o
+    o: {}
   };
 
   oParent = options.oParent.data.id;
-
-  initRadarItem();
 
   exports = {
     animate,
@@ -208,8 +164,7 @@ function RadarItem(options) {
     recycle,
     reset,
     summon,
-    dismiss,
-    updateScanNode
+    dismiss
   };
 
   if (options.oParent?.domCanvas?.radarItem) {
