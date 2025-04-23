@@ -245,6 +245,31 @@ let videoActive;
 const common = {
   domCanvas: DomCanvas(),
   hexToRgb,
+  initDOM: (exports) => {
+    if (!exports) return;
+    let { css, dom, data } = exports;
+
+    if (game.objects.editor) {
+      dom.o = sprites.create({
+        className: css.className,
+        // oft-used bits
+        id: data.id,
+        isEnemy: data.isEnemy
+      });
+      // assign dimensions, too (historically, via `className`)
+      Object.assign(dom.o.style, {
+        width: `${data.width}px`,
+        height: `${data.height}px`
+      });
+    } else {
+      dom.o = {};
+    }
+
+    // sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
+
+    // this will update domCanvas
+    sprites.moveTo(exports);
+  },
   setGameSpeed: (gameSpeed) => {
     // note: this updates GAME_SPEED
     const newGameSpeed = updateGameSpeed(gameSpeed);
