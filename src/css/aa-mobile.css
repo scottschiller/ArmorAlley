@@ -974,10 +974,6 @@ body.game-paused:not(.game-started) #world {
   filter: grayscale(100%);
 }
 
-body.game-paused .sprite {
-  animation: none !important;
-}
-
 @media screen and (orientation: portrait) {
   #game-tips {
     /* smaller text, too. */

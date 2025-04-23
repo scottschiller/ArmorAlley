@@ -215,16 +215,9 @@ body.is_safari:not(.is-mobile) {
 }
 
 #radar,
-#world,
-.sprite {
+#world {
   /* https://developer.mozilla.org/en-US/docs/Web/CSS/contain */
   contain: strict;
-}
-
-#battlefield > .sprite,
-#radar > .sprite {
-  /* hide all first-level sprites (but not sub-sprites) until first transform / position is set, prevent flicker at 0px/0px. */
-  transform: translate(-100%, -100%);
 }
 
 #game-status,
@@ -369,10 +362,6 @@ body #radar-container .interference {
   height: 100%;
   opacity: 0;
   transition: opacity 0.5s;
-}
-
-#radar-container.interference .scan-node {
-  display: none;
 }
 
 body.radar_interference_blur #radar-container.interference .interference {
@@ -574,43 +563,6 @@ body:not(.edit-mode) #top-bar {
   bottom: 0;
 }
 
-#radar .sprite {
-  position: absolute;
-  top: 0;
-  left: 0;
-  background: padding-box #17a007;
-  border-color: #ccc;
-  border-radius: calc(0.5px * var(--gs)) calc(0.5px * var(--gs)) 0 0;
-  contain: strict;
-  width: calc(3px * var(--rs));
-  height: calc(3px * var(--gs));
-  z-index: 2;
-}
-
-#radar .sprite.bottom-aligned {
-  top: auto;
-  bottom: 0;
-}
-
-#radar .sprite.enemy {
-  background-color: #ccc;
-}
-
-@media screen and (orientation: landscape) and (max-height: 480px) {
-  /* give everybody a vertical boost, per se. */
-  #radar .sprite:not(.balloon) {
-    padding-bottom: calc(1px * var(--rs));
-  }
-}
-
-#radar .sprite.missile-launcher {
-  /* now invisible, basically a placeholder for the scan node. */
-  background-color: transparent;
-  box-shadow: none;
-  height: calc(2px * var(--gs));
-  width: calc(2px * var(--rs));
-}
-
 #bottom {
   position: absolute;
   height: calc(18px * var(--gs));
@@ -625,28 +577,6 @@ body:not(.edit-mode) #top-bar {
 #bottom,
 #queue .queue-item {
   font-size: calc(7px * var(--gs));
-}
-
-#radar .sprite.turret {
-  /* now invisible, basically a placeholder for the scan node. */
-  background-color: transparent;
-  box-shadow: none;
-}
-
-/* scan nodes */
-#battlefield .sprite.missile-launcher,
-#battlefield .sprite.turret,
-#radar .sprite.missile-launcher,
-#radar .sprite.turret {
-  /* allow nested .scan-mode to show */
-  contain: unset;
-  overflow: visible;
-}
-
-#radar .sprite.missile-launcher,
-#radar .sprite.turret {
-  /* ensure everything sits on top of scan nodes */
-  z-index: 2;
 }
 
 #editor-window,

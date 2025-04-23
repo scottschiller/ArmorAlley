@@ -53,7 +53,7 @@ body.has-gamepad.gamepad-active u {
   text-decoration: none;
 }
 
-body.edit-mode .sprite .zone-flag {
+body.edit-mode .zone-flag {
   border-radius: 2px;
   left: 1px;
   top: 1px;

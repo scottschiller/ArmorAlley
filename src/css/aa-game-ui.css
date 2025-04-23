@@ -1,8 +1,7 @@
 /**
  * AA: Game UI
  */
-body.is_safari:not(.is-mobile) #player-status-bar,
-body.is_safari:not(.is-mobile) .sprite {
+body.is_safari:not(.is-mobile) #player-status-bar {
   /* Safari: given rasterization, keep things pixelated and sharp for sprites. */
   image-rendering: pixelated;
 }
@@ -643,17 +642,6 @@ ul.stats-bar .bombs em {
   width: 3px;
 }
 
-.sprite {
-  background-position: 0 0;
-  background-repeat: no-repeat;
-  bottom: 0;
-  left: 0;
-  overflow: hidden;
-  -moz-pointer-events: none;
-  pointer-events: none;
-  position: absolute;
-}
-
 #fuel-line,
 .radar-scroller {
   /**
@@ -664,10 +652,6 @@ ul.stats-bar .bombs em {
    */
   will-change: transform;
   contain: strict;
-}
-
-.sprite.dead {
-  background-image: none;
 }
 
 body.rubber-chicken-mode #mobile-controls li.weapons-item a.smart-missile,
@@ -1596,10 +1580,6 @@ body.is_firefox #queue .queue-item.has-counter .fraction-wrapper {
   vertical-align: middle;
 }
 
-.sprite.infantry .zone-flag {
-  font-size: 3px;
-}
-
 .zone-post .zone-flag {
   font-size: 6px;
   left: 50%;
@@ -1650,8 +1630,6 @@ body.is_firefox #queue .queue-item.has-counter .fraction-wrapper {
   background: transparent;
 }
 
-.sprite.dead .target-ui,
-.sprite.exploding .target-ui,
 .target-ui.disabled,
 body.game-over .target-ui {
   opacity: 0;
