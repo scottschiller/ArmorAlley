@@ -13,7 +13,10 @@ const END_OF_WORLD_LEFT = 0 + END_OF_WORLD_BUFFER;
 const END_OF_WORLD_RIGHT = 8192 - END_OF_WORLD_BUFFER;
 
 function wander(data) {
-  // default: go "toward the other guys" - and reverse if we reach the end of the world.
+  /**
+   * Default: go "toward the other guys" - and reverse if we reach
+   * the end of the world / battlefield.
+   */
   if (data.didWander) return;
 
   if (data.vectors.arrive) {
@@ -25,7 +28,10 @@ function wander(data) {
 
   data.didWander = true;
 
-  // bail if there is a priority operation underway, UNLESS heading for landing pad
+  /**
+   * Bail if there is a priority operation underway,
+   * UNLESS heading for landing pad.
+   */
   if (data.forces.arrive || (data.forces.seek && !data.wantsLandingPad)) {
     return;
   }
