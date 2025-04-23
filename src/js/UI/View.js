@@ -311,7 +311,7 @@ const View = () => {
 
     // re-assign id, and re-"get"
     newListNode.id = newListId;
-    dom.gameTipsList = sprites.getWithStyle(newListNode.id);
+    dom.gameTipsList = document.getElementById(newListNode.id);
 
     // replace the source material with placeholders for rendering, and an invisible element which drives the CSS animation loop.
     // CSS `onanimationend()` is used to show the next tip.
@@ -1098,21 +1098,14 @@ const View = () => {
 
     if (debug) console.log('using transform-based scaling');
 
-    dom.worldWrapper._style.setProperty(
-      'width',
-      `${Math.floor(data.browser.screenWidth * (1 / data.screenScale))}px`
-    );
+    dom.worldWrapper.style.width = `${Math.floor(data.browser.screenWidth * (1 / data.screenScale))}px`;
 
     // TODO: consider translate() instead of marginTop here. Seems to throw off mouse Y coordinate, though,
     // and will need more refactoring to make that work the same.
-    dom.worldWrapper._style.setProperty(
-      'transform',
-      `scale3d(${data.screenScale}, ${data.screenScale}, 1)`
-    );
+    dom.worldWrapper.style.transform = `scale3d(${data.screenScale}, ${data.screenScale}, 1)`;
+    dom.worldWrapper.style.transformOrigin = '0px 0px';
 
     dom.root?.style?.setProperty('--game-scale-transform', data.screenScale);
-
-    dom.worldWrapper._style.setProperty('transform-origin', '0px 0px');
 
     game.objects.funds?.updateScale();
 
