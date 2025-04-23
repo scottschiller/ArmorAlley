@@ -250,11 +250,6 @@ function drift(exports, isEnemy) {
 
 function initCloud(exports) {
   common.initDOM(exports);
-
-  let { data, dom } = exports;
-
-  sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
-
   game.objects.radar.addItem(exports);
 }
 

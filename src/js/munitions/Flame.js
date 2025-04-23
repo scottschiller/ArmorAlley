@@ -141,11 +141,9 @@ function animate(exports) {
 }
 
 function initFlame(exports) {
-  let { data, dom } = exports;
+  let { dom } = exports;
 
   dom.o = {};
-
-  sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
 
   if (sounds.tankFlame) {
     playSound(sounds.tankFlame, game.players.local);
