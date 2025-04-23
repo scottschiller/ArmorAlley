@@ -374,8 +374,6 @@ function gameOver(exports, youWon) {
   utils.css.add(document.body, 'game-over', youWon ? 'you-won' : 'you-lost');
 
   game.logEvent('GAME_OVER');
-
-  game.objects.stats.displayEndGameStats();
 }
 
 function initVan(exports) {

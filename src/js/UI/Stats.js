@@ -650,31 +650,6 @@ function Stats() {
     data.time.end = new Date();
   }
 
-  function displayEndGameStats() {
-    console.log('TODO: fix endgame stats. 😅');
-    return;
-
-    /*
-    let i, j, k, items, cols, type, offset, dataSource;
-    items = document.getElementById('stats-endgame').getElementsByTagName('tr');
-    // data sources
-    dataSource = [data[TEAMS.left].destroyed, data[TEAMS.right].destroyed];
-    offset = 1;
-    for (i = 0, j = items.length; i < j; i++) {
-      type = items[i].getAttribute('data-type');
-      if (type) {
-        cols = items[i].getElementsByTagName('td');
-        for (k = 0; k < 2; k++) {
-          if (cols[k + offset]) {
-            cols[k + offset].childNodes[0].textContent = dataSource[k][type];
-          }
-        }
-      }
-    }
-    document.getElementById('stats-endgame').style.display = 'block';
-    */
-  }
-
   data = {
     time: {
       start: new Date(),
@@ -696,7 +671,6 @@ function Stats() {
     create,
     data,
     destroy,
-    displayEndGameStats,
     formatForDisplay,
     getTeamDataByPlayer,
     markEnd,
