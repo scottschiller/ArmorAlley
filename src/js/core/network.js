@@ -788,10 +788,7 @@ function updateUI() {
 
   if (offset !== lastLEDOffset) {
     lastLEDOffset = offset;
-    oLightsSubSprite.style.setProperty(
-      'transform',
-      `translate(${-16 * offset}px, 0px`
-    );
+    oLightsSubSprite.style.transform = `translate(${-16 * offset}px, 0px`;
   }
 }
 
