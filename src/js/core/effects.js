@@ -647,9 +647,8 @@ const effects = {
       );
     }
 
-    common.domCanvas.dom.ctx.battlefield.strokeStyle = data.isEnemy
-      ? 'rgba(255, 255, 255, 0.2)'
-      : 'rgba(0, 255, 0, 0.2)';
+    // slightly-reduced stroke opacity for enhanced FX
+    common.domCanvas.dom.ctx.battlefield.strokeStyle = `rgba(${data.isEnemy ? '255, 255, 255' : '0, 255, 0'}, ${gamePrefs.radar_enhanced_fx ? 0.1 : 0.2})`;
 
     common.domCanvas.dom.ctx.battlefield.stroke();
   },
