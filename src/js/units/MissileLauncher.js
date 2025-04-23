@@ -465,6 +465,8 @@ MissileLauncher.radarItemConfig = ({ data }) => ({
     // TODO: effects.drawRadarScanNode() for turret and missile launcher.
     // TODO: cache and redraw on resize?
 
+    if (!effects.canShowScanNode(data, 'radar')) return;
+
     /**
      * Relative to radar height, and scaled a bit.
      * TODO: review precise alignment w/helicopter etc.

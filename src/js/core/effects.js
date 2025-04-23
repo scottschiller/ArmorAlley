@@ -532,20 +532,37 @@ const effects = {
     }
   },
 
+  canShowScanNode: (data, scanType = 'battlefield') => {
+    // don't filter if sides not known / in preview mode.
+    if (!game.data.started) return true;
+
+    // guard
+    if (!data) return;
+
+    // hackish: which set of prefs to check.
+    let friendly = `scan_ui_${scanType}_friendly`;
+    let enemy = `scan_ui_${scanType}_enemy`;
+
+    // don't show if disabled by prefs and sides known.
+    let isFriendly = data.isEnemy === game.players?.local?.data?.isEnemy;
+    if (
+      (isFriendly && !gamePrefs[friendly]) ||
+      (!isFriendly && !gamePrefs[enemy])
+    )
+      return;
+
+    // finally, OK.
+    return true;
+  },
+
   drawScanNode: (exports) => {
     // as seen on turrets and missile launchers
     if (!exports.data.isOnScreen) return;
 
     let { data } = exports;
 
-    // TODO: handle radar
-    if (data.isEnemy) {
-      if (!gamePrefs.scan_ui_battlefield_enemy) return;
-      // if (!gamePrefs.scan_ui_radar_enemy) return;
-    } else {
-      if (!gamePrefs.scan_ui_battlefield_friendly) return;
-      // if (!gamePrefs.scan_ui_radar_friendly) return;
-    }
+    // don't show if disabled by prefs and sides known.
+    if (!effects.canShowScanNode(data, 'battlefield')) return;
 
     let x = data.x + data.halfWidth;
     let y =
