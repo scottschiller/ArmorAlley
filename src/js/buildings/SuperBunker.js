@@ -57,7 +57,10 @@ const SuperBunker = (options = {}) => {
       type: TYPES.superBunker,
       bottomAligned: true,
       frameCount: 0,
-      // if neutral / hostile, then "unmanned" - but helicopters and munitions can still hit it.
+      /**
+       * If neutral / hostile, then "unmanned" - but helicopters
+       * and munitions can still hit it.
+       */
       energy: options.hostile ? 0 : options.energy || 5,
       energyMax: 5, // note: +/- depending on friendly vs. enemy infantry
       isEnemy: !!options.isEnemy,
@@ -181,7 +184,10 @@ const SuperBunker = (options = {}) => {
           !target.data.hostile &&
           target.data.isEnemy === game.players.local.data.isEnemy;
 
-        // enemy might be inside the bunker bounding box, e.g., parachuted in from above. Consider a miss, if so.
+        /**
+         * Enemy might be inside the bunker bounding box, e.g., parachuted in
+         * from above. Consider a miss, if so.
+         */
         if (
           !isFriendly &&
           data.energy > 0 &&
@@ -191,10 +197,16 @@ const SuperBunker = (options = {}) => {
           nearby.options.fireTargetCount++;
         }
 
-        // only infantry (excluding engineers by role=1) are involved, beyond this point
+        /**
+         * Only infantry (excluding engineers by role=1) are involved,
+         * beyond this point.
+         */
         if (target.data.type !== TYPES.infantry || target.data.role) return;
 
-        // super bunkers can hold up to five men. only interact if not full (and friendly), OR an opposing, non-friendly infantry.
+        /**
+         * Super Bunkers can hold up to five men. Only interact if not full
+         * (and friendly), OR an opposing, non-friendly infantry.
+         */
         if (isFriendly && data.energy === data.energyMax) return;
 
         // infantry at door? contribute to capture, or arm base, depending.
@@ -207,7 +219,10 @@ const SuperBunker = (options = {}) => {
           // ensure that if we were dead, we aren't any more.
           data.dead = false;
 
-          // super bunker can be enemy, hostile or friendly. for now, we only care about enemy / friendly.
+          /**
+           * Super Bunker can be enemy, hostile or friendly. For now,
+           * we only care about enemy / friendly.
+           */
           capture(exports, target.data.isEnemy);
 
           // update, now that capture has happened.
@@ -305,7 +320,7 @@ function updateFireModulus(exports) {
     1,
     FIRE_MODULUS * gsRatio - data.energy * gsRatio
   );
-  // hackish: apply this back to the "1X" value, for scaling vs. game speed and FPS
+  // hackish: apply this back to the "1X" value - for scaling game speed / FPS.
   data.fireModulus1X = data.fireModulus;
 }
 
@@ -368,8 +383,11 @@ function setFiring(exports, state) {
 function updateHealth(exports, attacker) {
   let { data } = exports;
 
-  // notify if just disarmed by tank gunfire
-  // note: the super bunker has not become friendly to the tank; it's still "dangerous", but unarmed and won't fire at incoming units.
+  /**
+   * Notify if just disarmed by tank gunfire.
+   * Note: The Super Bunker has not become friendly to the tank;
+   * it's still "dangerous", but unarmed and won't fire at incoming units.
+   */
   if (data.energy) return;
 
   const isFriendly = attacker.data.isEnemy === game.players.local.data.isEnemy;
@@ -413,7 +431,10 @@ function die(exports) {
 
   updateFireModulus(exports);
 
-  // this object, in fact, never actually dies because it only becomes neutral/hostile and can still be hit.
+  /**
+   * This object, in fact, never actually dies because it only becomes
+   * neutral/hostile and can still be hit.
+   */
   data.dead = false;
 
   // un-manned, but dangerous to helicopters on both sides.
@@ -428,7 +449,10 @@ function die(exports) {
 }
 
 function fire(exports) {
-  // TODO: BUG FIX - figure out why super bunker doesn't fire at local helicopter on right side. :X
+  /**
+   * TODO: BUG - figure out why super bunker doesn't fire at local helicopter
+   * on right side. :X
+   */
 
   let { data, nearby } = exports;
 
@@ -491,8 +515,9 @@ function animate(exports) {
 function refreshNearbyItems(exports) {
   let { nearby } = exports;
   /**
-   * Set on init, updated with `zones.changeOwnership()` as targets change sides.
-   * NOTE: Super Bunkers likely fire at all units when armed, but not when neutral.
+   * Set on init, updated with zones.changeOwnership() as targets change sides.
+   * NOTE: Super Bunkers likely fire at all units when armed,
+   * but not when neutral.
    */
   nearby.items = getTypes(
     'infantry:all, engineer, missileLauncher, van, helicopter',
