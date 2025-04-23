@@ -295,13 +295,12 @@ body.tutorial-mode #game-tips .tips-container b {
   color: #fff;
 }
 
-/* ignore events on sub/transform sprites, and explosions */
-body.edit-mode
-  #battlefield
-  .sprite:not(.sub-sprite):not(.transform-sprite):not(.ephemeral-explosion):not(
-    .gunfire
-  ):not(.helicopter):not(.smoke) {
-  pointer-events: unset;
+body.edit-mode #battlefield .sprite {
+  position: absolute;
+}
+
+body.edit-mode #battlefield .terrain-item {
+  transition: margin 0.25s ease-out;
 }
 
 /* ignore events on certain "non-moveable" sprites */
@@ -316,21 +315,6 @@ body.edit-mode #battlefield .sprite.selected:not(.exploding) {
   border-radius: 3px;
   /* override :not(), ugh. */
   outline: #090 solid 1px !important;
-}
-
-body.edit-mode #battlefield .sprite.newly-added-sprite,
-body.edit-mode #battlefield .terrain-item {
-  transition: margin 0.25s ease-out;
-}
-
-body.edit-mode #battlefield .sprite.newly-added-sprite.tank,
-body.edit-mode #battlefield .sprite.tank {
-  /* annoying pixel shift */
-  margin-top: -2px;
-}
-
-body.edit-mode #battlefield .sprite.newly-added-sprite {
-  margin-top: 0;
 }
 
 body.edit-mode #battlefield .terrain-item {
@@ -510,133 +494,52 @@ body.edit-mode #top-bar {
 /**
  * Sprites for editor UI
  */
-.sand-dune {
-  height: 8px;
-  width: 51px;
-}
-
 #editor-window .sand-dune {
   background-image: url(../../assets/image/sand-dune.png);
-}
-
-.sand-dunes {
-  height: 11px;
-  width: 73px;
 }
 
 #editor-window .sand-dunes {
   background-image: url(../../assets/image/sand-dunes.png);
 }
 
-.checkmark-grass {
-  height: 10px;
-  width: 15px;
-}
-
 #editor-window .checkmark-grass {
   background-image: url(../../assets/image/checkmark-grass.png);
-}
-
-.flower {
-  height: 8px;
-  width: 11px;
 }
 
 #editor-window .flower {
   background-image: url(../../assets/image/flower.png);
 }
 
-.flowers {
-  height: 11px;
-  width: 34px;
-}
-
 #editor-window .flowers {
   background-image: url(../../assets/image/flowers.png);
-}
-
-.flower-bush {
-  height: 13px;
-  width: 18px;
 }
 
 #editor-window .flower-bush {
   background-image: url(../../assets/image/flower-bush.png);
 }
 
-.tree {
-  height: 27px;
-  width: 26px;
-}
-
 #editor-window .tree {
   background-image: url(../../assets/image/tree.png);
-}
-
-.tumbleweed {
-  height: 15px;
-  width: 18px;
 }
 
 #editor-window .tumbleweed {
   background-image: url(../../assets/image/tumbleweed.png);
 }
 
-.palm-tree {
-  height: 22px;
-  width: 18px;
-}
-
 #editor-window .palm-tree {
   background-image: url(../../assets/image/palm-tree.png);
-}
-
-.rock {
-  height: 13px;
-  width: 18px;
 }
 
 #editor-window .rock {
   background-image: url(../../assets/image/rock.png);
 }
 
-.rock2 {
-  height: 11px;
-  width: 13px;
-}
-
 #editor-window .rock2 {
   background-image: url(../../assets/image/rock2.png);
 }
 
-.grass {
-  height: 9px;
-  width: 40px;
-}
-
 #editor-window .grass {
   background-image: url(../../assets/image/grass.png);
-}
-
-.gravestone {
-  height: 12px;
-  width: 20px;
-}
-
-.gravestone2 {
-  height: 12px;
-  width: 15px;
-}
-
-.grave-cross {
-  height: 10px;
-  width: 13px;
-}
-
-.left-arrow-sign,
-.right-arrow-sign {
-  width: 28px;
-  height: 25px;
 }
 
 .terrain-item {
@@ -644,117 +547,10 @@ body.edit-mode #top-bar {
   top: 0;
 }
 
-.barb-wire {
-  height: 11px;
-  width: 18px;
-}
-
 .barb-wire,
-.cactus {
-  background-size: contain;
-}
-
-.cactus {
-  height: 17px;
-  width: 12px;
-}
-
+.cactus,
 .cactus2 {
   background-size: contain;
-  height: 25px;
-  width: 18px;
-}
-
-/* classic game sprites, DOM node edition */
-.balloon {
-  height: 16px;
-  width: 38px;
-}
-
-.missile-launcher {
-  height: 18px;
-  width: 54px;
-}
-
-.tank {
-  height: 19px;
-  width: 58px;
-}
-
-.van {
-  height: 16px;
-  width: 38px;
-}
-
-.engineer,
-.infantry {
-  height: 11px;
-  width: 11px;
-}
-
-.engineer {
-  /* slightly smaller than infantry. */
-  width: 10px;
-}
-
-.cloud1,
-.cloud2,
-.cloud3 {
-  left: 0;
-  top: 0;
-}
-
-.cloud1 {
-  height: 29px;
-  width: 102px;
-}
-
-.cloud2 {
-  height: 28px;
-  width: 116px;
-}
-
-.cloud3 {
-  height: 34px;
-  width: 125px;
-}
-
-.base {
-  height: 26px;
-  /* +1 pixel, sprite clipping workaround */
-  width: 104px;
-}
-
-.end-bunker {
-  height: 19px;
-  width: 41px;
-}
-
-.super-bunker {
-  height: 28px;
-  width: 66px;
-}
-
-.bunker,
-.bunker.enemy {
-  height: 25.5px;
-  width: 52px;
-}
-
-.turret,
-.turret .sub-sprite {
-  height: 15px;
-  width: 22px;
-}
-
-.turret .sub-sprite {
-  height: 31px !important;
-  top: -5px;
-}
-
-.landing-pad {
-  height: 7px;
-  width: 81px;
 }
 
 /* Editor UI */

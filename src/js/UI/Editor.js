@@ -147,7 +147,6 @@ const Editor = () => {
     airborne: 'airborne',
     editMode: 'edit-mode',
     enemy: 'enemy',
-    newlyAddedSprite: 'newly-added-sprite',
     selected: 'selected',
     submerged: 'submerged'
   };
@@ -374,7 +373,6 @@ const Editor = () => {
 
     if (mtvie || airborne || structure) {
       obj = game.addObject(chosenItem, { isEnemy: data.isEnemy, x });
-      utils.css.add(obj.dom.o, css.newlyAddedSprite);
     } else {
       obj = game.addItem(chosenItem, x);
     }
