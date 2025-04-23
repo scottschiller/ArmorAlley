@@ -575,8 +575,6 @@ function animate(exports) {
 }
 
 function initDOM(exports, options) {
-  let { css, data, dom } = exports;
-
   if (options.noInit) return;
 
   common.initDOM(exports);

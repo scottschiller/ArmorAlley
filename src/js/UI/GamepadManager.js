@@ -145,35 +145,6 @@ const GamepadManager = (options = {}) => {
     ];
   })();
 
-  function handleDPad(btnUp, btnDown, btnLeft, btnRight) {
-    let state = {};
-
-    // default: middle row, neutral
-    let offset = OFFSET_CENTER;
-
-    if (btnUp.pressed) {
-      // top row: 0-2
-      offset = 1;
-      state[up] = up;
-    } else if (btnDown.pressed) {
-      // bottom row: 6-8
-      offset = 7;
-      state[down] = down;
-    }
-
-    if (btnLeft.pressed) {
-      offset--;
-      state[left] = left;
-    } else if (btnRight.pressed) {
-      offset++;
-      state[right] = right;
-    }
-
-    state.offset = offset;
-
-    return state;
-  }
-
   function handleAxisDPad(axis, axisValues) {
     /**
      * Special case (8Bitdo NES30 Pro): d-pad state via single axis vs. buttons.

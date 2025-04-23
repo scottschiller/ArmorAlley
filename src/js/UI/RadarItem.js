@@ -1,14 +1,6 @@
 import { game } from '../core/Game.js';
-import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
-import {
-  FPS,
-  GAME_SPEED,
-  noRadar,
-  TYPES,
-  worldHeight,
-  worldWidth
-} from '../core/global.js';
+import { FPS, GAME_SPEED, TYPES } from '../core/global.js';
 
 function RadarItem(options) {
   let css, data, dom, oParent, exports;

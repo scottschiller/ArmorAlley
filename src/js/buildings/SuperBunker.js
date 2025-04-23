@@ -546,7 +546,7 @@ function onArrowHiddenChange(exports, isVisible) {
 }
 
 function initDOM(exports) {
-  let { arrowConfig, css, data, dom, domCanvas, spriteConfig } = exports;
+  let { arrowConfig, domCanvas, spriteConfig } = exports;
 
   domCanvas.img = gamePrefs.super_bunker_arrows
     ? [spriteConfig, arrowConfig]
