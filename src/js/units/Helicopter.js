@@ -2121,18 +2121,19 @@ function reset(exports) {
   landingPad = pads[data.isEnemy ? pads.length - 1 : 0];
 
   /**
-   * determine if there is an enemy on, or about to be on the landing pad.
-   * if so, repeat this operation in a moment to avoid the copter dying immediately.
-   * this can happen when you have a convoy of tanks near the enemy base -
+   * Determine if there is an enemy on, or about to be on the landing pad.
+   * If so, repeat in a moment to avoid the copter dying immediately.
+   *
+   * This can happen when you have a convoy of tanks near the enemy base -
    * the enemy chopper can respawn each time a tank is over it. :(
    */
 
   types = getTypes('missileLauncher, tank, van, infantry', { exports });
   xLookAhead = 0;
 
-  // is there a "foreign" object on, or over the base that would kill the chopper?
+  // is there a "foreign" object on, or over the base that would collide?
   for (i = 0, j = types.length; i < j; i++) {
-    // enemy chopper is vulnerable if local player is at their base, and vice-versa.
+    // chopper is vulnerable if opponent is at their base
     items = game.objects[types[i].type];
     for (k = 0, l = items.length; k < l; k++) {
       if (
@@ -2240,8 +2241,9 @@ function respawn(exports) {
 
 function shouldDelayRespawn() {
   /**
-   * Special case: if a non-network game and a "fire" key is held down, delay respawn.
-   * This was in the original game as a feature where you could continue to watch the scene where you died.
+   * Special case: if a non-network game and a "fire" key is held down,
+   * delay the respawn. This was in the original game as a feature
+   * where you could continue to watch the scene where you died.
    */
 
   return (
@@ -2255,11 +2257,6 @@ function shouldDelayRespawn() {
 
 function localReset(exports, noDelay) {
   let { data } = exports;
-
-  /**
-   * Special case: if a non-network game and a "fire" key is held down, delay respawn.
-   * This was an original game feature where you could continue to watch the scene where you died.
-   */
 
   let respawnDelay = getRespawnDelay(exports);
 
@@ -2276,7 +2273,10 @@ function localReset(exports, noDelay) {
 
   common.setFrameTimeout(() => {
     if (shouldDelayRespawn()) {
-      // check again in a moment, but don't wait - once key is released, response should be immediate.
+      /**
+       * Check again in a moment, but don't wait - once key is released,
+       * response should be immediate.
+       */
       window.requestAnimationFrame(() => localReset(exports, true));
       return;
     }
@@ -2331,7 +2331,7 @@ function die(exports, dieOptions = {}) {
       aData.type === TYPES.smartMissile ||
       (aData.type === TYPES.gunfire && aData.parentType === TYPES.turret))
   ) {
-    // hit by other helicopter, missile, or turret gunfire? special (big) smoke ring.
+    // hit by other helicopter, missile, or turret gunfire? big smoke ring.
     effects.smokeRing(exports, {
       count: 20,
       velocityMax: 20,
@@ -2370,7 +2370,11 @@ function die(exports, dieOptions = {}) {
     if (aData.type === TYPES.helicopter) {
       if (!aData.isEnemy) gameEvents.fire(EVENTS.helicopterCollision);
     } else if (data.isEnemy && aData) {
-      // celebrate the win if you, or certain actors take out an enemy chopper while on-screen.
+      /**
+       * Celebrate the win if you, or certain actors take out an enemy
+       * chopper while on-screen.
+       */
+      //
       if (
         data.isOnScreen &&
         (aData.parentType === TYPES.helicopter ||
@@ -2393,7 +2397,7 @@ function die(exports, dieOptions = {}) {
     velocity: 4 + rngInt(4, TYPES.shrapnel),
     vX: data.vX,
     vY: -Math.abs(data.vY),
-    // special case: if a smart missile, use its velocity as the basis for the shrapnel.
+    // special case: if a smart missile, use its velocity for shrapnel.
     parentVX:
       attacker && aData?.type === TYPES.smartMissile
         ? aData.vX || data.vX
@@ -2746,10 +2750,16 @@ function getGunfireParams(exports) {
 
       let velocity = new Vector(target.vX, target.vY);
 
-      // NOTE: inverting velocity on the target, because seek expects velocity of the chopper chasing the target.
+      /**
+       * NOTE: inverting velocity on the target, because seek expects
+       * velocity of the chopper chasing the target.
+       */
       velocity.mult(-1);
 
-      // this magnitude works OK for targeting balloons on chains, and the human chopper.
+      /**
+       * this magnitude works OK for targeting balloons on chains,
+       * and the human chopper.
+       */
       velocity.setMag(1);
 
       let seekForce = seek(ammoTarget, pos, velocity, data.vXMax, data.vXMax);
@@ -2947,7 +2957,10 @@ function fire(exports) {
     data.fireFrameCount = parseInt(data.fireModulus, 10);
     if (data.ammo > 0) {
       if (levelFlags.bullets) {
-        // account somewhat for helicopter angle, including tilt from flying and random "shake" from damage
+        /**
+         * Account somewhat for helicopter angle, including tilt from flying
+         * and random "shake" from damage.
+         */
         let params = getGunfireParams(exports);
 
         game.addObject(TYPES.gunfire, params);
@@ -2998,11 +3011,12 @@ function fire(exports) {
       let params = getBombParams(exports);
 
       /**
-       * "AI" case: throttle bombing by target type; e.g., tanks get up to 3 bombs dropped at once.
-       * Intent: optimize the chance of taking out the target, while also not wasting bombs.
+       * "AI" case: throttle bombing by target type; e.g., tanks get
+       * up to 3 bombs dropped at once. Intent: optimize the chance of
+       * taking out the target, while also not wasting bombs.
        */
       if (data.isCPU && data.ai && data.bombTargets?.[0]) {
-        // HACK: re-define data.bombTargets[0] object because they were flattened for sorting.
+        // HACK: re-define data.bombTargets[0] object, flattened for sorting.
         let bombTarget = { data: data.bombTargets[0] };
 
         // exit if already at limit.
@@ -3011,15 +3025,20 @@ function fire(exports) {
         // count toward the limit.
         data.ai.addBomb(bombTarget);
 
-        // track when this bomb dies - whether it hit or missed, and whether the target died.
+        // when bomb dies, track hit/miss, and whether the target died.
         params.onDie = function (bombExports, bombDieOptions) {
-          // remove (decrement) if the target was not hit
-          // bomb may not have a target if it hit the ground, etc.
+          /**
+           * Remove (decrement) if the target was not hit.
+           * Bomb may not have a target if it hit the ground, etc.
+           */
           let didHitTarget =
             bombDieOptions?.target?.data?.id === bombTarget.data.id;
 
           if (didHitTarget) {
-            // reset tracking after a delay (so more can be dropped), in case the target is still alive.
+            /**
+             * Reset tracking after a delay (so more can be dropped),
+             * in case the target is still alive.
+             */
             data.ai.clearBombWithDelay(bombTarget);
           }
 
@@ -3098,7 +3117,7 @@ function fire(exports) {
 
         updateMissileUI(exports, data.missileReloading);
 
-        // set a timeout for "reloading", so the next (second) missile doesn't fire immediately.
+        // set a timeout for "reloading", delay next missile launch slightly.
         timers.missileReloadingTimer = common.setFrameTimeout(() => {
           data.missileReloading = false;
           updateMissileUI(exports, data.missileReloading);
@@ -3111,7 +3130,10 @@ function fire(exports) {
       data.isLocal &&
       (!data.smartMissiles || !missileTarget)
     ) {
-      // out of ammo / no available targets - and, it's been an interval OR the missile key / trigger was just pressed...
+      /**
+       * Out of ammo / no available targets - and, it's been an interval -
+       * OR, the missile key / trigger was just pressed...
+       */
       if (
         sounds.inventory.denied &&
         game.objects.gameLoop.data.frameCount %
@@ -3137,7 +3159,7 @@ function fire(exports) {
     if (data.parachutes > 0 && !data.parachutingThrottle) {
       data.parachutingThrottle = true;
 
-      // set a timeout for "reloading", so the next parachute doesn't drop immediately.
+      // set a timeout for "reloading", so the next parachute is not immediate.
       timers.parachutingTimer = common.setFrameTimeout(
         () => {
           data.parachutingThrottle = false;
@@ -3152,7 +3174,7 @@ function fire(exports) {
       if (data.landed) {
         game.addObject(TYPES.infantry, {
           isEnemy: data.isEnemy,
-          // don't create at half-width, will be immediately recaptured (picked up) by helicopter.
+          // don't create at half-width, chopper will pick up immediately.
           x: data.x + data.width * (data.isEnemy ? 0.25 : 0.75),
           y: data.y + data.height - 11,
           // exclude from recycle "refund" / reward case
@@ -3221,7 +3243,7 @@ function eject(exports) {
   }
 
   /**
-   * If on a touch device, require a "double-tap" (at least, while the UI is up.)
+   * If on a touch device, require a "double-tap" (at least, while UI is up.)
    * And, notify the first time this happens.
    */
   if (
@@ -3263,7 +3285,10 @@ function eject(exports) {
     // per the original game, always drop a grand total of five.
     const parachutes = 4;
 
-    // note that chopper could be dead, or parachutes could be deployed by the time this fires.
+    /**
+     * Note that chopper could be dead, or parachutes could be deployed
+     * by the time this fires.
+     */
     for (let i = 0; i < parachutes; i++) {
       common.setFrameTimeout(
         () => deployRandomParachuteInfantry(exports),
@@ -3310,8 +3335,11 @@ function eject(exports) {
 function deployRandomParachuteInfantry(exports) {
   let { data } = exports;
 
-  // only deploy if not already dead.
-  // e.g., helicopter could be ejected, then explode before all infantry have released.
+  /**
+   * Only deploy if not already dead.
+   * e.g., helicopter could be ejected, then explode before all infantry
+   * have released.
+   */
   if (data.dead) return;
 
   deployParachuteInfantry({
@@ -3330,9 +3358,10 @@ function deployRandomParachuteInfantry(exports) {
 
 function deployParachuteInfantry(options) {
   /**
-   * mid-air deployment: check and possibly become the chaff / decoy target for "vulnerable"
-   * smart missiles that have just launched, and have not yet locked onto their intended target.
-   * in the original game, the enemy helicopter would use this trick to distract your missiles.
+   * Mid-air deployment: check and possibly become the chaff / decoy target
+   * for "vulnerable" smart missiles that have just launched, and have not yet
+   * locked onto their intended target. In the original game, the enemy chopper
+   * would use this trick to distract your missiles.
    */
 
   game.addObject(TYPES.parachuteInfantry, options);
@@ -3343,7 +3372,7 @@ function maybeRumbleOnLanding(exports) {
 
   if (!gamePrefs.gamepad || !gamepad.data.active || !data.isLocal || data.isCPU)
     return;
-  // a bit of fun: bump the controller relative to how fast the chopper was descending.
+  // feedback: bump the controller relative to chopper's descending velocity.
 
   // throttle
   if (timers.rumbleTimer) return;
@@ -3363,8 +3392,9 @@ function animate(exports) {
 
   /**
    * If local and dead or respawning, send a packet over to keep things going.
-   * This is done because coordinates aren't sent while dead, and packets include frame counts.
-   * In the case of lock step, this could mean the remote client could freeze while waiting.
+   * This is done because coordinates aren't sent while dead, and packets
+   * include frame counts. In the case of lock step, this could mean the
+   * remote client could freeze while waiting.
    */
   if (net.active && data.isLocal && (data.dead || data.respawning)) {
     net.sendMessage({ type: 'PING' });
@@ -3482,26 +3512,38 @@ function animate(exports) {
     }
   }
 
-  // prevent X-axis motion if landed, including on landing pad
-  // Y-axis is motion still allowed, so helicopter can move upward and leave this state
+  /**
+   * Prevent X-axis motion if landed, including on landing pad.
+   * Y-axis is motion still allowed, so chopper can move upward
+   * and leave this state.
+   */
   if (!data.dead && (data.landed || data.onLandingPad)) {
     data.vX = 0;
   }
 
-  // has the helicopter landed?
-  // TODO: note and fix(?) slight offset, helicopter falls short of perfect alignment with bottom.
+  /**
+   * Has the helicopter landed?
+   * TODO: note and fix(?) slight offset, helicopter may fall short of
+   * perfect alignment with bottom.
+   *
+   */
   yOffset = data.isCPU ? 0 : 3;
 
   maxY = worldHeight - data.height + yOffset;
 
-  // allow helicopter to land on the absolute bottom, IF it is not on a landing pad (which sits a bit above.)
+  /**
+   * Allow helicopter to land on the absolute bottom, IF it is not
+   * on a landing pad (which sits a bit above.)
+   */
   if (data.y >= maxY && data.vY > 0 && !data.landed) {
     // slightly annoying: allow one additional pixel when landing.
     data.y = maxY + 1;
 
     if (data.isLocal && !data.isCPU) {
-      // TODO: notify of opponent crash when in network, etc.
-      // "safety" check: if moving too fast, this is a crash as per the original game.
+      /**
+       * TODO: notify of opponent crash when in network, etc.
+       * "Safety" check: if moving too fast, this is a crash as per original.
+       */
       if (!data.dead && Math.abs(data.vX) >= data.vXMax / 2 - 2) {
         game.objects.notifications.add(
           'You hit the ground going too fast. 🚁💥'
@@ -3550,7 +3592,10 @@ function animate(exports) {
     data.vY = 0;
   }
 
-  // take the difference between the game speed and real-time, if less than real-time.
+  /**
+   * Take the difference between the game speed and real-time,
+   * if less than real-time.
+   */
   const RELATIVE_GAME_SPEED = GAME_SPEED_RATIOED; // (GAME_SPEED < 1 ? (1 - (GAME_SPEED / 2)) : GAME_SPEED);
 
   if (!data.dead) {
@@ -3635,13 +3680,17 @@ function animate(exports) {
       // determines smart missile counter-measures
       let defendB = (game.iQuickRandom() & 0xf) < levelConfig.clipSpeedI;
 
-      // determines whether "in combat" with nearby missile or chopper, whether to go after / kill the helicopter, AND, some counter-measures like dropping bombs and men
+      /**
+       * Determines whether "in combat" with nearby missile or chopper,
+       * whether to go after / kill the helicopter, AND, some counter-measures
+       * like dropping bombs and men.
+       */
       let attackB = !!(game.iQuickRandom() & 0x7);
 
       // only related to capturing the end bunker / funds
       let stealB = !(game.getRandSeedUI() & 0x30);
 
-      // TODO: implement shooting tanks with gunfire and dumb / aimed missiles, too.
+      // TODO: implement shooting tanks with gunfire and dumb / aimed missiles.
       data.targeting.tanks = levelConfig.killTankB && levelConfig.scatterBombB;
 
       data.targeting.clouds = aiRNG(exports) > 0.65;
@@ -3701,7 +3750,7 @@ function reactToDamage(exports, attacker) {
     }
   }
 
-  // extra special case: BnB, and helicopter being hit by shrapnel or enemy gunfire.
+  // extra special case: BnB + chopper being hit by shrapnel or enemy gunfire.
   if (!gamePrefs.bnb) return;
 
   // make a racket, depending
@@ -3716,9 +3765,15 @@ function reactToDamage(exports, attacker) {
       {
         onfinish: (sound) => {
           data.lastReactionSound = null;
-          // call the "main" onfinish, which will hit onAASoundEnd() and destroy things cleanly.
-          // hackish: ensure that sound has not already been destroyed, prevent infinite loop.
-          // NOTE: I dislike this pattern and wish to do away with it. ;)
+          /**
+           * Call the "main" onfinish, which will hit onAASoundEnd() and
+           * destroy things cleanly.
+           *
+           * Hackish: ensure that sound has not already been destroyed,
+           * prevent infinite loop.
+           *
+           * NOTE: I dislike this pattern and wish to do away with it. ;)
+           */
           if (!sound.disabled) {
             sound.options.onfinish(sound);
           }
@@ -3834,12 +3889,18 @@ function callAction(exports, method, value) {
     return;
   }
 
-  // if not a network game, OR a remote object taking calls, just do the thing right away.
+  /**
+   * If not a network game, OR a remote object taking calls,
+   * just do the thing right away.
+   */
   if (!net.active || data.isRemote) return callMethod(exports, method, value);
 
-  // presently, `value` is only boolean.
-  // if this changes, this will break and will need refactoring. :P
-  // this throttles repeat calls with the same value, while the change is pending e.g., setFiring(true);
+  /**
+   * Presently, `value` is only boolean.
+   * If this changes, this will break and will need refactoring. :P
+   * This throttles repeat calls with the same value, while the change
+   * is pending e.g., setFiring(true);
+   */
   const pendingId = `${method}_${value ? 'true' : 'false'}`;
 
   // we're already doing this.
@@ -3912,7 +3973,7 @@ function getFiringRates() {
       classic: levelFlags.bullets ? 3 : 999,
       modern: levelFlags.bullets ? 2 : 999,
       cpu: {
-        // special firing rates - with aimed missiles, faster with game difficulty
+        // special firing rates - w/aimed missiles, faster with game difficulty
         helicopter: levelFlags.bullets
           ? gameType === 'extreme' || gameType === 'armorgeddon'
             ? 2
