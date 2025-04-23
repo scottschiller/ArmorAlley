@@ -579,21 +579,7 @@ function initDOM(exports, options) {
 
   if (options.noInit) return;
 
-  if (!game.objects.editor) {
-    dom.o = {};
-  } else {
-    dom.o = sprites.create({
-      className: css.className,
-      id: data.id
-    });
-  }
-
-  sprites.setTransformXY(
-    exports,
-    dom.o,
-    `${data.x}px`,
-    `${data.y - data.yOffset}px`
-  );
+  common.initDOM(exports);
 
   exports.radarItem = game.objects.radar.addItem(exports);
 }

@@ -197,14 +197,10 @@ function animate(exports) {
   return data.dead && !dom.o;
 }
 
-function initDOM(exports) {
-  exports.dom.o = {};
-}
-
 function initMissileNapalm(exports) {
   let { data, dom } = exports;
 
-  initDOM(exports);
+  dom.o = {};
 
   exports.radarItem = game.objects.radar.addItem(exports);
 

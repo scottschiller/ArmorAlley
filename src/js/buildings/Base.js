@@ -671,19 +671,11 @@ function refreshSprite(exports) {
 }
 
 function initBase(exports) {
-  let { css, data, dom } = exports;
+  let { data, dom } = exports;
 
-  if (game.objects.editor) {
-    dom.o = sprites.create({
-      className: css.className
-    });
-  } else {
-    dom.o = {};
-  }
+  common.initDOM(exports);
 
   refreshSprite(exports);
-
-  sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
 
   exports.radarItem = game.objects.radar.addItem(exports);
 }

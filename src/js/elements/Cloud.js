@@ -248,20 +248,8 @@ function drift(exports, isEnemy) {
   }
 }
 
-function initDOM(exports) {
-  let { css, data, dom } = exports;
-  if (game.objects.editor) {
-    dom.o = sprites.create({
-      className: css.className,
-      id: data.id
-    });
-  } else {
-    dom.o = {};
-  }
-}
-
 function initCloud(exports) {
-  initDOM(exports);
+  common.initDOM(exports);
 
   let { data, dom } = exports;
 

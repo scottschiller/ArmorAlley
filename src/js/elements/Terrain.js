@@ -212,24 +212,9 @@ function addItem(className, x, options = {}) {
     }
   }
 
-  function initDOM() {
-    // legacy support / editor / zone debugging
-    if (!useDomNode) return;
-    dom.o = sprites.create({
-      className: `${className} terrain-item`,
-      id
-    });
-  }
-
-  function initItem() {
-    initDOM();
-  }
-
   dom = {
     o: {}
   };
-
-  initItem();
 
   const props = terrainItems[className];
 
@@ -303,6 +288,8 @@ function addItem(className, x, options = {}) {
   game.objectsById[data.id] = exports;
 
   // only track zones while editing.
+  common.initDOM(exports);
+
   if (game.objects.editor) {
     zones.refreshZone(exports);
   }

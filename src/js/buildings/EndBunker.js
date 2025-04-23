@@ -511,15 +511,7 @@ function applySpriteURL(exports) {
 }
 
 function initEndBunker(exports) {
-  let { css, data, dom, domCanvas } = exports;
-
-  if (game.objects.editor) {
-    dom.o = sprites.create({
-      className: css.className
-    });
-  } else {
-    dom.o = {};
-  }
+  let { data, domCanvas } = exports;
 
   const src = getSpriteURL(data);
 
@@ -544,8 +536,7 @@ function initEndBunker(exports) {
 
   domCanvas.img = spriteConfig;
 
-  // this will set x + y for domCanvas
-  sprites.moveTo(exports, data.x, data.y);
+  common.initDOM(exports);
 
   exports.radarItem = game.objects.radar.addItem(exports);
 

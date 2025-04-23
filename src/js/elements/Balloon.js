@@ -574,25 +574,10 @@ function reset(exports) {
   }
 }
 
-function initDOM(exports) {
-  let { css, data, dom } = exports;
-
-  if (game.objects.editor) {
-    dom.o = sprites.create({
-      className: css.className,
-      id: data.id
-    });
-  } else {
-    dom.o = {};
-  }
-
-  sprites.moveTo(exports);
-}
-
 function initBalloon(exports) {
-  let { data, dom, objects } = exports;
+  let { css, data, objects } = exports;
 
-  initDOM(exports);
+  common.initDOM(exports);
 
   if (!objects.bunker) {
     // ensure we're free of chain + bunker
@@ -611,7 +596,7 @@ function initBalloon(exports) {
 
   exports.radarItem = game.objects.radar.addItem(
     exports,
-    dom.o.className,
+    css.className,
     canRespawn
   );
 }

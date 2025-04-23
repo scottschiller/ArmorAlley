@@ -322,23 +322,8 @@ function animate(exports) {
   return data.dead && !dom.o;
 }
 
-function initDOM(exports) {
-  let { css, data, dom } = exports;
-
-  if (game.objects.editor) {
-    dom.o = sprites.create({
-      className: css.className,
-      id: data.id
-    });
-  } else {
-    dom.o = {};
-  }
-
-  sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
-}
-
 function initChain(exports) {
-  initDOM(exports);
+  common.initDOM(exports);
 
   applyHeight(exports);
 

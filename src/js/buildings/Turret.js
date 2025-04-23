@@ -1072,31 +1072,12 @@ function updateDomCanvas(exports, state) {
   domCanvas.img = state.dead ? turretDead : [turretBase, turretGun];
 }
 
-function initDOM(exports) {
-  let { css, data, dom } = exports;
-
-  const isEnemy = data.isEnemy ? css.enemy : false;
-
-  dom.o = sprites.create({
-    className: game.objects.editor ? css.className : 'placeholder',
-    id: data.id,
-    isEnemy
-  });
-
-  sprites.setTransformXY(
-    exports,
-    dom.o,
-    `${data.x}px`,
-    `${data.y - data.yOffset}px`
-  );
-}
-
 function initTurret(exports, options) {
-  let { data, dom, objects, radarItem } = exports;
+  let { data, objects, radarItem } = exports;
 
   refreshCollisionItems(exports);
 
-  initDOM(exports);
+  common.initDOM(exports);
 
   let cornholio = game.addObject(TYPES.cornholio, {
     x: data.x - data.cornholioOffsetX,

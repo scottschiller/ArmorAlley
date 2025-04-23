@@ -378,22 +378,8 @@ function gameOver(exports, youWon) {
   game.objects.stats.displayEndGameStats();
 }
 
-function initDOM(exports) {
-  let { css, data, dom } = exports;
-  if (!game.objects.editor) {
-    dom.o = {};
-  } else {
-    dom.o = sprites.create({
-      className: css.className,
-      id: data.id
-    });
-  }
-
-  sprites.setTransformXY(exports, exports.dom.o, `${data.x}px`, `${data.y}px`);
-}
-
 function initVan(exports) {
-  initDOM(exports);
+  common.initDOM(exports);
 
   common.initNearby(exports.friendlyNearby, exports);
 

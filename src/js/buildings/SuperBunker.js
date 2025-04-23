@@ -556,23 +556,13 @@ function onArrowHiddenChange(exports, isVisible) {
 function initDOM(exports) {
   let { arrowConfig, css, data, dom, domCanvas, spriteConfig } = exports;
 
-  if (game.objects.editor) {
-    dom.o = sprites.create({
-      className: css.className,
-      id: data.id
-    });
-  } else {
-    dom.o = {};
-  }
-
   domCanvas.img = gamePrefs.super_bunker_arrows
     ? [spriteConfig, arrowConfig]
     : spriteConfig;
 
   onArrowHiddenChange(exports, gamePrefs.super_bunker_arrows);
 
-  // this will set x + y for domCanvas
-  sprites.moveTo(exports, data.x, data.y);
+  common.initDOM(exports);
 }
 
 function initSuperBunker(exports) {

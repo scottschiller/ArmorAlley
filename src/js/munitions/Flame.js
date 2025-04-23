@@ -136,16 +136,10 @@ function animate(exports) {
   return data.dead && !dom.o;
 }
 
-function initDOM(exports) {
-  let { dom } = exports;
-
-  dom.o = {};
-}
-
 function initFlame(exports) {
   let { data, dom } = exports;
 
-  initDOM(exports);
+  dom.o = {};
 
   sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
 

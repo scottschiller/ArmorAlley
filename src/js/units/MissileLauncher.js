@@ -402,27 +402,12 @@ function animate(exports) {
   return data.dead && !dom.o;
 }
 
-function initDOM(exports) {
-  let { css, data, dom } = exports;
-  dom.o = sprites.create({
-    className: game.objects.editor ? css.className : 'placeholder',
-    id: data.id,
-    isEnemy: data.isEnemy ? css.enemy : false
-  });
-
-  dom.oScanNode = document.createElement('div');
-  dom.oScanNode.className = css.scanNode;
-  dom.o.appendChild(dom.oScanNode);
-
-  sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
-}
-
 function initMissileLauncher(options, exports) {
   if (options.noInit) return;
 
   let { data } = exports;
 
-  initDOM(exports);
+  common.initDOM(exports);
 
   common.initNearby(exports.friendlyNearby, exports);
 

@@ -42,16 +42,6 @@ const Cornholio = (options = {}) => {
     sprites.moveWithScrollOffset(exports);
   }
 
-  function initDOM() {
-    if (game.objects.editor) {
-      dom.o = sprites.create({
-        className: css.className
-      });
-    } else {
-      dom.o = {};
-    }
-  }
-
   height = 33.6;
 
   css = common.inheritCSS({
@@ -110,11 +100,14 @@ const Cornholio = (options = {}) => {
 
   exports = {
     animate,
+    css,
     data,
     dom,
     domCanvas,
     hide: () => setVisible(false),
-    init: initDOM,
+    init: () => {
+      common.initDOM(exports);
+    },
     show: () => setVisible(true),
     setActiveSound,
     setSpeaking,

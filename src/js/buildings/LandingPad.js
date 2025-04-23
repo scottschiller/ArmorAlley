@@ -145,16 +145,7 @@ function setWelcomeMessage(exports) {
 }
 
 function initLandingPad(exports) {
-  let { data, dom, css, domCanvas } = exports;
-
-  if (game.objects.editor) {
-    dom.o = sprites.create({
-      id: data.id,
-      className: css.className
-    });
-  } else {
-    dom.o = {};
-  }
+  let { domCanvas } = exports;
 
   const animConfig = (() => {
     const spriteWidth = 162;
@@ -175,7 +166,7 @@ function initLandingPad(exports) {
 
   domCanvas.animation = common.domCanvas.canvasAnimation(exports, animConfig);
 
-  sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
+  common.initDOM(exports);
 
   game.objects.radar.addItem(exports);
 

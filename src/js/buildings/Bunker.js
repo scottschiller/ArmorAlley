@@ -658,18 +658,11 @@ function updateArrowState(exports) {
 }
 
 function initDOM(exports) {
-  let { arrowConfig, css, data, dom, domCanvas, spriteConfig } = exports;
+  let { arrowConfig, domCanvas, spriteConfig } = exports;
 
-  if (game.objects.editor) {
-    dom.o = sprites.create({
-      className: css.className,
-      id: data.id
-    });
-  } else {
-    dom.o = {};
-  }
   domCanvas.img = [spriteConfig, arrowConfig];
-  sprites.moveTo(exports, data.x, data.y);
+
+  common.initDOM(exports);
 }
 
 function initBunker(exports) {
