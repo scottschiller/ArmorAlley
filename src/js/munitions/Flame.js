@@ -20,7 +20,7 @@ const Flame = (options = {}) => {
       isEnemy: options.isEnemy,
       frameCount: 0,
       expireFrameCount: options.expireFrameCount || 2,
-      hostile: true, // flame burns both sides (infantry/engineers/paratroopers)
+      hostile: true, // flame burns both sides, infantry/engineers/paratroopers
       width: 32,
       height: 18,
       damagePoints: options.damagePoints || 1,
@@ -75,7 +75,10 @@ const Flame = (options = {}) => {
         if (data.damagePoints) {
           // hit once, then remain until the object animation has completed.
           common.hit(target, data.damagePoints, exports);
-          // nullify this object unless infantry / engineers, so we don't hit e.g., a super-bunker repeatedly.
+          /**
+           * Nullify this object unless infantry / engineers, so we don't
+           * hit e.g., a super-bunker repeatedly.
+           */
           if (target.data.type !== TYPES.infantry) {
             data.damagePoints = 0;
           }
@@ -84,9 +87,10 @@ const Flame = (options = {}) => {
     },
     /**
      * If unspecified, use default list of items which flames can hit.
+     *
      * Per the original game, "flame burns both sides" - though friendly fire
-     * is unlikely to happen where infantry/engineers would not already be at risk,
-     * i.e., from an opposing tank's flamethrower or near an armed super bunker.
+     * is unlikely to happen where infantry/engineers would not already be at
+     * risk, i.e., from an enemy tank flamethrower or armed super bunker.
      */
     items:
       options.collisionItems ||
