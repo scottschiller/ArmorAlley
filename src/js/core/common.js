@@ -1096,27 +1096,6 @@ const common = {
 
   resetGUID,
 
-  updateScanNode(exports, radius = 0) {
-    if (!exports) return;
-
-    const { data, dom } = exports;
-
-    if (!data || !dom) return;
-
-    // special case: some radar items also get a "scan range" node.
-    const { oScanNode } = dom;
-
-    if (!oScanNode) return;
-
-    exports.data.logicalWidth = radius;
-
-    oScanNode.style.width = `${radius * 2}px`;
-    oScanNode.style.height = `${radius}px`;
-
-    // border radius shenanigans
-    oScanNode.style.borderRadius = `${radius}px ${radius}px 0 0`;
-  },
-
   unlimitedLivesMode() {
     // regardless of pref, treat tutorial as "unlimited."
     if (gamePrefs.unlimited_lives || tutorialMode) return true;

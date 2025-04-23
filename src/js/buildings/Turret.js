@@ -627,11 +627,6 @@ function die(exports, dieOptions = {}) {
     playSound(sounds.genericExplosion, exports);
   }
 
-  // TODO: review what's needed for scan node
-  utils.css.add(dom.o, css.destroyed);
-  utils.css.add(radarItem.dom.o, css.destroyed);
-  utils.css.add(radarItem.dom.oScanNode, css.destroyed);
-
   sprites.updateEnergy(exports);
 
   common.onDie(exports, dieOptions);
@@ -681,9 +676,6 @@ function repair(exports, engineer, complete) {
       if (data.dead && data.energy > data.energyMax * 0.25) {
         // restore to life at 25%
         data.dead = false;
-        utils.css.remove(dom.o, css.destroyed);
-        utils.css.remove(radarItem.dom.o, css.destroyed);
-        utils.css.remove(radarItem.dom.oScanNode, css.destroyed);
 
         updateDomCanvas(exports, { dead: false });
 
@@ -987,7 +979,6 @@ function animate(exports) {
   // engineer interaction flag
   if (data.engineerInteracting && !data.engineerHitCount) {
     data.engineerInteracting = false;
-    utils.css.add(radarItem?.dom?.oScanNode, css.engineerInteracting);
   }
 
   // always reset
@@ -1095,9 +1086,6 @@ function initTurret(exports, options) {
 
   if (!noRadar) {
     radarItem = game.objects.radar.addItem(exports);
-
-    // turrets also get a scan node.
-    radarItem.initScanNode();
   }
 
   // "dead on arrival"

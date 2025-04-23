@@ -3,7 +3,6 @@ import { game, gameType } from '../core/Game.js';
 import { common } from '../core/common.js';
 import { autoStart, searchParams, TYPES, worldHeight } from '../core/global.js';
 import { net } from '../core/network.js';
-import { scanNodeTypes } from '../UI/Radar.js';
 import { prefsManager, screenScale } from '../aa.js';
 import { utils } from '../core/utils.js';
 import { FACING } from '../elements/Balloon.js';
@@ -865,11 +864,6 @@ function previewLevel(levelName) {
     }
 
     const radarItem = game.objects.radar.addItem(exports, css.join(' '));
-
-    if (scanNodeTypes[item[0]]) {
-      // special case: certain radar items also get a "scan range" node.
-      radarItem.initScanNode();
-    }
   });
 }
 

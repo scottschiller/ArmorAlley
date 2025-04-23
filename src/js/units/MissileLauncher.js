@@ -175,12 +175,10 @@ function resume(exports) {
 }
 
 function die(exports, dieOptions = {}) {
-  let { css, data, dom, domCanvas, radarItem } = exports;
+  let { data, domCanvas, radarItem } = exports;
   if (data.dead) return;
 
   if (!dieOptions?.silent) {
-    utils.css.add(dom.o, css.exploding);
-
     if (sounds.genericExplosion) {
       playSound(sounds.genericExplosion, exports);
     }
@@ -198,7 +196,7 @@ function die(exports, dieOptions = {}) {
       effects.damageExplosion(exports);
     }
 
-    // account for scan-node transition time
+    // account for scan node transition time
     data.timers.dieComplete = common.frameTimeout.set('dieComplete', 1100);
 
     if (!dieOptions.firingMissile) {
@@ -414,9 +412,6 @@ function initMissileLauncher(options, exports) {
   data.timers.orderActive = common.frameTimeout.set(null, 2000);
 
   exports.radarItem = game.objects.radar.addItem(exports);
-
-  // missile launchers also get a scan node.
-  exports.radarItem.initScanNode();
 }
 
 MissileLauncher.radarItemConfig = ({ data }) => ({

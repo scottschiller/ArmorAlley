@@ -144,18 +144,6 @@ function RadarItem(options) {
     utils.css.add(dom.o, css.radarItem, ...classNames);
   }
 
-  function initScanNode() {
-    if (!dom?.o || noRadar) return;
-
-    // special case: certain radar items also get a "scan range" node.
-    let scanNode = document.createElement('div');
-    scanNode.className = css.scanNode;
-
-    dom.o.appendChild(scanNode);
-    dom.oScanNode = scanNode;
-    scanNode = null;
-  }
-
   function updateScanNode(radius = 0) {
     // special case: some radar items also get a "scan range" node.
     const { oScanNode } = dom;
@@ -215,7 +203,6 @@ function RadarItem(options) {
     data,
     dom,
     die,
-    initScanNode,
     onHiddenChange,
     oParent,
     recycle,
