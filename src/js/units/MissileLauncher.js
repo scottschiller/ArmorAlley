@@ -207,7 +207,7 @@ function die(exports, dieOptions = {}) {
       if (
         !net.connected &&
         game.players.local.data.isEnemy === data.isEnemy &&
-        gamePrefs.notify_missile_launcher &&
+        gamePrefs['notify_missile-launcher'] &&
         !data.isOnScreen &&
         attackerType !== TYPES.smartMissile
       ) {
