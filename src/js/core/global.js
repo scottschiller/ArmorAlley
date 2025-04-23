@@ -110,7 +110,7 @@ const DEFAULT_POINTS = 15;
 
 function float(x, points = DEFAULT_POINTS) {
   // return a number, not a string.
-  return +(x).toFixed(points);
+  return +x.toFixed(points);
 }
 
 // buildings on radar
