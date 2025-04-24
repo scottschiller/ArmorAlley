@@ -582,6 +582,7 @@ const Editor = () => {
 
         // if dead, then destroy and forcefully remove entirely.
         if (gameObject.data.type === TYPES.turret && gameObject.data.dead) {
+          gameObject.dom?.o?.remove();
           gameObject.destroy();
           removeFromGameObjects(gameObject);
         } else {
@@ -590,6 +591,7 @@ const Editor = () => {
             gameObject.data.type !== TYPES.turret &&
             gameObject.data.type !== TYPES.bunker
           ) {
+            gameObject.dom?.o?.remove();
             removeFromGameObjects(gameObject);
           }
         }
