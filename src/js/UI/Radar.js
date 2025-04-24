@@ -602,11 +602,21 @@ const Radar = () => {
   function animate() {
     let i, j, left, top, hasEnemyMissile, newestMissile;
 
-    // minimize re-rendering of static level preview.
+    // minimize re-rendering of static level previews.
     if (!game.data.started) {
       data.renderCount++;
-      // off-by-one? :X Allow up to three renders.
-      if (data.renderCount > 2) return;
+
+      // off-by-one? :X Allow a few renders.
+      if (data.renderCount > 3) return;
+
+      // forcefully clear, since no game loop animation yet.
+      let name = 'radar';
+      common.domCanvas.dom.ctx[name].clearRect(
+        0,
+        0,
+        common.domCanvas.data.ctxLayout[name].width,
+        common.domCanvas.data.ctxLayout[name].height
+      );
     }
 
     let nextScale;
