@@ -872,7 +872,7 @@ function previewLevel(levelName) {
       game.objects.radar.addItem(balloonExports);
     }
 
-    const radarItem = game.objects.radar.addItem(exports, css.join(' '));
+    game.objects.radar.addItem(exports, css.join(' '));
   });
 }
 
