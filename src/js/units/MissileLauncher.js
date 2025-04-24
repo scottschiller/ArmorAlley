@@ -3,6 +3,7 @@ import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
 import {
   bananaMode,
+  ENEMY_UNIT_COLOR_RGBA,
   FPS,
   GAME_SPEED_RATIOED,
   getTypes,
