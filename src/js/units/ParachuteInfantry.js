@@ -234,6 +234,8 @@ function animate(exports) {
     data.y + data.vY * GAME_SPEED_RATIOED
   );
 
+  sprites.draw(exports);
+
   if (!data.parachuteOpen) {
     if (data.y >= data.parachuteOpensAtY) {
       openParachute(exports);
