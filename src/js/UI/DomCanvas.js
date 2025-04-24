@@ -711,10 +711,15 @@ const DomCanvas = () => {
       return;
     }
 
-    // prevent redundant / excessive canvas drawing calls - no more than one per frame.
-    // TODO: refactor and reduce the need for this check.
-    // console.warn('Already drawn', exports.data.id);
-    if (exports.data._drawFrame === game.objects.gameLoop.data.frameCount)
+    /**
+     * Prevent redundant / excessive canvas drawing calls, one per frame.
+     * NOTE: Radar needs to "redraw" on frame 0, before game start.
+     * TODO: reduce the need for this sanity check.
+     */
+    if (
+      exports.data._drawFrame === game.objects.gameLoop.data.frameCount &&
+      game.data.started
+    )
       return;
 
     // update
