@@ -8,7 +8,6 @@ import {
   isiPhone,
   isMobile,
   oneOf,
-  plusMinus,
   searchParams,
   TYPES,
   winloc,
@@ -24,8 +23,6 @@ import {
 import { soundsToPlayBNB } from '../core/sound-bnb.js';
 import { RadarItem } from './RadarItem.js';
 import { sprites } from '../core/sprites.js';
-import { TURRET_SCAN_RADIUS } from '../buildings/Turret.js';
-import { MISSILE_LAUNCHER_SCAN_RADIUS } from '../units/MissileLauncher.js';
 import { pos } from './DomCanvas.js';
 import { levelFlags } from '../levels/default.js';
 
@@ -971,11 +968,6 @@ const Radar = () => {
   };
 
   data = {
-    ctx: {
-      battlefield: null,
-      fx: null,
-      radar: null
-    },
     radarScrollLeft: 0,
     radarTarget: null,
     lastRadarTargetWidth: 0,
