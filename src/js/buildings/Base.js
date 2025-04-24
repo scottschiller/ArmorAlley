@@ -572,7 +572,7 @@ function battleOver(exports) {
 function animate(exports) {
   let { data, domCanvas } = exports;
 
-  sprites.moveWithScrollOffset(exports);
+  sprites.draw(exports);
 
   domCanvas.animation?.animate();
   domCanvas.nukeAnimation?.animate();

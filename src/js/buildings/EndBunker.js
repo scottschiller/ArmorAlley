@@ -445,7 +445,7 @@ function distributeFunds(exports) {
 function animate(exports) {
   let { data, dom, nearby } = exports;
 
-  sprites.moveWithScrollOffset(exports);
+  sprites.draw(exports);
 
   data.frameCount++;
 

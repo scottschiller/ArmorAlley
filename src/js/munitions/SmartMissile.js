@@ -1077,6 +1077,8 @@ function animate(exports) {
 
   moveTo(exports, newX, newY, rad * rad2Deg);
 
+  sprites.draw(exports);
+
   data.frameCount++;
 
   if (

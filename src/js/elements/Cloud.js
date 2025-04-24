@@ -200,6 +200,8 @@ function animate(exports) {
   zones.refreshZone(exports);
 
   sprites.moveTo(exports, data.x, data.y);
+
+  sprites.draw(exports);
 }
 
 function startDrift(exports) {

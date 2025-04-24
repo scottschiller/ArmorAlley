@@ -38,8 +38,7 @@ const Cornholio = (options = {}) => {
 
   function animate() {
     if (!data.visible) return;
-
-    sprites.moveWithScrollOffset(exports);
+    sprites.draw(exports);
   }
 
   height = 33.6;

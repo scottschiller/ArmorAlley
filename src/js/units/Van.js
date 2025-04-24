@@ -243,9 +243,6 @@ function animate(exports) {
 
   if (!data.stopped && !game.data.battleOver) {
     sprites.moveTo(exports, data.x + data.vX * GAME_SPEED_RATIOED, data.y);
-  } else {
-    // if stopped, just take scroll into effect
-    sprites.moveWithScrollOffset(exports);
   }
 
   if (data.dead) return !data.timers.deadTimer;
@@ -316,6 +313,8 @@ function animate(exports) {
   if (gamePrefs.ground_unit_traffic_control) {
     nearbyTest(exports.friendlyNearby, exports);
   }
+
+  sprites.draw(exports);
 
   data.frameCount++;
 

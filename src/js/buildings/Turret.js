@@ -951,9 +951,9 @@ function engineerCanInteract(exports, isEnemy) {
 }
 
 function animate(exports) {
-  let { css, data, domCanvas, radarItem } = exports;
+  let { data, domCanvas } = exports;
 
-  sprites.moveWithScrollOffset(exports);
+  sprites.draw(exports);
 
   data.frameCount++;
 

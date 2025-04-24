@@ -550,10 +550,10 @@ function extinguish(exports) {
 function animate(exports) {
   let { arrowConfig, data, domCanvas } = exports;
 
+  sprites.draw(exports);
+
   domCanvas?.animation?.animate();
   domCanvas?.nukeAnimation?.animate();
-
-  sprites.moveWithScrollOffset(exports);
 
   if (!data.dead) {
     effects.smokeRelativeToDamage(exports);

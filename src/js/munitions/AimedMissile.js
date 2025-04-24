@@ -358,7 +358,6 @@ function animate(exports) {
 
   // notify caller if now dead and can be removed.
   if (data.dead) {
-    sprites.moveWithScrollOffset(exports);
     return data.dead && !dom.o;
   }
 
@@ -376,6 +375,8 @@ function animate(exports) {
 
   // x, y
   sprites.moveTo(exports, newX, newY);
+
+  sprites.draw(exports);
 
   // push x/y to trailer history arrays, maintain size
   data.xHistory.push(data.x + (data.vXDirection < 0 ? data.width : 0));

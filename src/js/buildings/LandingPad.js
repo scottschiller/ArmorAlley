@@ -116,9 +116,9 @@ const LandingPad = (options = {}) => {
 function animate(exports) {
   let { domCanvas, collision } = exports;
 
-  domCanvas?.animation?.animate();
+  sprites.draw(exports);
 
-  sprites.moveWithScrollOffset(exports);
+  domCanvas?.animation?.animate();
 
   collisionTest(collision, exports);
 }

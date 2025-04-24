@@ -159,31 +159,8 @@ function animate(exports) {
     }
   }
 
-  // scale applied if also fading out
-  if (data.isFading) {
-    scale = 1 - data.fadeFrame / data.fadeFrames;
-  } else {
-    scale = data.baseScale;
-  }
-
   if (data.rotation !== undefined) {
     data.rotation += data.rotationAmount;
-  }
-
-  if (scale) {
-    // data.scale = scale;
-    scale = `scale3d(${[scale, scale, 1].join(', ')})`;
-  }
-
-  if (data.isOnScreen) {
-    sprites.setTransformXY(
-      exports,
-      dom.o,
-      `${data.x}px`,
-      `${data.y}px`,
-      (data.rotation ? `rotate3d(0, 0, 1, ${data.rotation}deg) ` : '') +
-        (scale ? ` ${scale}` : '')
-    );
   }
 
   // animate and fade
@@ -196,6 +173,8 @@ function animate(exports) {
       data.isFading = true;
     }
   }
+
+  sprites.draw(exports);
 
   // if fading, animate every frame.
   if (data.isFading) {

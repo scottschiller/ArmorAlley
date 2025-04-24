@@ -492,7 +492,7 @@ function fire(exports) {
 function animate(exports) {
   let { arrowConfig, data, dom, nearby } = exports;
 
-  sprites.moveWithScrollOffset(exports);
+  sprites.draw(exports);
 
   data.frameCount++;
 

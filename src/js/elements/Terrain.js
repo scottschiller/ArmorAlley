@@ -189,6 +189,10 @@ function addItem(className, x, options = {}) {
   }
 
   function animate() {
+    if (data.visible) {
+      sprites.draw(exports);
+    }
+
     // set top offset, if stepping up or down
     if (!data.stepActive) return;
 

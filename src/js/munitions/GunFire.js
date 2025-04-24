@@ -412,6 +412,8 @@ function animate(exports) {
     collisionTest(collision, exports);
   }
 
+  sprites.draw(exports);
+
   // notify caller if now dead and can be removed.
   return data.dead && !dom.o;
 }

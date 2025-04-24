@@ -502,7 +502,6 @@ function animate(exports) {
 
   // exit early if dead
   if (data.dead) {
-    sprites.moveWithScrollOffset(exports);
     domCanvas.dieExplosion?.animate?.();
 
     return !data.timers.deadTimer && !dom.o;
@@ -570,6 +569,8 @@ function animate(exports) {
   }
 
   recycleTest(exports);
+
+  sprites.draw(exports);
 
   return data.dead && !data.timers.deadTimer && !dom.o;
 }

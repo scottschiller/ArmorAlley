@@ -555,6 +555,8 @@ function animate(exports) {
 
   collisionTest(exports.collision, exports);
 
+  sprites.draw(exports);
+
   // notify caller if dead, and node has been removed.
   return data.dead && !data.timers.deadTimer && !dom.o;
 }

@@ -1072,8 +1072,6 @@ function centerView(exports) {
 
   // "get to the choppa!" (center the view on it, that is.)
   game.objects.view.setLeftScrollToPlayer(exports);
-
-  sprites.moveWithScrollOffset(exports);
 }
 
 function updateFuelUI(exports) {
@@ -1736,8 +1734,6 @@ function setRespawning(exports, state) {
     if (data.isLocal) {
       // "get to the choppa!" (center the view on it, that is.)
       game.objects.view.setLeftScrollToPlayer(exports);
-
-      sprites.moveWithScrollOffset(exports);
 
       // good time to do some DOM pruning, etc.
       if (game.objects.queue) {
@@ -3401,10 +3397,7 @@ function animate(exports) {
 
   domCanvas.animation?.animate();
 
-  if (data.respawning) {
-    sprites.moveWithScrollOffset(exports);
-    return;
-  }
+  if (data.respawning) return;
 
   if (game.data.battleOver) return;
 

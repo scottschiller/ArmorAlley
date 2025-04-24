@@ -122,7 +122,7 @@ function die(exports, force) {
 function animate(exports) {
   let { collision, data, dom } = exports;
 
-  sprites.moveWithScrollOffset(exports);
+  sprites.draw(exports);
 
   if (data.dead) return true;
 

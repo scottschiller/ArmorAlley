@@ -318,6 +318,8 @@ function animate(exports) {
     data.height = height;
   }
 
+  sprites.draw(exports);
+
   return data.dead && !dom.o;
 }
 

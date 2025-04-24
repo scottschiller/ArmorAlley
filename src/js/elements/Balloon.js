@@ -439,7 +439,6 @@ function animate(exports) {
 
     // explosion underway: move, accounting for scroll
     if (data.timers.deadTimer) {
-      sprites.moveWithScrollOffset(exports);
       return;
     }
 
@@ -520,7 +519,7 @@ function animate(exports) {
     zones.refreshZone(exports);
   }
 
-  sprites.moveWithScrollOffset(exports);
+  sprites.draw(exports);
 }
 
 function randomExplosionType() {
