@@ -56,7 +56,6 @@ const Radar = () => {
   let css;
   let dom;
   let exports;
-  let layoutCache;
   let objects;
 
   const spliceArgs = [null, 1];
@@ -125,66 +124,7 @@ const Radar = () => {
     }
   }
 
-  function getLayout(itemObject) {
-    // 01/2024: at present, just for missile launchers and turrets' scan nodes.
-    let type = itemObject.data.parentType;
-
-    // cache hit, based on "type"
-    if (layoutCache[type]) return layoutCache[type];
-
-    // data to merge with itemObject
-    let result = {
-      layout: {
-        width: 0,
-        height: 0
-      },
-      bottomAligned: false,
-      // TODO: review
-      bottomAlignedY: 0
-    };
-
-    // domCanvas case: layout is N/A
-    if (itemObject.domCanvas && !itemObject.dom.o?.nodeName) return result;
-
-    // if we hit this, something is wrong.
-    if (!itemObject?.dom?.o) {
-      console.warn(
-        'getLayout: something is wrong, returning empty result.',
-        itemObject
-      );
-      return result;
-    }
-
-    // read from DOM ($$$) and cache
-    // note: offsetWidth + offsetHeight return integers, and without padding.
-    let rect = itemObject.dom.o?.getBoundingClientRect?.();
-
-    if (!rect) {
-      console.warn('getLayout: no getBoundingClientRect?', itemObject);
-      return rect;
-    }
-
-    // NOTE screenScale, important for positioning
-    result.layout.width = rect.width * (1 / data.cssRadarScale);
-    result.layout.height = rect.height;
-
-    if (game.objectsById[itemObject.oParent]?.data?.bottomAligned) {
-      // if set, use bottom: 0 and call it a day.
-      result.bottomAligned = true;
-    }
-
-    // cache
-    layoutCache[type] = result;
-
-    return result;
-  }
-
   function addItem(item, className, canRespawn) {
-    /*
-    // TODO: optional? don't create "expensive" / redundant objects during game end sequence
-    if (game.data.battleOver && item.data.type.match(/gunfire|shrapnel/i)) return;
-    */
-
     let itemObject;
 
     if (item.data.bottomAligned) {
@@ -192,11 +132,8 @@ const Radar = () => {
     }
 
     itemObject = RadarItem({
-      // special case: null-ish for domCanvas, provided there no scan node.
-      o: {},
       parentType: item.data.type,
       className,
-      // note: live parent (object, not ID) reference, for RadarItem().
       oParent: item,
       canRespawn: canRespawn || false,
       isStatic: false,
@@ -218,16 +155,7 @@ const Radar = () => {
       itemObject?.onHiddenChange(show);
     }
 
-    game.objects.queue.addNextFrame(() => {
-      if (itemObject.dom?.o?.nodeName) {
-        dom.radar.appendChild(itemObject.dom.o);
-
-        // attempt to read from layout cache, or live DOM if needed for item height / positioning
-        itemObject = common.mixin(itemObject, getLayout(itemObject));
-      }
-
-      objects.items.push(itemObject);
-    });
+    objects.items.push(itemObject);
 
     // Slightly hackish: tack radarItem on to exports.
     // setTargetTracking() looks at this reference.
@@ -452,14 +380,6 @@ const Radar = () => {
     // there may be nothing to do.
     if (!data.radarTarget) return;
 
-    // hack: guard against invalid layout, for now.
-    if (!data.radarTarget?.layout) {
-      data.radarTarget = common.mixin(
-        data.radarTarget,
-        getLayout(data.radarTarget)
-      );
-    }
-
     const offset =
       data.radarTarget.data.parentType === 'balloon'
         ? (game.objectsById[data.radarTarget.data.oParent]?.data?.width *
@@ -494,16 +414,6 @@ const Radar = () => {
 
     data.radarTarget = targetItem;
 
-    if (data.radarTarget) {
-      // fetch layout immediately, if needed.
-      if (!data.radarTarget.layout) {
-        data.radarTarget = common.mixin(
-          data.radarTarget,
-          getLayout(data.radarTarget)
-        );
-      }
-    }
-
     // immediately align
     alignTargetMarkerWithScroll();
   }
@@ -536,11 +446,6 @@ const Radar = () => {
 
     objects.items = [];
 
-    // hack: remove all DOM nodes.
-    document
-      .querySelectorAll('#radar .radar-item')
-      .forEach((node) => node.remove());
-
     data.renderCount = 0;
   }
 
@@ -555,27 +460,6 @@ const Radar = () => {
 
     // for battle previews, before game start.
     data.renderCount = 0;
-
-    // trash the cache, and rebuild.
-    layoutCache = {};
-
-    let i, j;
-
-    // iterate through radar items and update, accordingly.
-    for (i = 0, j = objects.items.length; i < j; i++) {
-      objects.items[i] = common.mixin(
-        objects.items[i],
-        getLayout(objects.items[i])
-      );
-    }
-
-    // hackish: force target marker update.
-    if (data.radarTarget) {
-      data.radarTarget = common.mixin(
-        data.radarTarget,
-        getLayout(data.radarTarget)
-      );
-    }
 
     // scale radar items' width relative to available screen width, >= 500px.
     // >= 500px width, that is.
@@ -753,14 +637,6 @@ const Radar = () => {
             ((oParent.data.x + (oParent.data.radarLeftOffset || 0)) /
               worldWidth) *
             game.objects.view.data.browser.screenWidth;
-        }
-
-        // get layout, if needed (i.e., new object created while radar is jammed, i.e., engineer, and its layout hasn't been read + cached from the DOM)
-        if (!objects.items[i].layout?.width && !objects.items[i].domCanvas) {
-          objects.items[i] = common.mixin(
-            objects.items[i],
-            getLayout(objects.items[i])
-          );
         }
 
         // bottom-aligned, OR, somewhere between top and bottom of radar display, accounting for own height
@@ -963,9 +839,6 @@ const Radar = () => {
     dom.radarContainer.appendChild(dom.targetMarker);
     resize();
   }
-
-  // width / height of rendered elements, based on class name
-  layoutCache = {};
 
   css = {
     incomingSmartMissile: 'incoming-smart-missile',
