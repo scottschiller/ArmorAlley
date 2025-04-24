@@ -74,9 +74,10 @@ const GameLoop = () => {
             sprites.updateIsOnScreen(gameObjects[item][i]);
 
             if (game.objects.editor) {
-              // don't animate certain things.
-              if (gameObjects[item][i]?.data?.type.match(/balloon|cloud/i))
+              if (gameObjects[item][i]?.data?.type.match(/balloon|cloud/i)) {
+                // don't animate certain things, only draw.
                 continue;
+              }
             }
 
             if (gameObjects[item][i].animate?.()) {
@@ -98,6 +99,7 @@ const GameLoop = () => {
 
           if (gameObjects[item].animate) {
             if (game.objects.editor && gameObjects[item]?.data?.type) {
+              // don't animate certain things, only draw.
               continue;
             }
 
