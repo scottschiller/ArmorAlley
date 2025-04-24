@@ -250,7 +250,11 @@ function animate(exports) {
   effects.smokeRelativeToDamage(exports);
 
   // just in case: prevent any multiple "game over" actions via animation
-  if (game.data.battleOver) return;
+  if (game.data.battleOver) {
+    // ensure the van at the enemy base is drawn.
+    sprites.draw(exports);
+    return;
+  }
 
   if (data.isEnemy && data.x <= data.xGameOver && !game.objects.editor) {
     stop(exports);
