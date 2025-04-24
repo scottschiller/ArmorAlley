@@ -273,6 +273,8 @@ const sprites = {
       );
     }
 
+    sprites.draw(exports);
+
     sprites.maybeFade(exports);
   },
 
