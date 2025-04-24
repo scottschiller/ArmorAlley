@@ -5,16 +5,10 @@ import {
   ENERGY_TIMER_DELAY,
   ENERGY_TIMER_FADE_RATIO,
   FPS,
-  GAME_SPEED_RATIOED,
-  isChrome,
-  rnd,
-  winloc
+  GAME_SPEED_RATIOED
 } from '../core/global.js';
 import { game } from './Game.js';
 import { zones } from './zones.js';
-
-// by default, transform: translate3d(), more GPU compositing seen vs.2d-base transform: translate().
-const useTranslate3d = !winloc.match(/noTranslate3d/i);
 
 const sprites = {
   create: (options = {}) => {
