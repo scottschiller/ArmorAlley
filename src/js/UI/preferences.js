@@ -871,6 +871,9 @@ function PrefsManager() {
         `#prefs-select-level input[value="${levelName}"]`
       );
       if (radio) radio.checked = true;
+      // force preview / radar redraw
+      let force = true;
+      previewLevel(levelName, force);
     } else {
       updateGamepadList();
     }

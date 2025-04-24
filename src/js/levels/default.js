@@ -652,18 +652,26 @@ function filterLevelData(data, excludeVehicles) {
   );
 }
 
-function previewLevel(levelName) {
+function previewLevel(levelName, force) {
   // given level data, filter down and render at scale.
 
   // if playing network co-op vs. CPU, then include CPU vehicles to start.
   // also, let custom levels include any provided vehicles.
 
+  if (!levelName) return;
+
+  if (force) {
+    /**
+     * Allow "re-display" of preview, when opening the select level modal.
+     * Account for radar clearing, and preview needs to be re-rendered.
+     */
+    lastPreviewed = null;
+  }
+
   const excludeVehicles =
     prefsManager.data.network &&
     gamePrefs.net_game_style.match(/coop/) &&
     levelName != 'Custom Level';
-
-  if (!levelName) return;
 
   updateLevelNumber(levelName);
 
