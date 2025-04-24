@@ -1,7 +1,6 @@
 import { common } from './common.js';
 import { gamePrefs, PREFS } from '../UI/preferences.js';
 import {
-  debug,
   ENERGY_TIMER_DELAY,
   ENERGY_TIMER_FADE_RATIO,
   FPS,
