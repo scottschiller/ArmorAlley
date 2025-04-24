@@ -342,10 +342,9 @@ function animate(exports) {
 
   if (!data.stopped) {
     sprites.moveTo(exports, data.x + data.vX * GAME_SPEED_RATIOED, data.y);
-  } else {
-    // if stopped, just take scroll into effect
-    sprites.moveWithScrollOffset(exports);
   }
+
+  sprites.draw(exports);
 
   effects.drawScanNode(exports);
 

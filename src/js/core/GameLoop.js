@@ -74,7 +74,6 @@ const GameLoop = () => {
             sprites.updateIsOnScreen(gameObjects[item][i]);
 
             if (game.objects.editor) {
-              sprites.moveWithScrollOffset(gameObjects[item][i]);
               // don't animate certain things.
               if (gameObjects[item][i]?.data?.type.match(/balloon|cloud/i))
                 continue;
@@ -99,7 +98,6 @@ const GameLoop = () => {
 
           if (gameObjects[item].animate) {
             if (game.objects.editor && gameObjects[item]?.data?.type) {
-              sprites.moveWithScrollOffset(gameObjects[item]);
               continue;
             }
 
@@ -113,11 +111,6 @@ const GameLoop = () => {
           }
         }
       }
-    }
-
-    // move static terrain items, too, given we're scrolling.
-    for (i = 0, j = game.objects[TYPES.terrainItem].length; i < j; i++) {
-      sprites.moveWithScrollOffset(game.objects[TYPES.terrainItem][i]);
     }
 
     // update all setTimeout()-style FrameTimeout() instances.

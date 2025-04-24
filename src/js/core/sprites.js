@@ -68,32 +68,6 @@ const sprites = {
     if (!exports.data.isTerrainItem && !exports.data.dead) {
       zones.refreshZone(exports);
     }
-
-    sprites.moveWithScrollOffset(exports);
-  },
-
-  moveWithScrollOffset: (exports) => {
-    if (!exports?.dom?.o) return;
-
-    // ignore if off-screen and a real DOM node, and editor is not active.
-    if (
-      !exports?.data?.isOnScreen &&
-      exports?.dom?.o?.nodeType &&
-      !game.objects.editor
-    ) {
-      if (debug) {
-        // mark as "skipped" transform
-        game.objects.gameLoop.incrementTransformCount(true);
-      }
-      return;
-    }
-
-    sprites.setTransformXY(
-      exports,
-      exports.dom.o,
-      `${exports.data.x}px`,
-      `${exports.data.y}px`
-    );
   },
 
   attachToTarget: (exports, target) => {
@@ -297,9 +271,6 @@ const sprites = {
       // object may be in the process of being destroyed
       if (!o?.dom?.o) return;
 
-      // restore position, including battlefield scroll offset
-      sprites.moveWithScrollOffset(o);
-
       // callback, if defined
       o.isOnScreenChange?.(o.data.isOnScreen);
     } else if (o.data.isOnScreen !== false) {
@@ -347,9 +318,6 @@ const sprites = {
         target.data.x + data.targetOffsetX,
         target.data.y + data.targetOffsetY
       );
-    } else {
-      // keep moving with scroll, while visible
-      sprites.moveWithScrollOffset(exports);
     }
 
     sprites.maybeFade(exports);
