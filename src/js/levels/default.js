@@ -264,6 +264,8 @@ const networkParams = [
   [511, 14, 60, h, 10, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1]
 ];
 
+let lastPreviewed;
+
 function getLevelParams(paramArray, offset) {
   return unpackLevelParams(offset < 0 ? demoParams[0] : paramArray[offset]);
 }
@@ -671,6 +673,13 @@ function previewLevel(levelName) {
     console.warn('previewLevel(): no gameType');
     return;
   }
+
+  // has this already been previewed?
+  let thisPreview = `${levelName}_${gameType}`;
+
+  if (lastPreviewed === thisPreview) return;
+
+  lastPreviewed = thisPreview;
 
   let data = normalizeLevelData(originalLevels[levelName]);
 
