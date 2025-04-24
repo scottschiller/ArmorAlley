@@ -108,6 +108,43 @@ const sprites = {
     exports.data.targetOffsetY = exports.data.y - target.data.y;
   },
 
+  draw: (exports) => {
+    /**
+     * Most all objects call this for rendering purposes.
+     */
+
+    if (exports?.domCanvas && !exports.domCanvas.animation) {
+      /**
+       * Editor hack: avoid redundant draw calls on init.
+       * TODO: identify and fix root cause.
+       */
+      if (game.objects.editor) {
+        if (
+          exports.data._lastDrawFrame === game.objects.gameLoop.data.frameCount
+        ) {
+          return;
+        }
+        exports.data._lastDrawFrame = game.objects.gameLoop.data.frameCount;
+      }
+      common.domCanvas.draw(exports);
+    }
+
+    /**
+     * If in the editor and there is an associated DOM node, move it as well.
+     * This can probably be optimized, and limited to battlefield items.
+     * It's possible the dom + node structure has just been deleted, also.
+     * TOOD: ensure placeholder node is removed from the DOM.
+     */
+    if (game.objects.editor && exports.dom?.o?.nodeType) {
+      sprites.setTransformXY(
+        exports,
+        exports.dom.o,
+        exports.data.x,
+        exports.data.y
+      );
+    }
+  },
+
   setTransformXY: (exports, o, x, y) => {
     /**
      * given an object (and its on-screen/off-screen status), apply transform to its live DOM node.
