@@ -84,7 +84,7 @@ const Infantry = (options = {}) => {
   defaultLookAhead = options.role ? 4 : 8;
 
   css = common.inheritCSS({
-    className: null,
+    className: 'infantry',
     beavis: 'beavis',
     butthead: 'butthead',
     infantry: TYPES.infantry,
