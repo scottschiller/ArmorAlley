@@ -561,6 +561,8 @@ function animate(exports) {
     }
   }
 
+  sprites.draw(exports);
+
   collisionTest(collision, exports);
 
   // start, or stop firing?
