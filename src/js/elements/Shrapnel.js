@@ -412,8 +412,6 @@ function initShrapnel(exports) {
   // domCanvas
   dom.o = {};
 
-  sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
-
   exports.radarItem = game.objects.radar.addItem(exports);
 
   // special case for end game (base) explosion: don't create identical "clouds" of smoke *at* base.

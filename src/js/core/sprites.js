@@ -120,22 +120,6 @@ const sprites = {
   },
 
   setTransformXY: (exports, o, x, y) => {
-    /**
-     * given an object (and its on-screen/off-screen status), apply transform to its live DOM node.
-     * battlefield scroll and "target" offset can also be included.
-     */
-
-    // hackish: if this lives on the canvas, handle that here.
-    // we don't care about on/off-screen at this juncture, because logic may still need to run.
-    // furthermore: don't draw if there is an animation defined, it will take care of itself.
-
-    let domCanvas = exports?.domCanvas;
-
-    if (domCanvas && !domCanvas.animation) {
-      common.domCanvas.draw(exports);
-    }
-
-    // for now, lots of objects have o = {}.
     if (!o?.nodeType) return;
 
     // ignore if off-screen and a real DOM node, and editor is not active.
@@ -144,39 +128,15 @@ const sprites = {
       exports?.dom?.o?.nodeType &&
       !game.objects.editor
     ) {
-      if (debug) {
-        // mark as "skipped" transform
-        game.objects.gameLoop.incrementTransformCount(true);
-      }
       return;
     }
 
-    // somewhat hackish: include scroll and "target" offset for most pixel-based values
-    if (
-      exports?.data?.type &&
-      !exports.data.excludeLeftScroll &&
-      x.indexOf('px') !== -1
-    ) {
-      // drop px
-      x = parseFloat(x);
-
+    // include scroll offset for DOM nodes - likely editor placeholders.
+    if (exports?.data?.type && !exports.data.excludeLeftScroll) {
       x -= game.objects.view.data.battleField.scrollLeft;
-
-      // back to pixels
-      x = `${x}px`;
     }
 
-    if (useTranslate3d) {
-      o.style.transform = `translate3d(${x}, ${y}, 0px)`;
-    } else {
-      o.style.transform = `translate(${x}, ${y})`;
-    }
-
-    if (debug) {
-      // show that this element was moved
-      // o.style.outline = `1px solid #${rndInt(9)}${rndInt(9)}${rndInt(9)}`;
-      game.objects.gameLoop.incrementTransformCount();
-    }
+    o.style.transform = `translate3d(${x}px, ${y}px, 0px)`;
   },
 
   nullify: (obj) => {

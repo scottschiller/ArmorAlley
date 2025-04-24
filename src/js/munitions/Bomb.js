@@ -565,8 +565,6 @@ function initDOM(exports) {
   let { dom, data } = exports;
   dom.o = {};
   exports.domCanvas.img = spriteConfig;
-
-  sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
 }
 
 function initBomb(exports) {

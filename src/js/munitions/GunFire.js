@@ -429,8 +429,6 @@ function initGunFire(exports) {
 
   dom.o = {};
 
-  sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
-
   if (!data.isInert) {
     exports.radarItem = game.objects.radar.addItem(exports);
   }

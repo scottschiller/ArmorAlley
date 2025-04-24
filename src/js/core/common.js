@@ -273,8 +273,6 @@ const common = {
       dom.o = {};
     }
 
-    // sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
-
     // this will update domCanvas
     sprites.moveTo(exports);
   },

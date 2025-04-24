@@ -360,19 +360,12 @@ function fire(exports) {
 }
 
 function moveTo(exports, x = exports.data.x, y = exports.data.y) {
-  let { data, dom } = exports;
+  let { data } = exports;
 
   data.x = x;
   data.y = y;
 
   zones.refreshZone(exports);
-
-  sprites.setTransformXY(
-    exports,
-    dom.o,
-    `${x}px`,
-    `${data.y - data.yOffset}px`
-  );
 }
 
 function setFlip(exports, isFlipped) {
@@ -534,17 +527,7 @@ function die(exports, dieOptions = {}) {
 function animate(exports) {
   let { collision, data, dom, domCanvas, nearby } = exports;
 
-  if (data.dead) {
-    // keep in sync with battlefield
-    sprites.setTransformXY(
-      exports,
-      dom.o,
-      `${data.x}px`,
-      `${data.y - data.yOffset}px`
-    );
-
-    return !dom.o;
-  }
+  if (data.dead) return !dom.o;
 
   // infantry are "always" walking, even when "stopped" (in which case they're firing.)
   // engineers fully stop to claim and/or repair bunkers.
@@ -571,13 +554,6 @@ function animate(exports) {
       moveTo(exports, data.x + data.vX * GAME_SPEED_RATIOED, data.y);
     }
   } else {
-    sprites.setTransformXY(
-      exports,
-      dom.o,
-      `${data.x}px`,
-      `${data.y - data.yOffset}px`
-    );
-
     if (!data.noFire) {
       // firing, or reclaiming/repairing?
       // only fire (i.e., GunFire objects) when stopped

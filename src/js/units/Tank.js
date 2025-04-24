@@ -284,18 +284,11 @@ function fire(exports) {
 }
 
 function moveTo(exports, x, y) {
-  let { data, dom } = exports;
+  let { data } = exports;
   data.x = x;
   data.y = y;
 
   zones.refreshZone(exports);
-
-  sprites.setTransformXY(
-    exports,
-    dom.o,
-    `${data.x}px`,
-    `${data.y - data.yOffset}px`
-  );
 }
 
 function updateHealth(exports) {
@@ -536,13 +529,6 @@ function animate(exports) {
   if (!data.stopped) {
     moveTo(exports, data.x + data.vX * GAME_SPEED_RATIOED, data.y);
   } else {
-    sprites.setTransformXY(
-      exports,
-      dom.o,
-      `${data.x}px`,
-      `${data.y - data.yOffset}px`
-    );
-
     if (shouldFireAtTarget(exports, data.lastNearbyTarget)) {
       // move one pixel every so often, to prevent edge case where tank can get "stuck" - e.g., shooting an enemy that is overlapping a bunker or super bunker.
       // the original game had something like this, too.

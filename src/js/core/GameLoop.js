@@ -289,15 +289,6 @@ const GameLoop = () => {
       }
     }
 
-    // performance debugging: number of style changes (transform) for this frame.
-    if (debug) {
-      console.log(
-        `transform (style/recalc) count: ${data.transformCount} / ${data.excludeTransformCount} (incl./excl)`
-      );
-      data.transformCount = 0;
-      data.excludeTransformCount = 0;
-    }
-
     animate();
 
     // snow - if by prefs, or "automatically" activated
@@ -402,14 +393,6 @@ const GameLoop = () => {
     data.frames = 0;
   }
 
-  function incrementTransformCount(isExclude) {
-    if (isExclude) {
-      data.excludeTransformCount++;
-    } else {
-      data.transformCount++;
-    }
-  }
-
   function setWaiting(isWaiting) {
     if (data.waiting === isWaiting) return;
 
@@ -472,8 +455,6 @@ const GameLoop = () => {
     fpsTimerInterval: 1000,
     fpsAverage: 0,
     fpsSamples: 0,
-    transformCount: 0,
-    excludeTransformCount: 0,
     sawRotateHint: false,
     waiting: false,
     lastWaitNotified: 0
@@ -481,7 +462,6 @@ const GameLoop = () => {
 
   exports = {
     data,
-    incrementTransformCount,
     init: initGameLoop,
     resetFPS,
     setWaiting,

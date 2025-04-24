@@ -772,13 +772,8 @@ const Radar = () => {
         objects.items[i].data.left = left;
         objects.items[i].data.top = top;
 
-        sprites.setTransformXY(
-          objects.items[i],
-          objects.items[i].dom.o,
-          // apply radar scale here
-          `${objects.items[i].data.left * data.scale}px`,
-          `${objects.items[i].data.top}px`
-        );
+        // radar item on canvas.
+        common.domCanvas.draw(objects.items[i]);
 
         if (objects.items[i] === data.radarTarget) {
           updateTargetMarker(objects.items[i]);

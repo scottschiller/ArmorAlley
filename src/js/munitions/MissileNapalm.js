@@ -209,13 +209,11 @@ function animate(exports) {
 }
 
 function initMissileNapalm(exports) {
-  let { data, dom } = exports;
+  let { dom } = exports;
 
   dom.o = {};
 
   exports.radarItem = game.objects.radar.addItem(exports);
-
-  sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
 }
 
 export { MissileNapalm };

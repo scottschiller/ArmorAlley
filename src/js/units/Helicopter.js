@@ -116,8 +116,6 @@ const Helicopter = (options = {}) => {
       exports
     );
 
-    sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
-
     // for human player: append immediately, so initial game start / respawn animation works nicely
     sprites.updateIsOnScreen(exports);
 
@@ -1079,12 +1077,7 @@ function updateFuelUI(exports) {
 
   if (!data.isLocal) return;
 
-  sprites.setTransformXY(
-    undefined,
-    dom.fuelLine,
-    `${100 - (100 - data.fuel)}%`,
-    '0px'
-  );
+  dom.fuelLine.style.transform = `translate3d(${100 - (100 - data.fuel)}%, 0px, 0px)`;
 
   if (data.repairing || tutorialMode) return;
 
@@ -1618,9 +1611,6 @@ function repair(exports) {
     dom.o.style.left =
       (progress === 0 || Math.random() < 0.66 ? 0 : plusMinus(rnd(1))) + 'px';
       */
-
-    // hackish: force update.
-    sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
   }
 }
 
@@ -1943,7 +1933,7 @@ function applyTilt(exports) {
       ? 0
       : (data.vX / data.vXMax / 0.6) * 10 + data.shakeOffset;
 
-  // transform-specific, to be provided to sprites.setTransformXY() as an additional transform
+  // to be rendered via domCanvas
   data.angle = data.tiltOffset;
 }
 
@@ -2038,7 +2028,7 @@ function refreshCoords(exports) {
 }
 
 function moveToForReal(exports, x, y) {
-  let { data, dom } = exports;
+  let { data } = exports;
 
   const yMax = data.yMax - (data.repairing ? 3 : 0);
 
@@ -2072,8 +2062,6 @@ function moveToForReal(exports, x, y) {
   applyTilt(exports);
 
   zones.refreshZone(exports);
-
-  sprites.setTransformXY(exports, dom.o, `${x}px`, `${y}px`);
 }
 
 function moveTo(exports, x, y) {

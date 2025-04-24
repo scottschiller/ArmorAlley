@@ -401,12 +401,9 @@ function animate(exports) {
 }
 
 function initDOM(exports) {
-  let { data, dom } = exports;
+  let { dom } = exports;
 
   dom.o = {};
-
-  // initial placement
-  sprites.setTransformXY(exports, dom.o, `${data.x}px`, `${data.y}px`);
 }
 
 function initAimedMissile(exports) {
