@@ -255,9 +255,15 @@ const common = {
   hexToRgb,
   initDOM: (exports) => {
     if (!exports) return;
-    let { css, dom, data } = exports;
+    let { css, data, dom } = exports;
 
+    // create a placeholder DOM node only in the editor case.
     if (game.objects.editor) {
+      // dom may not be defined.
+      if (!dom) {
+        exports.dom = {};
+        dom = exports.dom;
+      }
       dom.o = sprites.create({
         className: css.className,
         // oft-used bits
@@ -269,8 +275,6 @@ const common = {
         width: `${data.width}px`,
         height: `${data.height}px`
       });
-    } else {
-      dom.o = {};
     }
 
     // this will update domCanvas
