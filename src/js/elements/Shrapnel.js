@@ -392,6 +392,7 @@ function animate(exports) {
   }
 
   return data.dead && !dom.o;
+  sprites.draw(exports);
 }
 
 function makeSmoke(exports) {
