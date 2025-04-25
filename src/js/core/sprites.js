@@ -243,7 +243,7 @@ const sprites = {
   },
 
   maybeFade: (exports) => {
-    let { data, dom, domCanvas } = exports;
+    let { data, domCanvas } = exports;
 
     if (!data.isFading) return;
 
@@ -257,9 +257,9 @@ const sprites = {
       domCanvas.img.target.opacity = 1 - data.fadeFrame / data.fadeFrames;
     }
 
-    if (data.fadeFrame > data.fadeFrames) {
+    if (data.fadeFrame > data.fadeFrames && !data.canDestroy) {
       // animation finished
-      sprites.removeNodes(dom);
+      sprites.removeNodesAndUnlink(exports);
     }
   },
 
