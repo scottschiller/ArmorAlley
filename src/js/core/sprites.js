@@ -107,7 +107,9 @@ const sprites = {
         exports,
         exports.dom.o,
         exports.data.x,
-        exports.data.y
+        // TODO: sort out terrain item placeholder alignment.
+        exports.data.y -
+          (exports.data.isTerrainItem ? exports.data.height - 4 : 0)
       );
     }
   },

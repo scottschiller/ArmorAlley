@@ -144,16 +144,9 @@ const terrainItems = {
 };
 
 function addItem(className, x, options = {}) {
-  let data, dom, id, exports;
+  let data, id, exports;
 
   id = `terrain_item_${game.objects[TYPES.terrainItem].length}`;
-
-  // special case: if in editor, or zone debugging, make a DOM node.
-  // TODO: migrate editor to work with terrain items also on canvas.
-  const useDomNode =
-    game.objects.editor ||
-    className === 'zone-post' ||
-    className === 'zone-flag';
 
   function makeStepFrames(reverse) {
     const duration = FPS * 0.5 * (1 / GAME_SPEED);
@@ -208,10 +201,6 @@ function addItem(className, x, options = {}) {
       }
     }
   }
-
-  dom = {
-    o: {}
-  };
 
   const props = terrainItems[className];
 
@@ -277,7 +266,6 @@ function addItem(className, x, options = {}) {
     animate,
     css,
     data,
-    dom,
     domCanvas,
     dismiss,
     summon,
@@ -291,9 +279,6 @@ function addItem(className, x, options = {}) {
   common.initDOM(exports);
 
   if (game.objects.editor) {
-    // HACK: re-align terrain placeholder node, not quite right.
-    dom.o.style.marginTop = `${-data.height + 4}px`;
-
     // only track zones while editing.
     zones.refreshZone(exports);
   }
