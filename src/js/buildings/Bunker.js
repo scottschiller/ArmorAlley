@@ -359,11 +359,14 @@ function nullifyBalloon(exports) {
 function detachBalloon(exports) {
   let { objects } = exports;
 
-  // update height of chain in the DOM, assuming it's
-  // attached to the balloon now free from the base.
-  // once height is assigned, the chain will either
-  // hang from the balloon it's attached to, OR, will
-  // fall due to gravity (i.e., no base, no balloon.)
+  /**
+   * Update height of chain, assuming it's
+   * attached to the balloon now free from the base.
+   * 
+   * Once height is assigned, the chain will either
+   * hang from the balloon it's attached to, OR, will
+   * fall due to gravity (i.e., no base, no balloon.)
+   */
   game.objectsById[objects?.chain]?.applyHeight();
 
   if (objects.balloon) {
