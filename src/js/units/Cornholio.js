@@ -5,7 +5,7 @@ import { common } from '../core/common.js';
 import { sprites } from '../core/sprites.js';
 
 const Cornholio = (options = {}) => {
-  let css, data, dom, domCanvas, exports, height;
+  let css, data, domCanvas, exports, height;
 
   function setVisible(visible) {
     if (data.visible === visible) return;
@@ -93,15 +93,10 @@ const Cornholio = (options = {}) => {
     }
   };
 
-  dom = {
-    o: null
-  };
-
   exports = {
     animate,
     css,
     data,
-    dom,
     domCanvas,
     hide: () => setVisible(false),
     init: () => {

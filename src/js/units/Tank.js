@@ -42,7 +42,7 @@ const energy = 15;
 const Tank = (options = {}) => {
   let exports;
 
-  let css, data, dom, domCanvas, radarItem, nearby, friendlyNearby;
+  let css, data, domCanvas, radarItem, nearby, friendlyNearby;
 
   css = common.inheritCSS({
     className: TYPES.tank
@@ -87,10 +87,6 @@ const Tank = (options = {}) => {
     options
   );
 
-  dom = {
-    o: null
-  };
-
   domCanvas = {
     radarItem: Tank.radarItemConfig(),
     img: {
@@ -123,7 +119,6 @@ const Tank = (options = {}) => {
     animate: () => animate(exports),
     css,
     data,
-    dom,
     domCanvas,
     die: (dieOptions) => die(exports, dieOptions),
     dieComplete: () => dieComplete(exports),
@@ -489,7 +484,7 @@ function resume(exports) {
 }
 
 function animate(exports) {
-  let { data, dom, domCanvas } = exports;
+  let { data, domCanvas } = exports;
 
   data.frameCount++;
 
@@ -497,7 +492,8 @@ function animate(exports) {
   if (data.dead) {
     domCanvas.dieExplosion?.animate?.();
 
-    return !data.timers.deadTimer && !dom.o;
+    // || data.canDestroy?
+    return !data.timers.deadTimer;
   }
 
   if (!data.stopped && domCanvas?.img) {
@@ -558,7 +554,7 @@ function animate(exports) {
 
   sprites.draw(exports);
 
-  return data.dead && !data.timers.deadTimer && !dom.o;
+  return data.dead && !data.timers.deadTimer;
 }
 
 function initDOM(exports, options) {

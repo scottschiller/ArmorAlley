@@ -45,7 +45,7 @@ const frameHeight = 32;
 const Turret = (options = {}) => {
   let exports;
 
-  let css, data, dom, domCanvas, objects, height, radarItem;
+  let css, data, domCanvas, objects, height, radarItem;
 
   height = 15;
 
@@ -137,11 +137,6 @@ const Turret = (options = {}) => {
     options
   );
 
-  dom = {
-    o: null,
-    oSubSprite: null
-  };
-
   // base of turret
   const turretBase = {
     src: utils.image.getImageObject(src),
@@ -229,7 +224,6 @@ const Turret = (options = {}) => {
     data,
     destroy: () => destroy(exports),
     die: (dieOptions) => die(exports, dieOptions),
-    dom,
     // hackish: see below.
     domCanvas,
     engineerCanInteract: (isEnemy) => engineerCanInteract(exports, isEnemy),
@@ -542,7 +536,7 @@ function setFiring(exports, isFiring) {
 }
 
 function die(exports, dieOptions = {}) {
-  let { css, data, dom, domCanvas, objects, radarItem } = exports;
+  let { data, domCanvas, objects } = exports;
 
   if (data.dead) return;
 
@@ -657,7 +651,7 @@ function isEngineerInteracting(exports) {
 }
 
 function repair(exports, engineer, complete) {
-  let { css, data, dom, objects, radarItem } = exports;
+  let { data, objects } = exports;
 
   let result = false;
 
@@ -802,16 +796,13 @@ function updateHealth(exports /*, attacker*/) {
 }
 
 function setEnemy(exports, isEnemy) {
-  let { css, data, dom, radarItem } = exports;
+  let { data } = exports;
 
   if (data.isEnemy === isEnemy) return;
 
   data.isEnemy = isEnemy;
 
   zones.changeOwnership(exports);
-
-  utils.css.addOrRemove(dom.o, isEnemy, css.enemy);
-  utils.css.addOrRemove(radarItem?.dom?.o, isEnemy, css.enemy);
 
   playSoundWithDelay(
     isEnemy ? sounds.enemyClaim : sounds.friendlyClaim,
@@ -865,7 +856,7 @@ function claim(exports, engineer) {
 }
 
 function engineerHit(exports, engineer) {
-  let { css, data, radarItem } = exports;
+  let { data } = exports;
 
   // target is an engineer; either repairing, or claiming.
 
@@ -874,8 +865,6 @@ function engineerHit(exports, engineer) {
 
   if (!data.engineerInteracting) {
     data.engineerInteracting = true;
-    utils.css.add(radarItem?.dom?.oScanNode, css.engineerInteracting);
-
     // may not be provided, as in tutorial - just restoring immediately etc.
     if (engineer) {
       const isCapture = data.isEnemy !== engineer.data.isEnemy;
@@ -1097,10 +1086,9 @@ function initTurret(exports, options) {
 }
 
 function destroy(exports) {
-  let { dom, radarItem } = exports;
+  let { radarItem } = exports;
 
   radarItem?.die();
-  sprites.removeNodes(dom);
 }
 
 export { TURRET_SCAN_RADIUS, Turret };

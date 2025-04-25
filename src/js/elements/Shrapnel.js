@@ -24,8 +24,7 @@ const maxVX = 16;
 const maxVY = 16;
 
 const Shrapnel = (options = {}) => {
-  let dom,
-    domCanvas,
+  let domCanvas,
     data,
     collision,
     scale,
@@ -118,14 +117,9 @@ const Shrapnel = (options = {}) => {
     }
   };
 
-  dom = {
-    o: null
-  };
-
   exports = {
     animate: () => animate(exports),
     data,
-    dom,
     domCanvas,
     die: () => die(exports),
     init: () => initShrapnel(exports)
@@ -346,13 +340,13 @@ function ricochet(exports, targetType) {
 }
 
 function animate(exports) {
-  let { collision, data, dom } = exports;
+  let { collision, data } = exports;
 
   if (data.dead) {
     // may be attached to a target, and/or fading out.
     sprites.movePendingDie(exports);
 
-    return !dom.o;
+    return data.canDestroy;
   }
 
   data.rotate3DAngle += data.rotate3DAngleIncrement * GAME_SPEED_RATIOED;
@@ -391,8 +385,9 @@ function animate(exports) {
     collisionTest(collision, exports);
   }
 
-  return data.dead && !dom.o;
   sprites.draw(exports);
+
+  return data.dead && data.canDestroy;
 }
 
 function makeSmoke(exports) {
@@ -408,10 +403,7 @@ function makeSmoke(exports) {
 }
 
 function initShrapnel(exports) {
-  let { data, dom } = exports;
-
-  // domCanvas
-  dom.o = {};
+  let { data } = exports;
 
   exports.radarItem = game.objects.radar.addItem(exports);
 

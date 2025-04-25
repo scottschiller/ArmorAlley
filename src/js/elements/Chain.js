@@ -12,7 +12,7 @@ let pattern;
 const Chain = (options = {}) => {
   let exports;
 
-  let css, data, dom, objects, defaultHeight;
+  let css, data, objects, defaultHeight;
 
   css = common.inheritCSS({
     className: 'chain',
@@ -34,7 +34,6 @@ const Chain = (options = {}) => {
        */
       height: defaultHeight,
       adjustedWorldHeight: game.objects.view.data.world.height - 16,
-      // tracks what's actually on the DOM
       appliedHeight: 0,
       damagePoints: 18,
       fallingVelocity: 0.5,
@@ -92,10 +91,6 @@ const Chain = (options = {}) => {
     }
   };
 
-  dom = {
-    o: null
-  };
-
   objects = {
     bunker: options?.bunker?.data?.id || null,
     balloon: options?.balloon?.data?.id || null
@@ -108,7 +103,6 @@ const Chain = (options = {}) => {
     css,
     data,
     detachFromBunker: () => detachFromBunker(exports),
-    dom,
     domCanvas,
     die: () => die(exports),
     init: () => initChain(exports),
@@ -164,7 +158,7 @@ function isJerking(exports, intent) {
 }
 
 function updateIsJerking(exports, intent) {
-  let { css, data, dom } = exports;
+  let { css, data } = exports;
 
   if (intent && !gamePrefs.bnb) return;
 
@@ -173,7 +167,7 @@ function updateIsJerking(exports, intent) {
     intent && data.y + data.height < data.adjustedWorldHeight;
 
   // TODO: fix. ;)
-  utils.css.addOrRemove(dom.o, isJerkingNow, css.jerking);
+  // utils.css.addOrRemove(dom.o, isJerkingNow, css.jerking);
 
   return isJerkingNow;
 }
@@ -215,7 +209,7 @@ function setEnemy(exports, isEnemy) {
 }
 
 function animate(exports) {
-  let { data, dom, objects } = exports;
+  let { data, objects } = exports;
 
   let x, y, height;
 
@@ -262,7 +256,7 @@ function animate(exports) {
           data.fallingVelocity = data.fallingVelocityInitialRate;
         }
 
-        // live height in DOM might have been zeroed if balloon was dead. restore if so.
+        // live height might have been zeroed if balloon was dead. restore if so.
         if (!data.appliedHeight) {
           height = data.defaultHeight;
           data.height = data.defaultHeight;
@@ -312,15 +306,12 @@ function animate(exports) {
   sprites.moveTo(exports, x, y);
 
   if (height !== undefined && data.height !== height) {
-    // don't update DOM - $$$ paint even when GPU compositing,
-    // because this invalidates the texture going to the GPU (AFAICT)
-    // on every animation frame. just translate and keep fixed height.
     data.height = height;
   }
 
   sprites.draw(exports);
 
-  return data.dead && !dom.o;
+  return data.dead && data.canDestroy;
 }
 
 function initChain(exports) {

@@ -79,11 +79,6 @@ const Base = (options = {}) => {
     options
   );
 
-  dom = {
-    o: null,
-    oSubSpriteNuke: null
-  };
-
   domCanvas = {
     radarItem: Base.radarItemConfig()
   };
@@ -92,7 +87,6 @@ const Base = (options = {}) => {
     animate: () => animate(exports),
     css,
     data,
-    dom,
     domCanvas,
     die: () => die(exports),
     fire: () => fire(exports),

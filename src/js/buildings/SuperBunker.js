@@ -41,7 +41,7 @@ const arrowWidth = 6;
 const arrowHeight = 10;
 
 const SuperBunker = (options = {}) => {
-  let css, dom, domCanvas, data, nearby, exports;
+  let css, domCanvas, data, nearby, exports;
 
   css = common.inheritCSS({
     className: TYPES.superBunker,
@@ -92,10 +92,6 @@ const SuperBunker = (options = {}) => {
     height: data.height
   };
 
-  dom = {
-    o: null
-  };
-
   domCanvas = {
     radarItem: SuperBunker.radarItemConfig({ data })
   };
@@ -142,7 +138,6 @@ const SuperBunker = (options = {}) => {
     data,
     destroy: () => destroy(exports),
     die: (dieOptions) => die(exports, dieOptions),
-    dom,
     domCanvas,
     hit: (points, target) => hit(exports, points, target),
     init: () => initSuperBunker(exports),
@@ -490,7 +485,7 @@ function fire(exports) {
 }
 
 function animate(exports) {
-  let { arrowConfig, data, dom, nearby } = exports;
+  let { arrowConfig, data, nearby } = exports;
 
   sprites.draw(exports);
 
@@ -508,8 +503,8 @@ function animate(exports) {
     }
   }
 
-  // note: super bunkers never die, but leaving this in anyway.
-  return !dom.o;
+  // note: super bunkers cannot be destroyed.
+  return;
 }
 
 function refreshNearbyItems(exports) {

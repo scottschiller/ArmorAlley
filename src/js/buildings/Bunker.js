@@ -74,10 +74,6 @@ const Bunker = (options = {}) => {
     options
   );
 
-  dom = {
-    o: null
-  };
-
   objects = {
     balloon: null,
     chain: null
@@ -157,7 +153,6 @@ const Bunker = (options = {}) => {
     data,
     deadConfig,
     die: (dieOptions) => die(exports, dieOptions),
-    dom,
     domCanvas,
     engineerHit: (target) => engineerHit(exports, target),
     extinguish: () => extinguish(exports),
@@ -380,7 +375,7 @@ function detachBalloon(exports) {
 }
 
 function die(exports, dieOptions = {}) {
-  let { data, deadConfig, domCanvas, radarItem } = exports;
+  let { data, domCanvas, radarItem } = exports;
 
   if (data.dead) return;
 

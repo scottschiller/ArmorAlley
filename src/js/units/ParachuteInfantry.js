@@ -31,7 +31,7 @@ const energy = 5;
 const ParachuteInfantry = (options = {}) => {
   let exports;
 
-  let dom, data, domCanvas;
+  let data, domCanvas;
 
   data = common.inheritData(
     {
@@ -122,14 +122,9 @@ const ParachuteInfantry = (options = {}) => {
     }
   };
 
-  dom = {
-    o: null
-  };
-
   exports = {
     animate: () => animate(exports),
     data,
-    dom,
     domCanvas,
     die: (dieOptions) => die(exports, dieOptions),
     hit: () => hit(exports),
@@ -220,11 +215,11 @@ function hit(exports, hitPoints, target) {
 }
 
 function animate(exports) {
-  let { data, dom, domCanvas } = exports;
+  let { data, domCanvas } = exports;
 
   let randomWind, bgX;
 
-  if (data.dead) return !dom.o;
+  if (data.dead) return data.canDestroy;
 
   // falling?
 
@@ -371,12 +366,6 @@ function getSpriteURL(data) {
   return `${parts.join('-')}.png`;
 }
 
-function initDOM(exports) {
-  let { dom } = exports;
-  dom.o = {};
-  sprites.moveTo(exports);
-}
-
 function checkSmartMissileDecoy(exports) {
   // given the current helicopter, find missiles targeting it and possibly distract them.
 
@@ -386,7 +375,7 @@ function checkSmartMissileDecoy(exports) {
 }
 
 function initParachuteInfantry(exports) {
-  initDOM(exports);
+  common.initDOM(exports);
 
   exports.radarItem = game.objects.radar.addItem(exports);
 

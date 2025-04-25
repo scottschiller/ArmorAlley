@@ -14,7 +14,7 @@ import { gamePrefs } from '../UI/preferences.js';
 import { levelFlags } from '../levels/default.js';
 
 const Smoke = (options = {}) => {
-  let dom, domCanvas, data, exports;
+  let domCanvas, data, exports;
 
   // live reference
   let oParent = game.objectsById[options.oParent];
@@ -98,14 +98,9 @@ const Smoke = (options = {}) => {
     data.gameObjectGroup = 'backgroundSmoke';
   }
 
-  dom = {
-    o: null
-  };
-
   exports = {
     animate: () => animate(exports),
     data,
-    dom,
     domCanvas,
     die: () => die(exports),
     options
@@ -113,8 +108,6 @@ const Smoke = (options = {}) => {
 
   // in the original, smoke generation increments a key seed value for the game.
   game.incrementRandSeed();
-
-  initSmoke(exports);
 
   return exports;
 };
@@ -124,21 +117,18 @@ function refreshSprite(data) {
 }
 
 function die(exports) {
-  let { data, dom } = exports;
+  let { data } = exports;
 
   if (data.dead) return;
-
-  sprites.nullify(dom);
 
   data.dead = true;
 }
 
 function animate(exports) {
-  let { data, dom, domCanvas, options } = exports;
+  let { data, domCanvas, options } = exports;
 
   let scale = null;
 
-  // TODO: implement or drop scaling of smoke sprites in domCanvas.
   if (data.vX !== null && data.vY !== null) {
     data.x +=
       data.vX *
@@ -233,12 +223,7 @@ function animate(exports) {
 
   data.frameCount++;
 
-  return data.dead && !dom.o;
-}
-
-function initSmoke(exports) {
-  // null-ish object, for domCanvas
-  exports.dom.o = {};
+  return data.dead && data.canDestroy;
 }
 
 export { Smoke };

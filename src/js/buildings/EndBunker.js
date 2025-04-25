@@ -30,7 +30,7 @@ let height = 19;
 const EndBunker = (options = {}) => {
   let exports;
 
-  let css, dom, domCanvas, data, objects;
+  let css, domCanvas, data, objects;
 
   css = common.inheritCSS({
     className: TYPES.endBunker,
@@ -90,10 +90,6 @@ const EndBunker = (options = {}) => {
     height: data.height
   };
 
-  dom = {
-    o: null
-  };
-
   objects = {
     helicopters: [],
     leftHelicopterCount: 0,
@@ -110,7 +106,6 @@ const EndBunker = (options = {}) => {
     animate: () => animate(exports),
     css,
     data,
-    dom,
     domCanvas,
     hit: (points, target) => hit(exports, points, target),
     init: () => initEndBunker(exports),
@@ -443,7 +438,7 @@ function distributeFunds(exports) {
 }
 
 function animate(exports) {
-  let { data, dom, nearby } = exports;
+  let { data, nearby } = exports;
 
   sprites.draw(exports);
 
@@ -456,7 +451,7 @@ function animate(exports) {
   distributeFunds(exports);
 
   // note: end bunkers never die, but leaving this in anyway.
-  return data.dead && !dom.o;
+  return data.dead && data.canDestroy;
 }
 
 function updateHealth(exports, attacker) {

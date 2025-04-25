@@ -95,8 +95,6 @@ const Helicopter = (options = {}) => {
       data.frameCount = Math.floor(data.fireModulus / 2);
     }
 
-    dom.o = {};
-
     dom.fuelLine = document.getElementById('fuel-line');
 
     dom.oSpinner = document.getElementById('spinner');
@@ -450,7 +448,6 @@ const Helicopter = (options = {}) => {
   };
 
   dom = {
-    o: null,
     fuelLine: null,
     oSpinner: null,
     statsBar,
@@ -1516,7 +1513,7 @@ function updateStatusUI(exports, updated) {
 }
 
 function repair(exports) {
-  let { data, dom } = exports;
+  let { data } = exports;
 
   const updated = {};
 
@@ -1604,13 +1601,6 @@ function repair(exports) {
         vY: 3 + rndInt(2)
       });
     }
-
-    // hackish: horizontal travel.
-    // TODO: move to sprite offsetX / xOffset.
-    /*
-    dom.o.style.left =
-      (progress === 0 || Math.random() < 0.66 ? 0 : plusMinus(rnd(1))) + 'px';
-      */
   }
 }
 
@@ -4046,7 +4036,7 @@ function updateFiringRates(exports) {
 }
 
 function setSpinner(exports, spinning) {
-  let { css, data, dom, timers } = exports;
+  let { css, dom, timers } = exports;
 
   if (spinning) {
     utils.css.add(dom.oSpinner, css.animating, css.active);

@@ -28,7 +28,7 @@ const energy = 12;
 const Van = (options = {}) => {
   let exports;
 
-  let css, dom, domCanvas, data, radarItem;
+  let css, domCanvas, data, radarItem;
 
   css = common.inheritCSS({
     className: TYPES.van
@@ -73,10 +73,6 @@ const Van = (options = {}) => {
     options
   );
 
-  dom = {
-    o: null
-  };
-
   domCanvas = {
     radarItem: Van.radarItemConfig(),
     img: {
@@ -104,7 +100,6 @@ const Van = (options = {}) => {
     animate: () => animate(exports),
     css,
     data,
-    dom,
     domCanvas,
     die: (dieOptions) => die(exports, dieOptions),
     dieComplete: () => dieComplete(exports),

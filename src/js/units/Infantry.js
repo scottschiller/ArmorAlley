@@ -78,7 +78,7 @@ const buttheadHeadbanging = {
 };
 
 const Infantry = (options = {}) => {
-  let css, data, dom, domCanvas, defaultLookAhead, exports;
+  let css, data, domCanvas, defaultLookAhead, exports;
 
   // engineers stop closer to turrets vs. infantry.
   defaultLookAhead = options.role ? 4 : 8;
@@ -142,10 +142,6 @@ const Infantry = (options = {}) => {
     options
   );
 
-  dom = {
-    o: null
-  };
-
   domCanvas = {
     radarItem: Infantry.radarItemConfig(),
     animation: null
@@ -155,7 +151,6 @@ const Infantry = (options = {}) => {
     animate: () => animate(exports),
     css,
     data,
-    dom,
     domCanvas,
     die: (dieOptions) => die(exports, dieOptions),
     init: (options) => initInfantry(exports, options),
@@ -525,9 +520,9 @@ function die(exports, dieOptions = {}) {
 }
 
 function animate(exports) {
-  let { collision, data, dom, domCanvas, nearby } = exports;
+  let { collision, data, domCanvas, nearby } = exports;
 
-  if (data.dead) return !dom.o;
+  if (data.dead) return data.canDestroy;
 
   // infantry are "always" walking, even when "stopped" (in which case they're firing.)
   // engineers fully stop to claim and/or repair bunkers.
@@ -572,7 +567,7 @@ function animate(exports) {
 
   data.frameCount++;
 
-  return data.dead && !dom.o;
+  return data.dead && data.canDestroy;
 }
 
 function initInfantry(exports, options = {}) {

@@ -124,7 +124,7 @@ const SmartMissile = (options = {}) => {
    *  -- Homer Simpson
    */
 
-  let dom, data, radarItem, objects, collision, dieSound, launchSound, exports;
+  let data, radarItem, objects, collision, dieSound, launchSound, exports;
 
   /**
    * "Clip speed" as a range from 0-100%, e.g., 0/6 -> 6/6
@@ -302,10 +302,6 @@ const SmartMissile = (options = {}) => {
     }
   };
 
-  dom = {
-    o: null
-  };
-
   objects = {
     target: options.target,
     lastTarget: options.target
@@ -315,7 +311,6 @@ const SmartMissile = (options = {}) => {
     animate: () => animate(exports),
     data,
     dieSound,
-    dom,
     domCanvas,
     die: (dieOptions) => die(exports, dieOptions),
     init: () => initSmartMissile(exports),
@@ -736,7 +731,7 @@ function sparkAndDie(exports, target) {
 }
 
 function animate(exports) {
-  let { collision, data, dom, launchSound, objects } = exports;
+  let { collision, data, launchSound, objects } = exports;
 
   let deltaX, deltaY, newX, newY, newTarget, rad, targetData, targetHalfWidth;
 
@@ -745,7 +740,7 @@ function animate(exports) {
   // notify caller if now dead and can be removed.
   if (data.dead) {
     sprites.movePendingDie(exports);
-    return data.dead && !dom.o;
+    return data.dead && data.canDestroy;
   }
 
   /**
@@ -1112,16 +1107,8 @@ function animate(exports) {
   collisionTest(collision, exports);
 }
 
-function initDOM(exports) {
-  let { dom } = exports;
-
-  dom.o = {};
-}
-
 function initSmartMissile(exports) {
-  let { data, objects, options } = exports;
-
-  initDOM(exports);
+  let { data, objects } = exports;
 
   data.yMax = game.objects.view.data.battleField.height - data.height - 1;
 

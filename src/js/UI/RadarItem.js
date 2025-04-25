@@ -3,7 +3,7 @@ import { common } from '../core/common.js';
 import { FPS, GAME_SPEED, TYPES } from '../core/global.js';
 
 function RadarItem(options) {
-  let css, data, dom, oParent, exports;
+  let data, oParent, exports;
 
   // certain items' visibility can be updated by user prefs.
   const onHiddenEnabled = {
@@ -19,8 +19,6 @@ function RadarItem(options) {
 
   function dieComplete() {
     game.objects.radar.removeItem(exports);
-    dom.o = null;
-    options.o = null;
   }
 
   function die(dieOptions) {
@@ -108,12 +106,6 @@ function RadarItem(options) {
     }
   }
 
-  css = {
-    radarItem: 'radar-item',
-    dying: 'dying',
-    dead: 'dead'
-  };
-
   data = {
     type: 'radar-item',
     excludeLeftScroll: true, // don't include battlefield scroll in transform(x)
@@ -132,16 +124,11 @@ function RadarItem(options) {
     stepFrames: []
   };
 
-  dom = {
-    o: {}
-  };
-
   oParent = options.oParent.data.id;
 
   exports = {
     animate,
     data,
-    dom,
     die,
     onHiddenChange,
     oParent,

@@ -19,7 +19,7 @@ import { net } from '../core/network.js';
 import { gamePrefs } from '../UI/preferences.js';
 
 const GunFire = (options = {}) => {
-  let data, dom, domCanvas, collision, exports, radarItem;
+  let data, domCanvas, collision, exports, radarItem;
 
   data = common.inheritData(
     {
@@ -90,14 +90,9 @@ const GunFire = (options = {}) => {
   // hackish
   data.domFetti.startVelocity = data.vX;
 
-  dom = {
-    o: {}
-  };
-
   exports = {
     animate: () => animate(exports),
     data,
-    dom,
     domCanvas,
     die: (force) => die(exports, force),
     forceDie: () => forceDie(exports),
@@ -355,7 +350,7 @@ function sparkAndDie(exports, target) {
 }
 
 function animate(exports) {
-  let { collision, data, dom, domCanvas } = exports;
+  let { collision, data, domCanvas } = exports;
 
   // pending die()
   if (data.timers.frameTimeout) {
@@ -415,19 +410,17 @@ function animate(exports) {
   sprites.draw(exports);
 
   // notify caller if now dead and can be removed.
-  return data.dead && !dom.o;
+  return data.dead && data.canDestroy;
 }
 
 function initGunFire(exports) {
-  let { data, dom, options } = exports;
+  let { data, options } = exports;
 
   // randomize a little: ±1 pixel.
   if (!net.active && !options?.fixedXY) {
     data.x += plusMinus();
     data.y += plusMinus();
   }
-
-  dom.o = {};
 
   if (!data.isInert) {
     exports.radarItem = game.objects.radar.addItem(exports);

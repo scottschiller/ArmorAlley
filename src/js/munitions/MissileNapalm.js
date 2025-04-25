@@ -12,7 +12,7 @@ const height = 20;
 const animationFrameCount = 3;
 
 const MissileNapalm = (options = {}) => {
-  let collision, data, dom, domCanvas, exports;
+  let collision, data, domCanvas, exports;
 
   data = common.inheritData(
     {
@@ -87,14 +87,9 @@ const MissileNapalm = (options = {}) => {
     }
   };
 
-  dom = {
-    o: null
-  };
-
   exports = {
     animate: () => animate(exports),
     data,
-    dom,
     domCanvas,
     die: (force) => die(exports, force),
     init: () => initMissileNapalm(exports)
@@ -167,7 +162,7 @@ function die(exports, force) {
 }
 
 function animate(exports) {
-  let { collision, data, dom, domCanvas } = exports;
+  let { collision, data, domCanvas } = exports;
 
   sprites.draw(exports);
 
@@ -205,14 +200,10 @@ function animate(exports) {
   }
 
   // notify caller if now dead and can be removed.
-  return data.dead && !dom.o;
+  return data.dead && data.canDestroy;
 }
 
 function initMissileNapalm(exports) {
-  let { dom } = exports;
-
-  dom.o = {};
-
   exports.radarItem = game.objects.radar.addItem(exports);
 }
 

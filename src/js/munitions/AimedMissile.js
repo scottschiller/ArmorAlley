@@ -33,7 +33,7 @@ const AimedMissile = (options = {}) => {
    * "Dumb" missile, armed with napalm.
    */
 
-  let collision, dom, domCanvas, data, launchSound, radarItem, objects, exports;
+  let collision, domCanvas, data, launchSound, radarItem, objects, exports;
 
   data = common.inheritData(
     {
@@ -121,10 +121,6 @@ const AimedMissile = (options = {}) => {
     }
   };
 
-  dom = {
-    o: null
-  };
-
   objects = {
     target: options.target,
     lastTarget: options.target
@@ -134,7 +130,6 @@ const AimedMissile = (options = {}) => {
     addMissileNapalm,
     animate: () => animate(exports),
     data,
-    dom,
     domCanvas,
     die: (dieOptions) => die(exports, dieOptions),
     onDie: options.onDie || null,
@@ -350,7 +345,7 @@ function sparkAndDie(exports, target) {
 }
 
 function animate(exports) {
-  let { collision, data, dom, domCanvas } = exports;
+  let { collision, data, domCanvas } = exports;
 
   let newX, newY;
 
@@ -358,7 +353,7 @@ function animate(exports) {
 
   // notify caller if now dead and can be removed.
   if (data.dead) {
-    return data.dead && !dom.o;
+    return data.dead && data.canDestroy;
   }
 
   data.vX += data.vXDirection * 0.175 * GAME_SPEED_RATIOED;
@@ -400,16 +395,10 @@ function animate(exports) {
   collisionTest(collision, exports);
 }
 
-function initDOM(exports) {
-  let { dom } = exports;
-
-  dom.o = {};
-}
-
 function initAimedMissile(exports) {
   let { data } = exports;
 
-  initDOM(exports);
+  common.initDOM(exports);
 
   data.yMax = game.objects.view.data.battleField.height - data.height - 1;
 

@@ -105,10 +105,6 @@ const Bomb = (options = {}) => {
     }
   };
 
-  exports.dom = {
-    o: null
-  };
-
   exports.collision = {
     options: {
       source: exports,
@@ -522,14 +518,14 @@ function bombHitTarget(exports, target) {
 }
 
 function animate(exports) {
-  let { data, dom } = exports;
+  let { data } = exports;
   exports.domCanvas?.dieExplosion?.animate();
 
   if (data.dead) {
     // may be attached to a target, and/or fading out.
     sprites.movePendingDie(exports);
 
-    return !data.timers.deadTimer && !dom.o;
+    return !data.timers.deadTimer && data.canDestroy;
   }
 
   data.gravity *= 1 + 0.1 * GAME_SPEED_RATIOED;
@@ -561,16 +557,10 @@ function animate(exports) {
   return data.dead && !data.timers.deadTimer && !dom.o;
 }
 
-function initDOM(exports) {
-  let { dom, data } = exports;
-  dom.o = {};
-  exports.domCanvas.img = spriteConfig;
-}
-
 function initBomb(exports) {
   let { data } = exports;
 
-  initDOM(exports);
+  exports.domCanvas.img = spriteConfig;
 
   if (data.hidden) return;
 

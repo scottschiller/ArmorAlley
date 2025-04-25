@@ -29,7 +29,7 @@ const FACING = 4;
 const windOffsetXMax = 3;
 
 const Balloon = (options = {}) => {
-  let css, data, dom, domCanvas, objects, exports;
+  let css, data, domCanvas, objects, exports;
 
   objects = {
     bunker: options?.bunker?.data?.id || null,
@@ -105,10 +105,6 @@ const Balloon = (options = {}) => {
   // random Y start position, unless specified
   data.y = data.y || rngInt(data.maxY, data.type);
 
-  dom = {
-    o: null
-  };
-
   domCanvas = {
     ownershipAnimation: null,
     // hack: note delayed assignment below once exports is defined
@@ -125,7 +121,6 @@ const Balloon = (options = {}) => {
     detachFromBunker: () => detachFromBunker(exports),
     die: (dieOptions) => die(exports, dieOptions),
     dieComplete: () => dieComplete(exports),
-    dom,
     // hack - see below.
     domCanvas,
     init: () => initBalloon(exports),
@@ -343,11 +338,6 @@ function die(exports, dieOptions = {}) {
   data.dead = true;
 
   common.onDie(exports, dieOptions);
-
-  // editor case: when destroyed, gone for good.
-  if (game.objects.editor) {
-    sprites.removeNodes(exports?.dom);
-  }
 }
 
 function dieComplete(exports) {

@@ -10,7 +10,7 @@ const spriteWidth = 64;
 const spriteHeight = 36;
 
 const Flame = (options = {}) => {
-  let data, dom, domCanvas, collision, exports;
+  let data, domCanvas, collision, exports;
 
   data = common.inheritData(
     {
@@ -54,14 +54,9 @@ const Flame = (options = {}) => {
     data.x -= data.width;
   }
 
-  dom = {
-    o: null
-  };
-
   exports = {
     animate: () => animate(exports),
     data,
-    dom,
     domCanvas,
     die: (force) => die(exports, force),
     init: () => initFlame(exports)
@@ -120,7 +115,7 @@ function die(exports, force) {
 }
 
 function animate(exports) {
-  let { collision, data, dom } = exports;
+  let { collision, data } = exports;
 
   sprites.draw(exports);
 
@@ -137,14 +132,10 @@ function animate(exports) {
   }
 
   // notify caller if now dead and can be removed.
-  return data.dead && !dom.o;
+  return data.dead && data.canDestroy;
 }
 
-function initFlame(exports) {
-  let { dom } = exports;
-
-  dom.o = {};
-
+function initFlame() {
   if (sounds.tankFlame) {
     playSound(sounds.tankFlame, game.players.local);
   }

@@ -7,7 +7,7 @@ import { game } from '../core/Game.js';
 const LandingPad = (options = {}) => {
   let exports;
 
-  let css, dom, domCanvas, data, collision;
+  let css, domCanvas, data, collision;
 
   css = common.inheritCSS({
     className: 'landing-pad'
@@ -62,10 +62,6 @@ const LandingPad = (options = {}) => {
     options
   );
 
-  dom = {
-    o: null
-  };
-
   domCanvas = {
     radarItem: LandingPad.radarItemConfig({ data })
   };
@@ -74,7 +70,6 @@ const LandingPad = (options = {}) => {
     animate: () => animate(exports),
     css,
     data,
-    dom,
     domCanvas,
     init: () => initLandingPad(exports),
     isOnScreenChange: (...args) => isOnScreenChange(exports, ...args)

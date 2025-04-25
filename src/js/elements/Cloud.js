@@ -52,14 +52,12 @@ const Cloud = (options = {}) => {
   const { className, src, width, height } = cloudData;
 
   let css,
-    dom = {},
     domCanvas;
 
   css = common.inheritCSS({ className });
 
   let exports = {
     css,
-    dom,
     options
   };
 
@@ -134,10 +132,6 @@ const Cloud = (options = {}) => {
         ctx.strokeWidth = 1;
       }
     }
-  };
-
-  dom = {
-    o: null
   };
 
   Object.assign(exports, {

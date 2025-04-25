@@ -38,7 +38,7 @@ const energy = 8;
 const MissileLauncher = (options = {}) => {
   let exports;
 
-  let css, data, dom, domCanvas, friendlyNearby;
+  let css, data, domCanvas, friendlyNearby;
 
   css = common.inheritCSS({
     className: 'missile-launcher',
@@ -83,10 +83,6 @@ const MissileLauncher = (options = {}) => {
     options
   );
 
-  dom = {
-    o: null
-  };
-
   domCanvas = {
     radarItem: MissileLauncher.radarItemConfig({ data }),
     img: {
@@ -113,7 +109,6 @@ const MissileLauncher = (options = {}) => {
     animate: () => animate(exports),
     css,
     data,
-    dom,
     domCanvas,
     die: (dieOptions) => die(exports, dieOptions),
     dieComplete: () => dieComplete(exports),
@@ -336,7 +331,7 @@ function fire(exports) {
 }
 
 function animate(exports) {
-  let { data, dom, domCanvas } = exports;
+  let { data, domCanvas } = exports;
   data.frameCount++;
 
   const fpsMultiplier = 1 / GAME_SPEED_RATIOED;
@@ -351,7 +346,7 @@ function animate(exports) {
 
   domCanvas?.dieExplosion?.animate();
 
-  if (data.dead) return !dom.o;
+  if (data.dead) return data.canDestroy;
 
   effects.smokeRelativeToDamage(exports);
 
@@ -397,7 +392,7 @@ function animate(exports) {
     nearbyTest(exports.friendlyNearby, exports);
   }
 
-  return data.dead && !dom.o;
+  return data.dead && data.canDestroy;
 }
 
 function initMissileLauncher(options, exports) {
