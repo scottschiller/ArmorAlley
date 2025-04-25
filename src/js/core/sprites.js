@@ -175,13 +175,20 @@ const sprites = {
   },
 
   removeNodesAndUnlink: (exports) => {
-    if (!exports?.dom) {
-      console.warn('removeNodesAndUnlink: WTF no exports?', exports);
+    if (!exports) {
+      console.warn('removeNodesAndUnlink: WTF no exports?');
+    }
+
       return;
     }
 
-    sprites.removeNodes(exports.dom);
-    sprites.nullify(exports.dom);
+    if (exports.dom) {
+      sprites.removeNodes(exports.dom);
+      sprites.nullify(exports.dom);
+    }
+
+    // mark object for destruction
+    exports.data.canDestroy = true;
 
     // also "unlink" from game objects array
     common.unlinkObject(exports);
