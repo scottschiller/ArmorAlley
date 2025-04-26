@@ -24,7 +24,6 @@ import {
   rubberChickenMode,
   bananaMode
 } from '../core/global.js';
-import { sprites } from '../core/sprites.js';
 import { gameMenu } from './game-menu.js';
 import { net } from '../core/network.js';
 import { gamePrefs } from './preferences.js';
