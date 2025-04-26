@@ -737,7 +737,9 @@ const Inventory = () => {
 
         // randomize a bit, too.
         if (!net.active) {
-          adjustedDelay = Math.floor(adjustedDelay * (1 + rng(0.25, 'inventory')));
+          adjustedDelay = Math.floor(
+            adjustedDelay * (1 + rng(0.25, 'inventory'))
+          );
         }
 
         // delay before next convoy
