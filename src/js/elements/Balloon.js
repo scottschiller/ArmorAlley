@@ -641,9 +641,9 @@ Balloon.radarItemConfig = ({ exports }) => ({
         (isSafari ? 0.5 : 4);
 
       // TODO: check if mobile Chrome on Android needs this, too.
-      if (isMobile) {
+      if (isSafari && isMobile) {
         renderedWidth *= 0.5;
-        renderedHeight *= 0.5;
+        renderedHeight *= 4;
       }
 
       ctx.drawImage(
