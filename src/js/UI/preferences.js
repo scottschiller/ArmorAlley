@@ -2167,15 +2167,15 @@ function PrefsManager() {
     // expand and collapse a node specified by the clicked element.
     const { target } = e;
     const id = target.getAttribute('data-for');
-    const css = 'active';
+    const className = 'active';
     const node = document.getElementById(id);
-    const showing = !utils.css.has(node, css);
+    const showing = !utils.css.has(node, className);
     if (showing) {
       node.style.height = node.scrollHeight + 'px';
     } else {
       node.style.height = '0px';
     }
-    utils.css.addOrRemove(node, showing, css);
+    utils.css.addOrRemove(node, showing, className);
     e.preventDefault?.();
     return false;
   };
