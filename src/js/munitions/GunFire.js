@@ -173,11 +173,18 @@ function die(exports, force) {
 
   // aieee!
 
+  /**
+   * If gunfire -> spark (and attached to target), object is dead but visible.
+   * Ensure items are removed via `force`, but don't do redundant work.
+   */
   if (data.dead && !force) return;
 
   data.dead = true;
 
   data.isFading = true;
+
+  // avoid redundant remove/unlink work.
+  if (data.canDestroy) return;
 
   sprites.removeNodesAndUnlink(exports);
 
