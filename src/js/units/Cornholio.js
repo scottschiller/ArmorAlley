@@ -5,7 +5,7 @@ import { common } from '../core/common.js';
 import { sprites } from '../core/sprites.js';
 
 const Cornholio = (options = {}) => {
-  let css, data, domCanvas, exports, height;
+  let data, domCanvas, exports, height;
 
   function setVisible(visible) {
     if (data.visible === visible) return;
@@ -32,7 +32,7 @@ const Cornholio = (options = {}) => {
     }
 
     if (data.speaking) {
-      data.lastSpeaking = oneOf(css.speaking);
+      data.lastSpeaking = oneOf(speakingStates);
     }
   }
 
@@ -43,11 +43,7 @@ const Cornholio = (options = {}) => {
 
   height = 33.6;
 
-  css = common.inheritCSS({
-    className: TYPES.cornholio,
-    cornholio: 'cornholio',
-    speaking: ['threatening', 'bow-down']
-  });
+  let speakingStates = ['threatening', 'bow-down'];
 
   data = common.inheritData(
     {
@@ -95,7 +91,6 @@ const Cornholio = (options = {}) => {
 
   exports = {
     animate,
-    css,
     data,
     domCanvas,
     hide: () => setVisible(false),

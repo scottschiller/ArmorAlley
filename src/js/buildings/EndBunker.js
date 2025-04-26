@@ -30,12 +30,7 @@ let height = 19;
 const EndBunker = (options = {}) => {
   let exports;
 
-  let css, domCanvas, data, objects;
-
-  css = common.inheritCSS({
-    className: TYPES.endBunker,
-    neutral: 'neutral'
-  });
+  let domCanvas, data, objects;
 
   // CPU "discount" / price advantage on inventory costs
   let cpuBiasByGameType = {
@@ -104,7 +99,6 @@ const EndBunker = (options = {}) => {
 
   exports = {
     animate: () => animate(exports),
-    css,
     data,
     domCanvas,
     hit: (points, target) => hit(exports, points, target),

@@ -41,16 +41,7 @@ const arrowWidth = 6;
 const arrowHeight = 10;
 
 const SuperBunker = (options = {}) => {
-  let css, domCanvas, data, nearby, exports;
-
-  css = common.inheritCSS({
-    className: TYPES.superBunker,
-    arrow: 'arrow',
-    friendly: 'friendly',
-    facingLeft: 'facing-left',
-    facingRight: 'facing-right',
-    hostile: 'hostile'
-  });
+  let domCanvas, data, nearby, exports;
 
   data = common.inheritData(
     {
@@ -134,7 +125,6 @@ const SuperBunker = (options = {}) => {
     animate: () => animate(exports),
     arrowConfig,
     capture: (isEnemy) => capture(exports, isEnemy),
-    css,
     data,
     die: (dieOptions) => die(exports, dieOptions),
     domCanvas,

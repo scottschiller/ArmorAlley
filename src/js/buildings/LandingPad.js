@@ -7,11 +7,7 @@ import { game } from '../core/Game.js';
 const LandingPad = (options = {}) => {
   let exports;
 
-  let css, domCanvas, data, collision;
-
-  css = common.inheritCSS({
-    className: 'landing-pad'
-  });
+  let domCanvas, data, collision;
 
   data = common.inheritData(
     {
@@ -68,7 +64,6 @@ const LandingPad = (options = {}) => {
 
   exports = {
     animate: () => animate(exports),
-    css,
     data,
     domCanvas,
     init: () => initLandingPad(exports),

@@ -25,20 +25,7 @@ const energy = 69;
 const Bunker = (options = {}) => {
   let exports;
 
-  let css, data, domCanvas, objects, radarItem;
-
-  css = common.inheritCSS({
-    className: TYPES.bunker,
-    arrow: 'arrow',
-    burning: 'burning',
-    burningOut: 'burning-out',
-    engineerInteracting: 'engineer-interacting',
-    facingLeft: 'facing-left',
-    facingRight: 'facing-right',
-    rubbleContainer: 'rubble-container',
-    rubble: 'rubble',
-    nuke: 'nuke'
-  });
+  let data, domCanvas, objects, radarItem;
 
   const smokeFrames = (burninatingTime / 1000) * FPS;
 
@@ -148,7 +135,6 @@ const Bunker = (options = {}) => {
     animate: () => animate(exports),
     arrowConfig,
     capture: (isEnemy) => capture(exports, isEnemy),
-    css,
     objects,
     data,
     deadConfig,

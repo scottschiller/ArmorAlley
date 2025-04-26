@@ -51,13 +51,9 @@ const Cloud = (options = {}) => {
 
   const { className, src, width, height } = cloudData;
 
-  let css,
-    domCanvas;
-
-  css = common.inheritCSS({ className });
+  let domCanvas;
 
   let exports = {
-    css,
     options
   };
 

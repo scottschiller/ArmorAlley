@@ -12,12 +12,7 @@ let pattern;
 const Chain = (options = {}) => {
   let exports;
 
-  let css, data, objects, defaultHeight;
-
-  css = common.inheritCSS({
-    className: 'chain',
-    jerking: 'jerking'
-  });
+  let data, objects, defaultHeight;
 
   defaultHeight = game.objects.view.data.world.height + 5;
 
@@ -100,7 +95,6 @@ const Chain = (options = {}) => {
     animate: () => animate(exports),
     applyHeight: () => applyHeight(exports),
     attachBalloon: (balloon) => attachBalloon(exports, balloon),
-    css,
     data,
     detachFromBunker: () => detachFromBunker(exports),
     domCanvas,
@@ -158,7 +152,7 @@ function isJerking(exports, intent) {
 }
 
 function updateIsJerking(exports, intent) {
-  let { css, data } = exports;
+  let { data } = exports;
 
   if (intent && !gamePrefs.bnb) return;
 

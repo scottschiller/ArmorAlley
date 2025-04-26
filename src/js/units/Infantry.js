@@ -78,19 +78,10 @@ const buttheadHeadbanging = {
 };
 
 const Infantry = (options = {}) => {
-  let css, data, domCanvas, defaultLookAhead, exports;
+  let data, domCanvas, defaultLookAhead, exports;
 
   // engineers stop closer to turrets vs. infantry.
   defaultLookAhead = options.role ? 4 : 8;
-
-  css = common.inheritCSS({
-    className: 'infantry',
-    beavis: 'beavis',
-    butthead: 'butthead',
-    infantry: TYPES.infantry,
-    engineer: TYPES.engineer,
-    stopped: 'stopped'
-  });
 
   data = common.inheritData(
     {
@@ -149,7 +140,6 @@ const Infantry = (options = {}) => {
 
   exports = {
     animate: () => animate(exports),
-    css,
     data,
     domCanvas,
     die: (dieOptions) => die(exports, dieOptions),
@@ -413,7 +403,6 @@ function resume(exports) {
 function setRole(exports, role, force) {
   let { data } = exports;
 
-  // TODO: minimize CSS thrashing, track lastClass etc.
   if (data.role !== role || force) {
     // role
     data.role = role;

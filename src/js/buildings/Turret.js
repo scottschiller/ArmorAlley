@@ -45,14 +45,9 @@ const frameHeight = 32;
 const Turret = (options = {}) => {
   let exports;
 
-  let css, data, domCanvas, objects, height, radarItem;
+  let data, domCanvas, objects, height, radarItem;
 
   height = 15;
-
-  css = common.inheritCSS({
-    className: TYPES.turret,
-    destroyed: 'destroyed'
-  });
 
   let fireModulusMap = {
     armorgeddon: 1,
@@ -220,7 +215,6 @@ const Turret = (options = {}) => {
     animate: () => animate(exports),
     bulletShellSound: () => bulletShellSound(exports),
     collisionItems: null,
-    css,
     data,
     destroy: () => destroy(exports),
     die: (dieOptions) => die(exports, dieOptions),
@@ -1034,7 +1028,6 @@ function createSparks(exports, count = 1) {
     count,
     vX: 1,
     vY: 1 + rnd(2),
-    css: 'welding-spark',
     // object in question
     exports: {
       data: {

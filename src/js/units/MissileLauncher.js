@@ -38,12 +38,7 @@ const energy = 8;
 const MissileLauncher = (options = {}) => {
   let exports;
 
-  let css, data, domCanvas, friendlyNearby;
-
-  css = common.inheritCSS({
-    className: 'missile-launcher',
-    exploding: 'exploding'
-  });
+  let data, domCanvas, friendlyNearby;
 
   data = common.inheritData(
     {
@@ -107,7 +102,6 @@ const MissileLauncher = (options = {}) => {
 
   exports = {
     animate: () => animate(exports),
-    css,
     data,
     domCanvas,
     die: (dieOptions) => die(exports, dieOptions),

@@ -42,11 +42,7 @@ const energy = 15;
 const Tank = (options = {}) => {
   let exports;
 
-  let css, data, domCanvas, radarItem, nearby, friendlyNearby;
-
-  css = common.inheritCSS({
-    className: TYPES.tank
-  });
+  let data, domCanvas, radarItem, nearby, friendlyNearby;
 
   data = common.inheritData(
     {
@@ -117,7 +113,6 @@ const Tank = (options = {}) => {
 
   exports = {
     animate: () => animate(exports),
-    css,
     data,
     domCanvas,
     die: (dieOptions) => die(exports, dieOptions),

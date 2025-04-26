@@ -34,13 +34,9 @@ const width = 104;
 const height = 26;
 
 const Base = (options = {}) => {
-  let css, data, domCanvas, exports;
+  let data, domCanvas, exports;
 
   let counter = 0;
-
-  css = common.inheritCSS({
-    className: 'base'
-  });
 
   const fireModulus = tutorialMode ? FPS * 5 : FPS * 2;
 
@@ -85,7 +81,6 @@ const Base = (options = {}) => {
 
   exports = {
     animate: () => animate(exports),
-    css,
     data,
     domCanvas,
     die: () => die(exports),

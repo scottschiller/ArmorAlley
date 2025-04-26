@@ -28,11 +28,7 @@ const energy = 12;
 const Van = (options = {}) => {
   let exports;
 
-  let css, domCanvas, data, radarItem;
-
-  css = common.inheritCSS({
-    className: TYPES.van
-  });
+  let domCanvas, data, radarItem;
 
   data = common.inheritData(
     {
@@ -98,7 +94,6 @@ const Van = (options = {}) => {
 
   exports = {
     animate: () => animate(exports),
-    css,
     data,
     domCanvas,
     die: (dieOptions) => die(exports, dieOptions),
