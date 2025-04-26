@@ -511,8 +511,6 @@ const Inventory = () => {
   }
 
   function applyRiseTransition(newObject) {
-    if (!newObject?.dom?.o) return;
-
     // force-append this thing, if it's on-screen right now
     sprites.updateIsOnScreen(newObject);
 
@@ -521,19 +519,6 @@ const Inventory = () => {
     if (stepTypes[newObject.data.type]) {
       newObject.radarItem?.summon();
     }
-
-    utils.css.add(newObject.dom.o, css.building);
-
-    // and start the "rise" animation
-    window.requestAnimationFrame(() => {
-      utils.css.add(newObject.dom.o, css.ordering);
-
-      common.setFrameTimeout(() => {
-        if (!newObject.dom?.o) return;
-        utils.css.remove(newObject.dom.o, css.ordering);
-        utils.css.remove(newObject.dom.o, css.building);
-      }, 2200);
-    });
   }
 
   function animate() {
@@ -1030,11 +1015,8 @@ const Inventory = () => {
   }
 
   css = {
-    building: 'building',
-    complete: 'complete',
     hasCounter: 'has-counter',
-    queued: 'queued',
-    ordering: 'ordering'
+    queued: 'queued'
   };
 
   data = {
