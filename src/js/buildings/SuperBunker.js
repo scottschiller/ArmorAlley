@@ -136,7 +136,6 @@ const SuperBunker = (options = {}) => {
     capture: (isEnemy) => capture(exports, isEnemy),
     css,
     data,
-    destroy: () => destroy(exports),
     die: (dieOptions) => die(exports, dieOptions),
     domCanvas,
     hit: (points, target) => hit(exports, points, target),
@@ -585,13 +584,6 @@ function initSuperBunker(exports) {
   updateFireModulus(exports);
 
   exports.radarItem = game.objects.radar.addItem(exports);
-}
-
-function destroy(exports) {
-  let { dom, radarItem } = exports;
-
-  radarItem?.die();
-  sprites.removeNodes(dom);
 }
 
 function getSpriteURL() {
