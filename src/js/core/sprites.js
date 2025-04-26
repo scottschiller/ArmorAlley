@@ -181,8 +181,8 @@ const sprites = {
       console.warn('removeNodesAndUnlink: WTF no exports?');
     }
 
-      return;
-    }
+    // prevent redundant calls
+    if (exports.data.canDestroy) return;
 
     if (exports.dom) {
       sprites.removeNodes(exports.dom);
