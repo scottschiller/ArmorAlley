@@ -179,6 +179,10 @@ const sprites = {
   removeNodesAndUnlink: (exports) => {
     if (!exports) {
       console.warn('removeNodesAndUnlink: WTF no exports?');
+      return;
+    }
+    if (!exports.data) {
+      return;
     }
 
     // prevent redundant calls
