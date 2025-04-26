@@ -406,6 +406,9 @@ function die(exports, dieOptions = {}) {
 }
 
 function dieComplete(exports) {
+  // avoid redundant remove/unlink work.
+  if (exports?.data?.canDestroy) return;
+
   exports.domCanvas.dieExplosion = null;
   sprites.removeNodesAndUnlink(exports);
 }
