@@ -34,7 +34,7 @@ const width = 104;
 const height = 26;
 
 const Base = (options = {}) => {
-  let css, data, dom, domCanvas, exports;
+  let css, data, domCanvas, exports;
 
   let counter = 0;
 
@@ -665,12 +665,8 @@ function refreshSprite(exports) {
 }
 
 function initBase(exports) {
-  let { data, dom } = exports;
-
   common.initDOM(exports);
-
   refreshSprite(exports);
-
   exports.radarItem = game.objects.radar.addItem(exports);
 }
 

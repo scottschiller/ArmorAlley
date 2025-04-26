@@ -25,7 +25,7 @@ const energy = 69;
 const Bunker = (options = {}) => {
   let exports;
 
-  let css, data, dom, domCanvas, objects, radarItem;
+  let css, data, domCanvas, objects, radarItem;
 
   css = common.inheritCSS({
     className: TYPES.bunker,
