@@ -110,8 +110,6 @@ const EndBunker = (options = {}) => {
     hit: (points, target) => hit(exports, points, target),
     init: () => initEndBunker(exports),
     objects,
-    onNeutralHiddenChange: (isVisible) =>
-      onNeutralHiddenChange(exports, isVisible),
     registerHelicopter: (helicopter) => registerHelicopter(exports, helicopter),
     updateHealth: (attacker) => updateHealth(exports, attacker),
     updateSprite: () => applySpriteURL(exports)
@@ -167,7 +165,6 @@ const EndBunker = (options = {}) => {
               game.objects.funds.setFunds(data.funds);
             }
             sprites.updateEnergy(exports);
-            onEnergyUpdate(exports);
             // die silently.
             target.die({ silent: true });
             playSound(sounds.doorClose, exports);
@@ -209,7 +206,6 @@ function hit(exports, points, target) {
   ) {
     data.energy = Math.max(0, data.energy - points);
     sprites.updateEnergy(exports);
-    onEnergyUpdate(exports);
   }
 }
 
@@ -457,9 +453,6 @@ function animate(exports) {
 function updateHealth(exports, attacker) {
   let { data } = exports;
 
-  // notify if just neutralized by tank gunfire
-  onEnergyUpdate(exports);
-
   if (data.energy) return;
 
   if (attacker?.data?.parentType !== TYPES.tank) return;
@@ -474,22 +467,6 @@ function updateHealth(exports, attacker) {
       "You neutralized the enemy's end bunker ⛳"
     );
   }
-}
-
-function onEnergyUpdate(exports) {
-  let { css, data, radarItem } = exports;
-
-  utils.css.addOrRemove(radarItem?.dom?.o, !data.energy, css.neutral);
-}
-
-function onNeutralHiddenChange(exports, isVisible) {
-  let { css, data, radarItem } = exports;
-
-  utils.css.addOrRemove(
-    radarItem?.dom?.o,
-    !data.energy && isVisible,
-    css.neutral
-  );
 }
 
 function getSpriteURL(data) {
@@ -534,8 +511,6 @@ function initEndBunker(exports) {
   common.initDOM(exports);
 
   exports.radarItem = game.objects.radar.addItem(exports);
-
-  onEnergyUpdate(exports);
 }
 
 EndBunker.radarItemConfig = () => ({

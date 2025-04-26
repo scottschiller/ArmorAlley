@@ -1967,9 +1967,6 @@ function PrefsManager() {
         game.objects[TYPES.superBunker].forEach((superBunker) =>
           superBunker.onArrowHiddenChange?.(isActive)
         );
-        game.objects[TYPES.endBunker].forEach((endBunker) => {
-          endBunker.onNeutralHiddenChange?.(isActive);
-        });
       },
 
       weather: (type) => {
