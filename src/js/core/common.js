@@ -265,7 +265,8 @@ const common = {
         dom = exports.dom;
       }
       dom.o = sprites.create({
-        className: css.className,
+        // previously, css.className
+        className: data.type,
         // oft-used bits
         id: data.id,
         isEnemy: data.isEnemy
