@@ -29,17 +29,12 @@ const FACING = 4;
 const windOffsetXMax = 3;
 
 const Balloon = (options = {}) => {
-  let css, data, domCanvas, objects, exports;
+  let data, domCanvas, objects, exports;
 
   objects = {
     bunker: options?.bunker?.data?.id || null,
     chain: null
   };
-
-  css = common.inheritCSS({
-    className: TYPES.balloon,
-    explodingType: randomExplosionType()
-  });
 
   const width = 38;
   const height = 16;
@@ -116,7 +111,6 @@ const Balloon = (options = {}) => {
   exports = {
     animate: () => animate(exports),
     attachChain: (chain) => attachChain(exports, chain),
-    css,
     data,
     detachFromBunker: () => detachFromBunker(exports),
     die: (dieOptions) => die(exports, dieOptions),
@@ -512,12 +506,8 @@ function animate(exports) {
   sprites.draw(exports);
 }
 
-function randomExplosionType() {
-  return oneOf(['generic-explosion', 'generic-explosion-2']);
-}
-
 function reset(exports) {
-  let { css, data, domCanvas, radarItem } = exports;
+  let { data, domCanvas, radarItem } = exports;
 
   // respawn can actually happen now
   data.energy = data.energyMax;
@@ -551,9 +541,6 @@ function reset(exports) {
   // and reset
   domCanvas.img = getCanvasBalloon(data);
 
-  // randomize again
-  css.explodingType = randomExplosionType();
-
   sprites.updateEnergy(exports);
 
   // presumably, triggered by an infantry.
@@ -563,7 +550,7 @@ function reset(exports) {
 }
 
 function initBalloon(exports) {
-  let { css, data, objects } = exports;
+  let { data, objects } = exports;
 
   common.initDOM(exports);
 
