@@ -1714,11 +1714,6 @@ function setRespawning(exports, state) {
     if (data.isLocal) {
       // "get to the choppa!" (center the view on it, that is.)
       game.objects.view.setLeftScrollToPlayer(exports);
-
-      // good time to do some DOM pruning, etc.
-      if (game.objects.queue) {
-        game.objects.queue.process();
-      }
     } else {
       // hackish: force enemy helicopter to be on-screen when respawning
       sprites.updateIsOnScreen(exports, force);
