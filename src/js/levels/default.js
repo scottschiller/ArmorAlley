@@ -880,7 +880,7 @@ function previewLevel(levelName, force) {
       game.objects.radar.addItem(balloonExports);
     }
 
-    game.objects.radar.addItem(exports, css.join(' '));
+    game.objects.radar.addItem(exports);
   });
 }
 
