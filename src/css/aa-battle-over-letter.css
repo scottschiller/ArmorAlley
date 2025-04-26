@@ -320,16 +320,16 @@ body.has-gamepad.gamepad-active .animated-mail .wax-seal:focus-visible {
   /* compress a little bit */
   letter-spacing: -0.25px;
   padding: calc(6px * var(--gs2)) 0px;
-  font-size: calc(5px * var(--gs2));
+  font-size: calc(4.75px * var(--gs2));
   line-height: 150%;
 }
 
 .animated-mail .letter .letter-context-body .game-stats code {
   flex-shrink: 0;
   white-space: pre-wrap;
-  font-size: calc(5px * var(--gs2));
+  font-size: calc(4.75px * var(--gs2));
   line-height: 130%;
-  margin: 0px 1.5em 0px 0px;
+  margin: 0px 1.25em 0px 0px;
 }
 
 .animated-mail .letter .letter-context-body .copy-game-stats-wrapper br {
