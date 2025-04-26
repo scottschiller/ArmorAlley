@@ -140,12 +140,7 @@ const Helicopter = (options = {}) => {
       updateLives(exports);
     }
 
-    // note final true param, for respawn purposes
-    radarItem = game.objects.radar.addItem(
-      exports,
-      `${css.className}${data.isLocal ? ' local-player' : ''}`,
-      true
-    );
+    radarItem = game.objects.radar.addItem(exports, { canRespawn: true });
 
     exports.radarItem = radarItem;
 

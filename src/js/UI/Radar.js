@@ -124,18 +124,15 @@ const Radar = () => {
     }
   }
 
-  function addItem(item, className, canRespawn) {
+  // @param item: object "exports"
+  // @param itemOptions: { canRespawn: true }
+  function addItem(item, itemOptions) {
     let itemObject;
-
-    if (item.data.bottomAligned) {
-      className = (className ? className + ' ' : '') + 'bottom-aligned';
-    }
 
     itemObject = RadarItem({
       parentType: item.data.type,
-      className,
       oParent: item,
-      canRespawn: canRespawn || false,
+      canRespawn: !!itemOptions?.canRespawn,
       isStatic: false,
       // width + height, determined after append
       layout: null,

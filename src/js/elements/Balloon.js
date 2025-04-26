@@ -579,13 +579,9 @@ function initBalloon(exports) {
     data.windOffsetY = rngPlusMinus(rng(0.33, data.type), data.type);
   }
 
-  // TODO: review hacky "can respawn" parameter
-  const canRespawn = true;
-
   exports.radarItem = game.objects.radar.addItem(
     exports,
-    css.className,
-    canRespawn
+    { canRespawn: true }
   );
 }
 
