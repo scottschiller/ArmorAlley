@@ -73,7 +73,7 @@ const { src, dest, series, task } = require('gulp');
 const rename = require('gulp-rename');
 const terser = require('gulp-terser');
 const { rollup } = require('rollup');
-const cleanCSS = require('gulp-clean-css');
+const lightningcss = require('gulp-lightningcss');
 const concat = require('gulp-concat');
 const htmlmin = require('gulp-htmlmin');
 const minifyInline = require('gulp-minify-inline');
@@ -120,6 +120,11 @@ const floppyTypes = {
 };
 
 let floppyRoot = `${distRoot}/${floppyTypes._1200}`;
+
+const lightningOptions = {
+  minify: true,
+  sourceMap: false
+};
 
 function asset(path) {
   return `${assetPath}/${path}`;
@@ -325,7 +330,7 @@ function minifyCSS() {
        */
       .pipe(replace(assetPath + '/', distRootPath + '/'))
       // https://github.com/clean-css/clean-css#constructor-options
-      .pipe(cleanCSS({ level: 2 }))
+      .pipe(lightningcss(lightningOptions))
       .pipe(dest(dp.css))
   );
 }
@@ -735,7 +740,7 @@ function gzipThatFloppy() {
 
     // CSS
     src(distCSS('*'))
-      .pipe(cleanCSS({ level: 2 }))
+      .pipe(lightningcss(lightningOptions))
       .pipe(gzip(gzipOptions))
       .pipe(dest(dp.css)),
 

@@ -39,12 +39,14 @@
     "rollup": "^4.13.0"
   },
   "dependencies": {
+    "browserslist": "^4.24.4",
     "del": "^8.0.0",
     "gulp-audiosprite": "^1.1.0",
     "gulp-fluent-ffmpeg": "^2.0.0",
     "gulp-gzip": "^1.4.2",
     "gulp-image-resize": "^0.13.1",
     "gulp-imagemin": "^9.0.0",
+    "gulp-lightningcss": "^1.0.0",
     "gulp-minify-inline": "^1.1.0",
     "gulp-replace": "^1.1.4",
     "gulp.spritesmith": "^6.13.0",
