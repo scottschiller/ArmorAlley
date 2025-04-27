@@ -92,8 +92,11 @@ var imageResize = require('gulp-image-resize');
 // for spritesheet JSON
 var map = require('map-stream');
 
-// post-build cleanup for JSON
-var clean = require('gulp-clean');
+const { deleteAsync } = require('del');
+
+async function clean(paths) {
+  deleteAsync(paths);
+}
 
 // path replacement
 replace = require('gulp-replace');
@@ -586,35 +589,27 @@ function encodeStandaloneOgg() {
 
 function cleanAudioDist() {
   // delete previously-built audio assets
-  return src(dp.audio, { allowEmpty: true, read: false }).pipe(clean());
+  return clean([dp.audio]);
 }
 
 function cleanAudioTemp() {
   // delete temporary audio JS / JSON, post-build
-  return src(`${dp.audio}/*.json`, { allowEmpty: true, read: false }).pipe(
-    clean()
-  );
+  return clean([`${dp.audio}/*.json`]);
 }
 
 function cleanDist() {
   // delete dist/ path, with a few exceptions.
-  return src(['dist/*', `!dist/${audioPath}`, '!dist/README.md'], {
-    allowEmpty: true,
-    read: false
-  }).pipe(clean());
+  return clean(['dist/*', `!dist/${audioPath}`, '!dist/README.md']);
 }
 
 function cleanup() {
   // delete temporary spritesheet files, and PNGs which have been webP-encoded.
   // TODO: refactor. :P
-  return src(
-    [
-      `${dp.image}/${asName}*.js*`,
-      `${dp.image}/${asName}.png`,
-      `${dp.image}/battlefield/standalone/deviantart-Dirt-Explosion-774442026.png`
-    ],
-    { allowEmpty: true, read: false }
-  ).pipe(clean());
+  return clean([
+    `${dp.image}/${asName}*.js*`,
+    `${dp.image}/${asName}.png`,
+    `${dp.image}/battlefield/standalone/deviantart-Dirt-Explosion-774442026.png`
+  ]);
 }
 
 function minifyCode() {
@@ -632,7 +627,7 @@ function copyFiles() {
 }
 
 function cleanThatFloppy() {
-  return src(floppyRoot, { allowEmpty: true, read: false }).pipe(clean());
+  return clean([floppyRoot]);
 }
 
 function copyThatFloppy() {
@@ -722,7 +717,7 @@ function tidyThatFloppyCopy() {
     dp.video
   ];
 
-  return src(globs, { allowEmpty: true, read: false }).pipe(clean());
+  return clean(globs);
 }
 
 function gzipThatFloppy() {
@@ -784,34 +779,22 @@ function bootThatFloppy() {
 }
 
 function lastFloppyCleanup() {
-  return src(
-    [
-      `${dp.audio}/*.json`,
-      // ensure the other floppy version didn't sneak in
-      `${floppyRoot}/dist/floppy-*`
-    ],
-    {
-      allowEmpty: true,
-      read: false
-    }
-  ).pipe(clean());
+  return clean([
+    `${dp.audio}/*.json`,
+    // ensure the other floppy version didn't sneak in
+    `${floppyRoot}/dist/floppy-*`
+  ]);
 }
 
 function lastFloppyCleanup360() {
-  return src(
-    [
-      // clean up "ephemeral" 360K-modded source path
-      srcRoot360,
-      // drop all audio from 360K build
-      dp.audio,
-      // no BnB CSS
-      `${dp.css}/aa-bnb.css.gz`
-    ],
-    {
-      allowEmpty: true,
-      read: false
-    }
-  ).pipe(clean());
+  return clean([
+    // clean up "ephemeral" 360K-modded source path
+    srcRoot360,
+    // drop all audio from 360K build
+    dp.audio,
+    // no BnB CSS
+    `${dp.css}/aa-bnb.css.gz`
+  ]);
 }
 
 const buildTasks = [
