@@ -67,8 +67,8 @@
   Original release: V1.0.20131031
 
   For revision history, see README.md and CHANGELOG.txt.
-
 */
+
 :root {
   /* a bit of fun: calc() + var() for animations + transitions, for dynamic game speed. */
   --game-speed: 1;
@@ -136,7 +136,7 @@ b {
   font-family: 'EB Garamond';
   src: url(../../assets/font/EBGaramond/EBGaramond-Regular-subset.woff2)
     format('woff2');
-  font-weight: normal;
+  font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
@@ -214,14 +214,8 @@ body.is_safari:not(.is-mobile) {
   overflow: hidden;
 }
 
-#radar,
-#world {
-  /* https://developer.mozilla.org/en-US/docs/Web/CSS/contain */
-  contain: strict;
-}
-
-#game-status,
-#game-fps {
+#game-fps,
+#game-status {
   /* initially, hide */
   position: absolute;
   display: none;
@@ -245,6 +239,12 @@ body.game-started #player-status-bar {
 
 .generic-cta {
   border-radius: 2px;
+  font-size: 8px;
+  padding: 2px 8px;
+  line-height: 10px;
+  border-color: transparent;
+  color: #fff;
+  text-shadow: 0.5px 0.5px rgba(0, 0, 0, 0.25);
 }
 
 #exit {
@@ -256,7 +256,6 @@ body.game-started #player-status-bar {
 }
 
 #world-wrapper {
-  /* mac style - and hide until game start */
   border-bottom: 2px solid #875400;
   font-size: 11px;
   height: 384px;
@@ -268,11 +267,8 @@ body.game-started #player-status-bar {
   width: 100%;
 }
 
+body:not(.has-gamepad) .gamepad-only,
 body:not(.is-mobile) .mobile-only {
-  display: none;
-}
-
-body:not(.has-gamepad) .gamepad-only {
   display: none;
 }
 
@@ -307,19 +303,10 @@ body.game-started #world-wrapper {
     opacity 0.5s ease-in-out;
   opacity: 0;
   visibility: hidden;
-  /* initially hide, to prevent visible opacity flash */
   left: 0;
   position: absolute;
   top: 0;
   width: 100%;
-}
-
-body:not(.is_firefox) #radar {
-  /**
-   * A little nicer blend for overlapping scan-range bits.
-   * Not for Firefox, however, given pink video compositing issue.
-   */
-  mix-blend-mode: overlay;
 }
 
 body.loaded #radar {
@@ -327,12 +314,12 @@ body.loaded #radar {
   visibility: visible;
 }
 
-body:not(.is_firefox).radar_enhanced_fx #world-noise-overlay,
 body.is_firefox.game-started.radar_enhanced_fx #world-noise-overlay,
-body:not(.is_firefox).radar_enhanced_fx.radar_interference_blur
+body.is_firefox.game-started.radar_enhanced_fx.radar_interference_blur
   #radar-container.interference
   .interference,
-body.is_firefox.game-started.radar_enhanced_fx.radar_interference_blur
+body:not(.is_firefox).radar_enhanced_fx #world-noise-overlay,
+body:not(.is_firefox).radar_enhanced_fx.radar_interference_blur
   #radar-container.interference
   .interference {
   /**
@@ -350,8 +337,8 @@ body:not(.radar_interference_blur) #radar-container .interference {
 body #radar-container .interference {
   /* battle flag: "jamming" */
   position: absolute;
-  top: 0px;
-  left: 0px;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   opacity: 0;
@@ -368,17 +355,14 @@ body:not(.radar_enhanced_fx)
   .noise {
   /* hide if not enhanced. */
   display: none;
-  background: none;
+  background: 0 0;
 }
 
 /* home screen + radar "interference"-specific overlays */
-body:not(.game-started).radar_enhanced_fx #world-noise-overlay .noise,
 body.game-started #world-noise-overlay.radar-jammed .noise,
 body.radar_enhanced_fx #world-noise-overlay.radar-jammed .noise,
-body.radar_interference_blur
-  #radar-container.interference
-  .interference
-  .noise {
+body.radar_interference_blur #radar-container.interference .interference .noise,
+body:not(.game-started).radar_enhanced_fx #world-noise-overlay .noise {
   background: var(--noise-url) 0 0/128px 128px;
   bottom: 0;
   image-rendering: optimizeSpeed;
@@ -394,13 +378,10 @@ body.radar_interference_blur
 }
 
 /* home screen + radar "interference"-specific overlays (when active) */
-body:not(.game-started).radar_enhanced_fx #world-noise-overlay .noise,
-body.radar_enhanced_fx #world-noise-overlay.radar-jammed .noise,
 body.radar_enhanced_fx #radar-container.interference .noise,
-body.radar_interference_blur
-  #radar-container.interference
-  .interference
-  .noise {
+body.radar_enhanced_fx #world-noise-overlay.radar-jammed .noise,
+body.radar_interference_blur #radar-container.interference .interference .noise,
+body:not(.game-started).radar_enhanced_fx #world-noise-overlay .noise {
   /* "enhanced" version - also composited with a blend-mode filter. */
   animation: 1s steps(15) infinite both noise;
   opacity: 0.66;
@@ -437,7 +418,6 @@ body:not(.game-started).is_firefox.radar_enhanced_fx
 }
 
 body.game-started:not(.radar_interference_blur) #world-noise-overlay {
-  /* once started (and not flag-specific jamming / interference mode), cover radar. */
   top: 0;
   /* and only radar. */
   height: 8%;
@@ -472,7 +452,6 @@ body.radar_enhanced_fx #world-noise-overlay.radar-jammed {
 #battlefield-overlay-left,
 #battlefield-overlay-right {
   position: absolute;
-  /* sit underneath fuel bar */
   top: 11%;
   bottom: 5.5%;
   width: 2%;
@@ -693,18 +672,6 @@ button.primary {
   vertical-align: middle;
 }
 
-.generic-cta {
-  font-size: 8px;
-  padding: 2px 8px;
-  line-height: 10px;
-}
-
-.generic-cta {
-  border-color: transparent;
-  color: #fff;
-  text-shadow: 0.5px 0.5px rgba(0, 0, 0, 0.25);
-}
-
 .generic-cta:hover {
   background-color: rgba(0, 255, 0, 0.25);
   color: #fff;
@@ -717,6 +684,8 @@ button.primary {
   filter: drop-shadow(
     0 0 calc(0.75px * var(--menu-scale)) rgba(0, 255, 0, 0.75)
   );
+  transform: scale3d(0.9, 0.9, 1);
+  transform-origin: 50% 50%;
 }
 
 .generic-cta.large {
@@ -736,11 +705,6 @@ video {
    * 11/2024: "non-default" image-rendering here breaks video rendering in Firefox (at least on macOS?), solid pink. Wild.
    */
   image-rendering: auto;
-}
-
-.generic-cta:active {
-  transform: scale3d(0.9, 0.9, 1);
-  transform-origin: 50% 50%;
 }
 
 #network-pipe,
@@ -892,7 +856,6 @@ canvas {
 }
 
 #battlefield-canvas {
-  /* offset for radar */
   top: 8%;
   left: 0;
   width: 100%;
@@ -901,7 +864,6 @@ canvas {
 }
 
 #radar-canvas {
-  /* full width and height. */
   top: 0;
   left: 0;
   width: 100%;
@@ -915,29 +877,28 @@ body.loaded canvas {
   transition: opacity 0.75s ease-in-out;
 }
 
-body.game-over #top-bar,
 body.game-over #battlefield-canvas,
-body.game-over #game-announcements .announcement-text {
-  transition: 0.5s ease-in-out;
-  transition-property: filter;
+body.game-over #game-announcements .announcement-text,
+body.game-over #top-bar {
+  transition: filter 0.5s ease-in-out;
   filter: none;
 }
 
 /* "letter" and "prefs" open cases - dim background */
-body.game-over.envelope-open #top-bar,
 body.game-over.envelope-open #battlefield-canvas,
 body.game-over.envelope-open #game-announcements .announcement-text,
+body.game-over.envelope-open #top-bar,
 body.game-started.prefs-modal-open #top-bar,
 body.prefs-modal-open #battlefield-canvas,
 body.prefs-modal-open #game-announcements .announcement-text,
-body.prefs-modal-open #notification-toasts,
+body.prefs-modal-open #game-menu-wrapper,
 body.prefs-modal-open #home-menu-video,
-body.prefs-modal-open #game-menu-wrapper {
+body.prefs-modal-open #notification-toasts {
   filter: brightness(0.5);
 }
 
-body.is_firefox.prefs-modal-open #home-menu-video,
-body.is_firefox.prefs-modal-open #game-menu-wrapper {
+body.is_firefox.prefs-modal-open #game-menu-wrapper,
+body.is_firefox.prefs-modal-open #home-menu-video {
   /* pink video compositing fix */
   filter: none;
 }

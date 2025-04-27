@@ -8,7 +8,6 @@ body.is_safari:not(.is-mobile) #player-status-bar {
 
 body.game-started {
   -webkit-touch-callout: none;
-  /* prevent pinch-to-zoom and scroll */
   touch-action: none;
   /* on mobile especially, aggressively disable selection. this is a game, not a document. ;) */
   -webkit-user-select: none;
@@ -68,8 +67,8 @@ body.game-started #funds {
   padding-right: calc(1.5px * var(--gs));
 }
 
-#game-status,
-#game-fps {
+#game-fps,
+#game-status {
   position: absolute;
   display: none;
   top: calc(4px * var(--gs));
@@ -108,11 +107,11 @@ body.game-started #game-status {
 #funds-negative {
   position: relative;
   display: inline-block;
-  /* allow expand/collapse */
-  width: 0px;
+  width: 0;
   overflow: hidden;
   transition: width 0.5s ease-in-out;
-  line-height: 50%; /* errr... */
+  line-height: 50%;
+  /* errr... */
   margin-right: -2.5px;
 }
 
@@ -122,7 +121,6 @@ body.game-started #game-status {
   width: calc(4.25px * var(--gs));
   height: calc(8.5px * var(--gs));
   margin-top: calc(-0.125px * var(--gs));
-  /* tighten "letter spacing" a bit */
   margin-right: calc(-0.33px * var(--gs));
   opacity: 1;
   overflow: hidden;
@@ -150,6 +148,7 @@ body.game-started #game-status {
    * invert 80% -> #cc (216)
    * invert 60% -> #99 (153)
    */
+  /* TODO: review and stop using invert. */
   filter: invert(0.6);
   background: url(../../assets/image/UI/number-strip-iosevka.svg) 0 0/100% 1000%
     repeat-y;
@@ -244,7 +243,7 @@ body.is-mobile #queue .queue-item {
   margin-top: -60%;
   opacity: 0;
   position: absolute;
-  left: 0px;
+  left: 0;
   text-align: center;
   min-width: 0.8em;
   text-shadow: 0 1px 0 #000;
@@ -276,9 +275,9 @@ body.demo .target-marker {
   opacity: 0;
 }
 
+body.minimal #game-status-bar,
 body.minimal #game-tips,
 body.minimal #notification-toasts,
-body.minimal #game-status-bar,
 body.minimal #player-status-bar {
   /* reduced UI for home screen "attract mode" video */
   display: none !important;
@@ -287,10 +286,8 @@ body.minimal #player-status-bar {
 #player-status-bar {
   color: #999;
   font-size: 55%;
-  /* and room for green bars */
   height: calc(48px * var(--gs));
   left: 0;
-  /* so type lines up */
   line-height: 50%;
   /* previously, 24px */
   position: absolute;
@@ -369,8 +366,6 @@ body.game-started #fuel-bar {
     #c00000 2.25px,
     rgba(255, 0, 0, 0) 3px
   );
-  image-rendering: optimizeQuality;
-  image-rendering: crisp-edges;
   image-rendering: -webkit-optimize-contrast;
   /* hide at first */
   transform: translate3d(-100%, 0, 0);
@@ -441,7 +436,6 @@ ul.stats-bar li.stats-item:not(:last-of-type) {
 #status-bar.hide-keyboard-labels .letter-block,
 body.is_iphone #stats-bar .letter-block,
 body.is_iphone #status-bar .letter-block {
-  /* user has chosen to hide via game prefs */
   /* NOTE: #stats-bar and #status-bar are both valid. :P */
   display: none;
 }
@@ -517,7 +511,6 @@ ul.stats-bar li.repairing em {
 
 ul.stats-bar em {
   display: inline-block;
-  /* hide inner text */
   overflow: hidden;
   position: relative;
   font-size: 0px;
@@ -526,8 +519,8 @@ ul.stats-bar em {
   zoom: var(--gs);
 }
 
-body:not(.limited-lives-mode) #top-bar li.lives,
-body:not(.limited-lives-mode) #top-bar li.helicopter-item {
+body:not(.limited-lives-mode) #top-bar li.helicopter-item,
+body:not(.limited-lives-mode) #top-bar li.lives {
   display: none;
 }
 
@@ -536,8 +529,8 @@ ul.stats-bar .lives .letter-block {
 }
 
 ul.stats-bar .lives em {
-  background: url(../../assets/image/UI/status-helicopter.png) no-repeat;
-  background-size: contain;
+  background: url(../../assets/image/UI/status-helicopter.png) 0 0 / contain
+    no-repeat;
   height: 4.67px;
   margin-left: 0.5em;
   width: 10px;
@@ -591,6 +584,7 @@ ul.stats-bar .missiles em {
 
 body.banana-mode ul.stats-bar .missiles em {
   transform: rotate(14deg);
+  margin-top: -2px; /* height align tweak */
 }
 
 ul.stats-bar .missiles span.divider {
@@ -668,11 +662,6 @@ body.banana-mode ul.stats-bar .missiles em {
   background: url(../../assets/image/banana.png) 50% 0 / contain no-repeat;
 }
 
-body.banana-mode ul.stats-bar .missiles em {
-  /* background: transparent url(../../assets/image/banana.png) 50% 0px no-repeat; */
-  margin-top: -2px; /* height align tweak */
-}
-
 body.original_missile_mode ul.stats-bar .missiles .alternate-missiles,
 body.original_missile_mode ul.stats-bar .missiles .divider {
   /* hide |C|B in UI when "alternate missiles" are disabled. */
@@ -729,7 +718,6 @@ body.original_missile_mode ul.stats-bar .missiles .divider {
   position: absolute;
   font-family: 'Cheddar Gothic Stencil';
   font-weight: 400;
-  /* will be repositioned higher up on small portrait screens. */
   top: 23.5%;
   left: 0;
   width: 100%;
@@ -741,21 +729,20 @@ body.original_missile_mode ul.stats-bar .missiles .divider {
 }
 
 body.game-over #game-tips {
-  /* allow events at this point, user may have lost and links need to work. */
   pointer-events: auto;
   /* show atop explosions and whatnot. */
   z-index: 1;
 }
 
 #game-tips .game-over-tip {
-  color: #009900;
+  color: #090;
   font-family: 'EB Garamond', 'Times New Roman', serif;
   font-size: calc(12px * var(--gs));
   line-height: 125%;
   font-weight: 300;
   letter-spacing: -0.033em;
   max-width: 26em;
-  margin: 0px auto;
+  margin: 0 auto;
 }
 
 #game-tips hr {
@@ -786,11 +773,11 @@ body.game-over #game-tips {
 }
 
 body.has-gamepad.gamepad-active #game-tips .game-start:focus,
-body.has-gamepad.gamepad-active #game-tips .generic-cta:focus,
 body.has-gamepad.gamepad-active #game-tips .game-start:focus-visible,
+body.has-gamepad.gamepad-active #game-tips .generic-cta:focus,
 body.has-gamepad.gamepad-active #game-tips .generic-cta:focus-visible {
   border: 1px solid #fff;
-  outline: none;
+  outline: 0;
 }
 
 #game-tips .game-start:hover {
@@ -1022,7 +1009,7 @@ body.is_firefox #game-tips #game-announcements .inline-emoji {
    */
   min-width: 15em;
   max-width: 24em;
-  padding: 0px;
+  padding: 0;
   display: inline-block;
   text-align: center;
 }
@@ -1054,11 +1041,9 @@ body.game-started #world-wrapper.incoming-smart-missile {
 }
 
 #player-status-bar .spacer {
-  /* centering / sizing shenanigans */
   left: calc(-4px * var(--gs));
   padding-right: calc(5px * var(--gs));
   position: relative;
-  /* previously */
   /* min-width: 5% */
   width: calc(32px * var(--gs));
 }
@@ -1083,10 +1068,8 @@ body.game-started #world-wrapper.incoming-smart-missile {
   background-repeat: no-repeat;
   background-size: contain;
   display: inline-block;
-  /* annoying vertical alignment fix */
   margin-top: -1px;
   vertical-align: middle;
-  /* these shouldn't be clickable, despite being a link. :X */
   pointer-events: none;
   /* scale these up. */
   zoom: var(--gs);
@@ -1119,35 +1102,25 @@ body.limited-lives-mode
   li.inventory-item[data-for='helicopter'] {
   position: absolute;
   display: block;
-  top: 0px;
-  left: 0px;
+  top: 0;
+  left: 0;
   transform: translate3d(107%, -110%, 0);
 }
 
 /* default gamepad */
-body.limited-lives-mode.has-gamepad
-  #mobile-controls
-  li.inventory-item[data-for='helicopter'] {
-  top: auto;
-  bottom: 0px;
-  left: auto;
-  right: 2px;
-  transform: translate3d(0px, 110%, 0);
-}
-
 body #mobile-controls li.inventory-item[data-for='eject'] {
   position: absolute;
   display: block;
-  top: 0px;
-  left: 0px;
-  transform: translate3d(0px, -110%, 0);
+  top: 0;
+  left: 0;
+  transform: translate3d(0, -110%, 0);
 }
 
 body:not(.limited-lives-mode)
   .mobile-controls_right-aligned:not(.notch-at-right)
   #mobile-controls
   li.inventory-item[data-for='eject'] {
-  transform: translate3d(0px, -110%, 0);
+  transform: translate3d(0, -110%, 0);
 }
 
 body.mobile-controls_right-aligned
@@ -1157,8 +1130,8 @@ body.mobile-controls_right-aligned
   bottom: auto;
   left: auto;
   right: 2px;
-  top: 0px;
-  transform: translate3d(0px, -110%, 0);
+  top: 0;
+  transform: translate3d(0, -110%, 0);
 }
 
 body.has-gamepad #mobile-controls li.inventory-item[data-for='engineer'] {
@@ -1169,10 +1142,10 @@ body.has-gamepad #mobile-controls li.inventory-item[data-for='engineer'] {
 body.has-gamepad #mobile-controls li.inventory-item[data-for='eject'] {
   /* bottom left */
   top: auto;
-  bottom: 0px;
-  left: 0px;
+  bottom: 0;
+  left: 0;
   right: auto;
-  transform: translate3d(0px, 110%, 0);
+  transform: translate3d(0, 110%, 0);
 }
 
 body.limited-lives-mode.mobile-controls_right-aligned
@@ -1181,9 +1154,9 @@ body.limited-lives-mode.mobile-controls_right-aligned
   /* right-aligned controls, non-iOS (no notch): helicopter at top right */
   bottom: auto;
   right: auto;
-  top: 0px;
-  left: 0px;
-  transform: translate3d(0px, -110%, 0);
+  top: 0;
+  left: 0;
+  transform: translate3d(0, -110%, 0);
 }
 
 /* gamepad case, left or right control alignment case */
@@ -1191,10 +1164,10 @@ body.limited-lives-mode.has-gamepad
   #mobile-controls
   li.inventory-item[data-for='helicopter'] {
   /* right-aligned controls, non-iOS (no notch): helicopter at bottom + center */
-  bottom: 0px;
+  bottom: 0;
   right: auto;
   top: auto;
-  left: 0px;
+  left: 0;
   transform: translate3d(110%, 110%, 0);
 }
 
@@ -1298,7 +1271,7 @@ body.limited-lives-mode #mobile-controls.enemy li.inventory-item a.helicopter {
 #game-announcements div.game-over-stats {
   display: inline-block;
   text-align: left;
-  margin: 0px auto;
+  margin: 0 auto;
   font-size: calc(6.5px * var(--gs));
   line-height: 150%;
   font-family: var(--monospace);
@@ -1308,8 +1281,8 @@ body.limited-lives-mode #mobile-controls.enemy li.inventory-item a.helicopter {
 
 #game-announcements div.game-over-stats ul {
   display: inline-block;
-  margin: 0px;
-  padding: 0px;
+  margin: 0;
+  padding: 0;
   list-style-type: none;
 }
 
@@ -1318,21 +1291,22 @@ body.limited-lives-mode #mobile-controls.enemy li.inventory-item a.helicopter {
   #game-announcements div.game-over-stats {
     font-size: calc(4.5px * var(--gs));
   }
+
   #game-announcements div.game-over-stats ul {
     max-width: 45%;
   }
 }
 
 #game-announcements div.game-over-stats ul li {
-  margin: 0px;
-  padding: 0px;
+  margin: 0;
+  padding: 0;
 }
 
 #game-announcements div.game-over-stats code {
   white-space: pre-wrap;
   float: left;
   line-height: 130%;
-  margin: 0px 1.2em 0px 0px;
+  margin: 0 1.2em 0 0;
   background: rgba(0, 0, 0, 0.5);
   border-radius: 3px;
 }
@@ -1364,7 +1338,7 @@ button.copy-game-stats {
   border-radius: calc(2px * var(--gs));
   margin-top: 3px;
   margin-bottom: 3px;
-  margin-right: 0px;
+  margin-right: 0;
   min-width: auto;
 }
 
@@ -1424,7 +1398,6 @@ button.copy-game-stats:active {
 
 .notification-toast code {
   display: block;
-  /* slightly smaller monospace font. */
   font-family: var(--monospace);
   font-size: calc(4.75px * var(--gs));
   line-height: 120%;
@@ -1466,7 +1439,6 @@ button.copy-game-stats:active {
 #queue sup,
 .notification-toast sup.nsf {
   font-size: 75%;
-  /* pull closer to text at left */
   position: relative;
   right: -1px;
   /* super-script: closer to fraction "slash" */
@@ -1479,7 +1451,6 @@ button.copy-game-stats:active {
 }
 
 #queue span.fraction-wrapper {
-  /* left: -15%; */
   /* building queue: nudge a little */
   position: relative;
 }
@@ -1596,7 +1567,6 @@ body.is_firefox #queue .queue-item.has-counter .fraction-wrapper {
   border-bottom-left-radius: var(--height);
   border-bottom-right-radius: var(--height);
   height: var(--height);
-  margin-bottom: calc(var(--height) / 2);
   position: absolute;
   top: auto;
   bottom: 0;
@@ -1614,7 +1584,7 @@ body.is_firefox #queue .queue-item.has-counter .fraction-wrapper {
 
 .target-marker.radar-jammed {
   /* effectively hidden */
-  background: transparent;
+  background: 0 0;
 }
 
 .target-ui.disabled,
@@ -1628,21 +1598,20 @@ body.radar_jammed .target-marker {
 }
 
 /* end of battle (campaign mode) medals */
-
 #medals {
   position: relative;
-  margin: 12px auto 0px auto;
+  margin: 12px auto 0;
   font-size: 0px;
-  line-height: 0px;
+  line-height: 0;
 }
 
+#medals .column-spacer,
 #medals .medal,
-#medals .medal-spacer,
-#medals .column-spacer {
-  position: relative;
-  display: inline-block;
+#medals .medal-spacer {
   /* original medal width x height: 35px x 44px */
   /* this works out so medals roughly overlay the envelope nicely, if they have to. */
+  position: relative;
+  display: inline-block;
   width: calc(35px * var(--gs) * 0.72);
   /* enforce aspect ratio, if width is constrained */
   aspect-ratio: 0.795;
@@ -1650,7 +1619,7 @@ body.radar_jammed .target-marker {
   max-width: 9.5%;
   margin: calc(2px * var(--gs) * 0.72);
   margin-top: 1px;
-  margin-left: 0px;
+  margin-left: 0;
   padding: 1px;
 }
 
@@ -1661,10 +1630,9 @@ body.radar_jammed .target-marker {
   transform: scale3d(3, 3, 1);
   filter: blur(5px);
   opacity: 0;
-  transition: 1s ease-in-out;
   /* overshoot target a bit, "bounce" elastic ease back in. */
+  transition: 1s cubic-bezier(0.68, -0.55, 0.265, 1.55);
   transition-property: transform, filter, opacity;
-  transition-timing-function: cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
 #medals.active .medal {
@@ -1708,7 +1676,6 @@ body.game-over #pointer {
     50% 50% / contain no-repeat;
   display: none;
   left: 0;
-  margin: 0;
   position: absolute;
   top: 0;
   --size: calc(6px * var(--gs));
@@ -1785,8 +1752,8 @@ body.game-over #pointer {
 
 @keyframes blink-warning {
   50% {
-    background-color: #cc3333;
-    border-color: #cc3333;
+    background-color: #c33;
+    border-color: #c33;
   }
 }
 

@@ -42,9 +42,9 @@
 }
 
 #battle-over-letter.open .body,
-#battle-over-letter.open .top-fold,
 #battle-over-letter.open .left-fold,
-#battle-over-letter.open .right-fold {
+#battle-over-letter.open .right-fold,
+#battle-over-letter.open .top-fold {
   pointer-events: none;
 }
 
@@ -55,10 +55,10 @@
 
 #battle-over-letter .glow-element {
   position: absolute;
-  bottom: 0px;
-  left: 0px;
+  bottom: 0;
+  left: 0;
   top: 33.3%;
-  right: 0px;
+  right: 0;
   background-color: transparent;
 }
 
@@ -97,7 +97,7 @@
 #battle-over-letter .letter-content h3 {
   font-size: calc(13px * var(--gs2));
   margin-top: calc(6.5px * var(--gs2));
-  color: #006600;
+  color: #060;
 }
 
 #battle-over-letter .letter-content h1 span {
@@ -154,7 +154,6 @@ body.is_safari .animated-mail .top-fold {
   transform: translate3d(-50%, -50%, 0);
   width: calc(32px * var(--gs2));
   height: calc(31.25px * var(--gs2));
-  /* border / outline, focus tricks */
   border: calc(3px * var(--gs2)) solid transparent;
   border-radius: 100%;
   /**
@@ -166,13 +165,12 @@ body.is_safari .animated-mail .top-fold {
   transition:
     filter 0.25s ease-in-out,
     transform 0.25s ease-in-out;
-  image-rendering: optimizeQuality;
   image-rendering: crisp-edges;
 }
 
 body.has-gamepad.gamepad-active .animated-mail .wax-seal:focus,
 body.has-gamepad.gamepad-active .animated-mail .wax-seal:focus-visible {
-  outline: 1px solid #339933;
+  outline: #339933 solid 1px;
 }
 
 #battle-over-letter .generic-cta {
@@ -187,20 +185,20 @@ body.has-gamepad.gamepad-active .animated-mail .wax-seal:focus-visible {
   border-radius: calc(1px * var(--env-scale));
 }
 
-#battle-over-letter .generic-cta:hover,
-#battle-over-letter .generic-cta.gamepad-selected {
+#battle-over-letter .generic-cta.gamepad-selected,
+#battle-over-letter .generic-cta:hover {
   color: #fff;
   background-color: rgba(0, 255, 0, 0.5);
   filter: drop-shadow(0 0 calc(1px * var(--env-scale)) rgba(0, 0, 0, 0.25));
 }
 
-#battle-over-letter:not(.open) .animated-mail .wax-seal:hover,
-#battle-over-letter:not(.open) .animated-mail .wax-seal.gamepad-selected {
+#battle-over-letter:not(.open) .animated-mail .wax-seal.gamepad-selected,
+#battle-over-letter:not(.open) .animated-mail .wax-seal:hover {
   filter: drop-shadow(0px 0px calc(3px * var(--gs2)) rgba(0, 255, 0, 0.75));
 }
 
-#battle-over-letter:not(.open) .animated-mail .wax-seal:active,
 #battle-over-letter:not(.open) .animated-mail .wax-seal.gamepad-active,
+#battle-over-letter:not(.open) .animated-mail .wax-seal:active,
 #battle-over-letter:not(.open).mousedown .animated-mail .wax-seal {
   transform: translate3d(-50%, -50%, 0) scale3d(0.9, 0.9, 1);
   filter: drop-shadow(0px 0px calc(2px * var(--gs2)) rgba(0, 255, 0, 0.5));
@@ -306,7 +304,6 @@ body.has-gamepad.gamepad-active .animated-mail .wax-seal:focus-visible {
   padding: calc(5px * var(--gs2)) calc(10px * var(--gs2));
   max-height: 50vh;
   overflow: auto;
-  /* Firefox may show scaled-up scrollbars - this helps a bit. */
   scrollbar-width: thin;
   /* compensate for the bottom part of the envelope */
   padding-bottom: calc(84px * var(--gs2));
@@ -319,7 +316,7 @@ body.has-gamepad.gamepad-active .animated-mail .wax-seal:focus-visible {
   font-family: var(--monospace);
   /* compress a little bit */
   letter-spacing: -0.25px;
-  padding: calc(6px * var(--gs2)) 0px;
+  padding: calc(6px * var(--gs2)) 0;
   font-size: calc(4.75px * var(--gs2));
   line-height: 150%;
 }
@@ -329,7 +326,7 @@ body.has-gamepad.gamepad-active .animated-mail .wax-seal:focus-visible {
   white-space: pre-wrap;
   font-size: calc(4.75px * var(--gs2));
   line-height: 130%;
-  margin: 0px 1.25em 0px 0px;
+  margin: 0 1.25em 0 0;
 }
 
 .animated-mail .letter .letter-context-body .copy-game-stats-wrapper br {
@@ -339,20 +336,20 @@ body.has-gamepad.gamepad-active .animated-mail .wax-seal:focus-visible {
 
 .animated-mail .letter .letter-context-body .game-stats ul {
   /* guard against wrapping */
-  margin: 0px;
-  padding: 0px;
+  margin: 0;
+  padding: 0;
   list-style-type: none;
 }
 
 .animated-mail .letter .letter-context-body .game-stats ul li {
-  margin: 0px;
-  padding: 0px;
+  margin: 0;
+  padding: 0;
 }
 
 .animated-mail .letter .letter-context-body .game-stats + p {
   /* clear the float from stats, old-skool */
   clear: both;
-  margin-top: 0px;
+  margin-top: 0;
 }
 
 body.gamepad-active .animated-mail .letter .letter-context-body {
@@ -362,10 +359,9 @@ body.gamepad-active .animated-mail .letter .letter-context-body {
 
 @media screen and (orientation: landscape) {
   body.is-mobile.gamepad-active .animated-mail .letter .letter-context-body {
-    /* tricks when using gamepad, for scrolling */
     max-height: 100%;
     /* only drop bottom border on mobile landscape + gamepad */
-    padding-bottom: 0px;
+    padding-bottom: 0;
   }
 }
 
@@ -417,16 +413,9 @@ body.is-mobile #battle-over-letter.open .animated-mail {
 }
 
 /* duplicated from aa-game-menu */
-
 :root {
+  --gs2: calc(var(--gs) * 1.15);
   --env-scale: calc(var(--menu-scale));
-}
-
-/**
- * "Proximity glow" effect
- * Hat tip: https://twitter.com/jh3yy/status/1734369933558010226
- */
-:root {
   --glow-bg: hsl(0, 44%, 7%);
   --glow-border: hsl(280 10% 50%, 1);
   --glow-card: transparent;
@@ -444,6 +433,10 @@ body.is-mobile #battle-over-letter.open .animated-mail {
   );
 }
 
+/**
+ * "Proximity glow" effect
+ * Hat tip: https://twitter.com/jh3yy/status/1734369933558010226
+ */
 @property --glow-start {
   syntax: '<number>';
   inherits: true;
@@ -500,7 +493,6 @@ a.glow-item {
   inset: -1px;
   border: var(--glow-border-width) solid transparent;
   content: '';
-  border-radius: var(--glow-border-radius);
   pointer-events: none;
   background: var(--glow-border);
   background-attachment: fixed;

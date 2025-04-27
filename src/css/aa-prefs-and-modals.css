@@ -15,7 +15,6 @@ body.prefs-modal-open #envelopes-placeholder {
 /* prefs + modal stuff - based on original 68K Macintosh UI */
 #game-prefs-modal {
   border: 1px solid #000;
-  /* collapse */
   font-size: 0;
   left: 50%;
   top: 50.5%;
@@ -29,11 +28,6 @@ body.prefs-modal-open #envelopes-placeholder {
 body:not(.is_iphone).prefs-modal-open.network #game-prefs-modal {
   /* a little wider */
   width: 560px;
-}
-
-#game-prefs-modal .body {
-  /* fit roughly within battlefield, leaving room for radar UI. */
-  max-height: 81vh;
 }
 
 #game-prefs-modal #game-prefs-form {
@@ -63,17 +57,6 @@ body.is_standalone #game-prefs-modal #game-prefs-form {
   max-height: 79vh;
 }
 
-@media screen and (orientation: landscape) {
-  body.is_iphone #game-prefs-modal {
-    width: 500px;
-    top: 52.5%;
-  }
-  body.is_iphone #game-prefs-modal #game-prefs-form {
-    /* prevent overflowing radar */
-    max-height: 75vh;
-  }
-}
-
 #game-prefs-submit {
   position: relative;
 }
@@ -97,26 +80,26 @@ body.game-started #game-prefs-modal.is-network #game-prefs-cancel {
 
 #game-prefs-modal p.select-level-only {
   padding-bottom: 12px;
-  padding-left: 0px;
+  padding-left: 0;
   margin-left: 16px;
   margin-bottom: 1px;
 }
 
-#game-prefs-modal:not(.select-level) .select-level-only,
+#game-prefs-modal.select-level #game-prefs-header button,
 #game-prefs-modal.select-level fieldset:not(.select-level),
-#game-prefs-modal.select-level #game-prefs-header button {
+#game-prefs-modal:not(.select-level) .select-level-only {
   /* hide all except "select level" in that mode. */
   display: none;
 }
 
 /* all except "what's new", in that mode. */
-#game-prefs-modal:not(.whats-new) .whats-new-only,
-#game-prefs-modal.whats-new fieldset:not(.whats-new) {
+#game-prefs-modal.whats-new fieldset:not(.whats-new),
+#game-prefs-modal:not(.whats-new) .whats-new-only {
   display: none;
 }
 
 #game-prefs-modal.whats-new fieldset.whats-new code {
-  font-weight: bold;
+  font-weight: 700;
 }
 
 /* shenanigans: center the AA logo in the "select level" modal */
@@ -236,12 +219,11 @@ body.is_safari:not(.has_touch) #game-prefs-modal .range-slider {
 }
 
 #game-prefs-modal .body {
+  max-height: 81vh;
   font-size: calc(11px * var(--prefs-font-scale));
-  /* border all the way around */
   border: 0.5px solid #000;
   box-sizing: border-box;
   color: #000;
-  /* height: 10rem; */
   overflow: auto;
   position: relative;
   /* Firefox may show scaled-up scrollbars - this helps a bit. */
@@ -260,9 +242,7 @@ body.is_safari:not(.has_touch) #game-prefs-modal .range-slider {
 }
 
 #game-prefs-modal .battle-list {
-  /* slightly larger type, here. */
   font-size: calc(12px * var(--prefs-font-scale));
-  /* center reasonably when modal is wider. */
   text-align: center;
   /* dirty tricks: space out and pull content closer to edges. */
   width: 102%;
@@ -271,7 +251,7 @@ body.is_safari:not(.has_touch) #game-prefs-modal .range-slider {
 
 body.is_iphone .mac-classic ul.real-list li {
   /* collapse list items somewhat */
-  padding-bottom: 0px;
+  padding-bottom: 0;
 }
 
 .mac-classic ul.real-list.double-indent {
@@ -280,10 +260,20 @@ body.is_iphone .mac-classic ul.real-list li {
 }
 
 .mac-classic ul.real-list.paragraph-flush-left p {
-  margin-left: 0px;
+  margin-left: 0;
 }
 
 @media screen and (orientation: landscape) {
+  body.is_iphone #game-prefs-modal {
+    width: 500px;
+    top: 52.5%;
+  }
+
+  body.is_iphone #game-prefs-modal #game-prefs-form {
+    /* prevent overflowing radar */
+    max-height: 75vh;
+  }
+
   body.is-mobile.is_safari:not(.is_iphone)
     #game-prefs-modal.select-level
     #game-prefs-header {
@@ -293,8 +283,8 @@ body.is_iphone .mac-classic ul.real-list li {
 
   body.is_iphone #game-prefs-modal fieldset {
     /* tighten up modal spacing at large */
-    margin: 0px 6px 6px 6px;
-    padding: 0px 8px 4px 8px;
+    margin: 0 6px 6px;
+    padding: 0 8px 4px;
   }
 
   body.is_iphone #game-prefs-modal.select-level .body {
@@ -312,16 +302,16 @@ body.is_iphone .mac-classic ul.real-list li {
    */
   body.is_iphone
     #game-prefs-modal:not(.select-level)
+    fieldset
+    ul:not(.real-list)
+    li.inline-option,
+  body.is_iphone
+    #game-prefs-modal:not(.select-level)
     ul
     li
     ul:not(.real-list)
     li
-    label,
-  body.is_iphone
-    #game-prefs-modal:not(.select-level)
-    fieldset
-    ul:not(.real-list)
-    li.inline-option {
+    label {
     font-size: calc(9.5px * var(--prefs-font-scale));
     vertical-align: -webkit-baseline-middle;
   }
@@ -334,7 +324,7 @@ body.is_iphone .mac-classic ul.real-list li {
     /* space is at a premium. */
     margin-top: 2.5px;
     width: 100%;
-    padding: 0px;
+    padding: 0;
   }
 
   body.is_iphone #game-prefs-modal.is-network .aa-logo {
@@ -349,7 +339,7 @@ body.is_iphone .mac-classic ul.real-list li {
 
   body.is_iphone #game-prefs-modal:not(.is-network) #game-prefs-submit {
     /* space button out to balance logo at left. */
-    margin: 0px auto;
+    margin: 0 auto;
     align-self: center;
     min-width: 67%;
   }
@@ -375,6 +365,11 @@ body.is_iphone .mac-classic ul.real-list li {
   body.is_iphone #game-prefs-modal .battle-list label {
     font-size: calc(11px * var(--prefs-font-scale));
   }
+
+  body.is-mobile #select-more-info {
+    /* WTF, reset font-size for iOS Safari only in landscape??? */
+    font-size: calc(11px * var(--prefs-font-scale)) !important;
+  }
 }
 
 @media screen and (orientation: portrait) {
@@ -392,14 +387,16 @@ body.is_iphone .mac-classic ul.real-list li {
     /* regular prefs modal: fit better on iPhone, portrait */
     font-size: calc(9.5px * var(--prefs-font-scale));
   }
+
   body.is_iphone #game-prefs-modal.select-level .body {
     /* "select level" needs to be a bit smaller. */
     font-size: calc(9.5px * var(--prefs-font-scale));
   }
+
   body.is_iphone #game-prefs-modal fieldset {
     /* tighten up modal spacing at large */
-    margin: 0px 6px 10px 6px;
-    padding: 0px 8px 4px 8px;
+    margin: 0 6px 10px;
+    padding: 0 8px 4px;
   }
 }
 
@@ -419,7 +416,7 @@ body.is_iphone .mac-classic ul.real-list li {
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
-  padding: 10px 0px 10px;
+  padding: 10px 0;
   width: 100%;
 }
 
@@ -569,8 +566,8 @@ body.is_firefox #game-prefs-modal .fieldset-container {
 
 .mac-classic fieldset {
   border: 1px solid #000;
-  margin: 0 12px 12px 12px;
-  padding: 3px 12px 6px 12px;
+  margin: 0 12px 12px;
+  padding: 3px 12px 6px;
 }
 
 #game-prefs-modal button,
@@ -619,6 +616,8 @@ body.is_iphone #game-prefs-modal button {
 
 .mac-classic ul li {
   line-height: 120%;
+  margin-bottom: 10px;
+  margin-top: 5px;
 }
 
 .mac-classic .battle-list li {
@@ -647,7 +646,7 @@ body.is_iphone #game-prefs-modal button {
 
 .mac-classic ul.monospace li pre {
   display: inline-block;
-  margin: 3px 0px 0px 0px;
+  margin: 3px 0 0;
 }
 
 .mac-classic ul.monospace li pre.header {
@@ -664,16 +663,11 @@ body.is_iphone #game-prefs-modal button {
   background: #fff;
   padding: 1px 8px;
   /* counter-spacing */
-  margin: 0px -8px;
+  margin: 0 -8px;
 }
 
 .mac-classic ul.monospace li label {
   padding-left: 0;
-}
-
-.mac-classic ul li {
-  margin-bottom: 10px;
-  margin-top: 5px;
 }
 
 .mac-classic ul.partial-bottom-spacing li {
@@ -692,13 +686,6 @@ body.is_iphone #game-prefs-modal button {
 body.is-mobile #select-more-info {
   /* hackish: indentation for alignment */
   margin-left: calc(6.5px * var(--prefs-font-scale));
-}
-
-@media screen and (orientation: landscape) {
-  body.is-mobile #select-more-info {
-    /* WTF, reset font-size for iOS Safari only in landscape??? */
-    font-size: calc(11px * var(--prefs-font-scale)) !important;
-  }
 }
 
 .mac-classic .more-bottom-spacing,
@@ -770,7 +757,7 @@ body.is-mobile #select-more-info {
 
 .mac-classic ul.real-list.non-indented ul.non-indented li {
   /* one more nested-level fix. */
-  margin-left: 0px;
+  margin-left: 0;
 }
 
 .mac-classic .compact.full-width {
@@ -809,13 +796,13 @@ body.is-mobile #select-more-info {
   font-size: 300%;
   line-height: 100%;
   margin-right: 0.25em;
-  margin-top: 0px;
+  margin-top: 0;
   vertical-align: top;
 }
 
-b.gamepad-button,
 .gamepad-buttons b,
-.gamepad-buttons strong {
+.gamepad-buttons strong,
+b.gamepad-button {
   display: inline-block;
   padding: 0 3.5px;
   box-sizing: content-box;
@@ -826,7 +813,7 @@ b.gamepad-button,
 }
 
 .gamepad-buttons strong {
-  font-weight: bold;
+  font-weight: 700;
   padding: 0 5px;
   border-radius: 7px;
 }
@@ -873,7 +860,6 @@ b.gamepad-button,
     sans-serif;
   font-size: calc(10px * var(--menu-scale));
   font-weight: 400;
-  /* look similar to buttons */
   height: calc(18.25px * var(--menu-scale));
   /* vertical align shenanigans */
   margin: -2px 0 0 2px;
@@ -919,10 +905,8 @@ b.gamepad-button,
   color: currentColor;
   font: inherit;
   height: 15px;
-  /* Not removed via appearance */
   margin: 0;
   padding: 0;
-  /* vertical align w/text */
   position: relative;
   /* hackish: fix radio dot positioning */
   transform: translateY(-0.01px);
@@ -937,7 +921,7 @@ body.is_safari #game-prefs-modal input[type='radio'] {
 
 #game-prefs-modal .battle-list input[type='radio'] {
   /* battle list tweaks */
-  margin: 0px;
+  margin: 0;
   transform: translate(2px, 1px);
 }
 
@@ -1030,42 +1014,42 @@ body.is_firefox .mac-classic input[type='checkbox'] {
   outline: 0;
 }
 
-body.has-gamepad.gamepad-active .mac-classic input[type='checkbox']:focus,
+body.has-gamepad.gamepad-active
+  #game-prefs-modal
+  .range-slider.gamepad-selected,
+body.has-gamepad.gamepad-active #game-prefs-modal .range-slider:focus,
 body.has-gamepad.gamepad-active
   .mac-classic
   input[type='checkbox'].gamepad-selected,
-body.has-gamepad.gamepad-active .mac-classic input[type='radio']:focus,
+body.has-gamepad.gamepad-active .mac-classic input[type='checkbox']:focus,
 body.has-gamepad.gamepad-active
   .mac-classic
   input[type='radio'].gamepad-selected,
-body.has-gamepad.gamepad-active #game-prefs-modal .range-slider:focus,
-body.has-gamepad.gamepad-active
-  #game-prefs-modal
-  .range-slider.gamepad-selected {
+body.has-gamepad.gamepad-active .mac-classic input[type='radio']:focus {
   /* visual cues for gamepad navigation */
-  outline: 2px solid #339933;
+  outline: #339933 solid 2px;
 }
 
-body.has-gamepad.gamepad-active #game-prefs-modal .more-info-toggle:focus,
 body.has-gamepad.gamepad-active
   #game-prefs-modal
   .more-info-toggle.gamepad-selected,
-body.has-gamepad.gamepad-active .mac-classic button:not([type='submit']):focus,
+body.has-gamepad.gamepad-active #game-prefs-modal .more-info-toggle:focus,
 body.has-gamepad.gamepad-active
   .mac-classic
-  button:not([type='submit']).gamepad-selected {
+  button:not([type='submit']).gamepad-selected,
+body.has-gamepad.gamepad-active .mac-classic button:not([type='submit']):focus {
   /* gamepad highlight: "more info", cancel / reset buttons */
-  border-color: #339933;
+  border-color: #393;
 }
 
-body.has-gamepad.gamepad-active #game-prefs-modal button.primary:focus,
 body.has-gamepad.gamepad-active
   #game-prefs-modal
-  button.primary.gamepad-selected {
+  button.primary.gamepad-selected,
+body.has-gamepad.gamepad-active #game-prefs-modal button.primary:focus {
   /* gamepad highlight, OK buttons */
   box-shadow:
     0 0 0 1px #fff,
-    0 0 0 4px #339933;
+    0 0 0 4px #393;
 }
 
 .finder.mac-classic p {
@@ -1100,7 +1084,6 @@ body.has-gamepad.gamepad-active
 }
 
 #game-prefs-modal.is-network .network-icon {
-  /* match #game-prefs-modal .body */
   background-color: #fff;
   background-image: url(../../assets/image/UI/win95-networking-icon.png);
   background-position: 4px 0;
@@ -1144,12 +1127,10 @@ body.game-started #game-prefs-modal .hide-if-started {
 }
 
 #game-prefs-modal button.primary {
-  /* inner white, followed by outer black borders */
   box-shadow:
     0 0 0 1px #fff,
     0 0 0 4px #000;
   outline-offset: 1px;
-  /* Safari collapses buttons more than the others. :/ */
   padding: 1px 20px;
   /* Modal-specific: extra right spacing. */
   margin-right: 10px;
@@ -1163,7 +1144,7 @@ body.game-started #game-prefs-modal .hide-if-started {
 #game-prefs-modal button:not(.generic-cta):not(:disabled):focus-visible,
 button.primary:not(:disabled):focus-visible,
 button:not(.generic-cta):not(:disabled):focus-visible {
-  outline: none;
+  outline: 0;
   animation: 1s infinite modal-pulse;
 }
 
@@ -1206,7 +1187,7 @@ body.game-started #network-prompt {
 
 body.is-mobile.is_safari #network-options > ul > li {
   /* mobile Safari: double margins for some reason here? :X */
-  margin-top: 0px;
+  margin-top: 0;
   margin-bottom: 5px;
 }
 
@@ -1283,10 +1264,9 @@ body.is-mobile #game-prefs-modal .mobile-only.network {
 }
 
 #game-prefs-modal legend .more-info-toggle {
-  /* less spacing */
   margin-right: 2px;
   /* smaller button size */
-  padding: 0px 6px;
+  padding: 0 6px;
 }
 
 #game-prefs-modal .more-info {
@@ -1294,9 +1274,9 @@ body.is-mobile #game-prefs-modal .mobile-only.network {
   overflow: hidden;
   transition: height 0.5s ease-in-out;
   transition-property: height, opacity, padding;
-  height: 0px;
+  height: 0;
   opacity: 0;
-  padding-bottom: 0px;
+  padding-bottom: 0;
 }
 
 #game-prefs-modal .more-info.active {

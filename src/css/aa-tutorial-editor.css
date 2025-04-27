@@ -91,14 +91,13 @@ body.edit-mode .zone-flag {
 }
 
 .finder .title-bar-stripes {
-  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACEAAAAECAAAAAAl7gk2AAAAE0lEQVR42mPcz0AAMDpQQQVBWwCpNAIDi0boDwAAAABJRU5ErkJggg==);
-  background-size: 16.5px 1.5px;
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACEAAAAECAAAAAAl7gk2AAAAE0lEQVR42mPcz0AAMDpQQQVBWwCpNAIDi0boDwAAAABJRU5ErkJggg==)
+    0 0/16.5px 1.5px;
   border-color: #f3f3f3;
   border-style: solid;
   border-width: 0.5px 0.25px;
   box-sizing: border-box;
   height: 100%;
-  image-rendering: auto;
   image-rendering: -webkit-optimize-contrast;
   left: 0;
   position: absolute;
@@ -167,9 +166,7 @@ body.edit-mode .zone-flag {
   display: none;
   left: 50%;
   top: 50%;
-  /* scale up a bit for almost everyone. */
   transform: scale3d(1.25, 1.25, 1) translate3d(-50%, -50%, 0);
-  /* don't interfere with touch / click etc. */
   pointer-events: none;
   /* semi-transparent overlay */
   background: rgba(255, 255, 255, 0.5);
@@ -178,12 +175,6 @@ body.edit-mode .zone-flag {
 /* not iPhone, though - on portrait, scaling up will overlap controls. */
 body.is_iphone #tutorial-window {
   transform: scale3d(1, 1, 1) translate3d(-50%, -50%, 0);
-}
-
-#tutorial-window.finder .body {
-  /* lighten background, since helicopter underneath for now. */
-  /* note that colors are inverted for this window, heh. */
-  background: rgba(255, 255, 255, 0.15);
 }
 
 #tutorial-window.finder .title-bar {
@@ -208,6 +199,11 @@ body.is_iphone #tutorial-window {
 }
 
 #tutorial-window.finder .body {
+  /**
+   * Lighten background, since helicopter underneath for now.
+   * Note that colors are inverted for this window, heh.
+   */
+  background: rgba(255, 255, 255, 0.15);
   font-size: calc(5px * var(--gs));
 }
 
@@ -301,6 +297,7 @@ body.edit-mode #battlefield .sprite {
 
 body.edit-mode #battlefield .terrain-item {
   transition: margin 0.25s ease-out;
+  margin-bottom: 0;
 }
 
 /* ignore events on certain "non-moveable" sprites */
@@ -315,10 +312,6 @@ body.edit-mode #battlefield .sprite.selected:not(.exploding) {
   border-radius: 3px;
   /* override :not(), ugh. */
   outline: #090 solid 1px !important;
-}
-
-body.edit-mode #battlefield .terrain-item {
-  margin-bottom: 0;
 }
 
 body.edit-mode #battlefield .terrain-item.submerged {
@@ -472,7 +465,6 @@ ul.inline-list li:not(:first-of-type) {
 }
 
 #marquee {
-  /* TODO: GPU */
   background: rgba(33, 99, 33, 0.25);
   border: 1px solid #393;
   height: 0;
@@ -554,7 +546,6 @@ body.edit-mode #top-bar {
 }
 
 /* Editor UI */
-
 #radar-scrubber {
   background: rgba(0, 255, 0, 0.5);
   border: 0.5px solid #393;
