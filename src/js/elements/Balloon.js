@@ -9,7 +9,6 @@ import {
   rngInt,
   rngPlusMinus,
   rng,
-  oneOf,
   worldHeight,
   GAME_SPEED_RATIOED,
   isSafari,
