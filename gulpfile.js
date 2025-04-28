@@ -91,10 +91,10 @@ var imageResize = require('gulp-image-resize');
 // for spritesheet JSON
 var map = require('map-stream');
 
-const { deleteAsync } = require('del');
+const { deleteSync } = require('del');
 
 async function clean(paths) {
-  deleteAsync(paths);
+  deleteSync(paths);
 }
 
 // path replacement
