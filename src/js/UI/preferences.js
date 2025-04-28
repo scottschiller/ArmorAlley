@@ -1734,7 +1734,7 @@ function PrefsManager() {
     },
 
     onPrefChange: {
-      sound: (isActive) => soundManager[isActive ? 'unmute' : 'mute'](),
+      sound: (isActive) => soundManager?.[isActive ? 'unmute' : 'mute'](),
 
       bnb: (isActive) => {
         function updateCSS() {

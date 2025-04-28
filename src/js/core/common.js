@@ -891,7 +891,7 @@ const common = {
       window.requestAnimationFrame(callback);
     }
 
-    if (loadedAudio[fileName] || soundManager.disabled || !gamePrefs.sound) {
+    if (loadedAudio[fileName] || soundManager?.disabled || !gamePrefs.sound) {
       doCallback();
       return;
     }
