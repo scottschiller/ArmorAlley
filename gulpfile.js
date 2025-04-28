@@ -728,7 +728,7 @@ function tidyThatFloppyCopy() {
 
     // all except select UI
     `${dp.image}/UI/**/*`,
-    `!${dp.image}/UI/armor-alley-wordmark.svg`,
+    `!${dp.image}/UI/*.svg`,
 
     // medals and whatnot
     `${dp.image}/unused`,
