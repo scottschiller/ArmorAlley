@@ -118,6 +118,8 @@ const floppyTypes = {
   _1200: 'floppy-1200k'
 };
 
+let isFloppy;
+
 let floppyRoot = `${distRoot}/${floppyTypes._1200}`;
 
 const lightningOptions = {
@@ -238,7 +240,7 @@ const minifyInlineOpts = {
   cssSelector: 'style'
 };
 
-function terserOpts(isFloppy) {
+function terserOpts() {
   // https://github.com/terser/terser#minify-options
   return {
     module: true,
@@ -327,7 +329,9 @@ function minifyCSS() {
        * Remap production / bundled CSS asset references, accordingly.
        * Given this trivial string match, “What could possibly go wrong?” ;)
        */
-      .pipe(replace(assetPath + '/', distRootPath + '/'))
+      .pipe(
+        replace(`${!isFloppy ? '../../' : ''}${assetPath}/`, `${distRootPath}/`)
+      )
       // https://github.com/clean-css/clean-css#constructor-options
       .pipe(lightningcss(lightningOptions))
       .pipe(dest(dp.css))
@@ -873,6 +877,7 @@ const floppyTasks360 = [
 ];
 
 function floppy360KTask() {
+  isFloppy = true;
   return series(
     function set360Root(callback) {
       floppyRoot = `${distRootPath}/${floppyTypes._360}`;
@@ -886,6 +891,7 @@ function floppy360KTask() {
 
 function floppy1200KTask() {
   // default floppy build: 1200k version.
+  isFloppy = true;
   return series(
     function set1200Root(callback) {
       floppyRoot = `${distRootPath}/${floppyTypes._1200}`;
