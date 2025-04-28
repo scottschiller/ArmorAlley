@@ -238,35 +238,37 @@ const minifyInlineOpts = {
   cssSelector: 'style'
 };
 
-const terserOpts = {
+function terserOpts(isFloppy) {
   // https://github.com/terser/terser#minify-options
-  module: true,
-  ecma: '2016',
-  compress: {
-    passes: 2,
-    unsafe_arrows: true,
-    unsafe_proto: true,
-    unsafe_undefined: true,
-    unsafe_Function: true,
-    unsafe_methods: true
-  },
-  mangle: {
-    eval: true,
+  return {
     module: true,
-    toplevel: true
-  },
-  format: {
     ecma: '2016',
-    indent_level: 0,
-    preamble:
-      [
-        `/**`,
-        ` * ARMOR ALLEY 🚁`,
-        ` * Build: ${new Date().toLocaleString()}`,
-        ` */`
-      ].join('\n') + `\n\n${headerFileContents}`
-  }
-};
+    compress: {
+      passes: 2,
+      unsafe_arrows: true,
+      unsafe_proto: true,
+      unsafe_undefined: true,
+      unsafe_Function: true,
+      unsafe_methods: true
+    },
+    mangle: {
+      eval: true,
+      module: true,
+      toplevel: true
+    },
+    format: {
+      ecma: '2016',
+      indent_level: 0,
+      preamble:
+        [
+          `/**`,
+          ` * ARMOR ALLEY 🚁`,
+          ` * Build: ${new Date().toLocaleString()}`,
+          ` */`
+        ].join('\n') + (isFloppy ? '' : `\n\n${headerFileContents}`)
+    }
+  };
+}
 
 const rollupOpts = {
   onwarn: function (message) {
@@ -287,11 +289,11 @@ async function bundleBootFile() {
 }
 
 function minifyBootBundle() {
-  return src(bootBundleFile()).pipe(terser(terserOpts)).pipe(dest(dp.js));
+  return src(bootBundleFile()).pipe(terser(terserOpts())).pipe(dest(dp.js));
 }
 
 function minifyJS() {
-  return src(bundleFile()).pipe(terser(terserOpts)).pipe(dest(dp.js));
+  return src(bundleFile()).pipe(terser(terserOpts())).pipe(dest(dp.js));
 }
 
 function headerJS() {
@@ -770,7 +772,7 @@ function gzipThatFloppy() {
     // JS (excluding aa-boot_bundle)
     src([distJS('*'), `!${distJS('aa-boot_bundle')}`])
       // note: re-run through terser to drop header comment.
-      .pipe(terser(terserOpts))
+      .pipe(terser(terserOpts(true)))
       .pipe(gzip(gzipOptions))
       .pipe(dest(dp.js))
   ]);
@@ -795,7 +797,9 @@ function bootThatFloppy() {
       .pipe(rename('index.html'))
       .pipe(dest(floppyRoot)),
 
-    src('src/floppy/*.js').pipe(terser(terserOpts)).pipe(dest(dp.js))
+    src('src/floppy/*.js')
+      .pipe(terser(terserOpts(true)))
+      .pipe(dest(dp.js))
   ]);
 }
 
