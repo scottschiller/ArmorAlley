@@ -99,6 +99,7 @@ b {
 }
 
 @font-face {
+  /* tall and narrow monospace */
   font-display: swap;
   font-family: 'Iosevka Custom';
   font-style: normal;
@@ -115,6 +116,7 @@ b {
 }
 
 @font-face {
+  /* classic mac chicago-style font */
   font-display: swap;
   /* https://fontsarena.com/sysfont-by-alina-sava/ (SIL Open Font License 1.1) */
   font-family: 'FA Sysfont C';
@@ -124,6 +126,7 @@ b {
 }
 
 @font-face {
+  /* home menu battle selection */
   font-family: 'Cheddar Gothic Stencil';
   src: url(../../assets/font/CheddarGothicStencil/CheddarGothicStencil-subset.woff2)
     format('woff2');
@@ -133,6 +136,7 @@ b {
 }
 
 @font-face {
+  /* in-game tips */
   font-family: 'EB Garamond';
   src: url(../../assets/font/EBGaramond/EBGaramond-Regular-subset.woff2)
     format('woff2');
