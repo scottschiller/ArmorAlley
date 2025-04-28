@@ -85,7 +85,8 @@
   --rs: calc(var(--gs) * var(--radar-scale));
   /* global monospace font style */
   --monospace: 'Iosevka Custom', 'Fira Code', monospace;
-  --monospace-bold: 'Iosevka Custom Bold', 'Fira Code', monospace;
+  /* NOTE: fallback to "custom" if bold isn't provided e.g., in 360K floppy build */
+  --monospace-bold: 'Iosevka Custom Bold', 'Iosevka Custom', 'Fira Code', monospace;
 }
 
 #world-noise-overlay .noise {
