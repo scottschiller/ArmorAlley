@@ -149,10 +149,6 @@ const jsPath = 'js';
 const libPath = 'lib';
 const videoPath = 'video';
 
-// asset paths
-const ap = [audioPath, fontPath, imagePath, videoPath].map((path) => ({
-  [path]: asset(path)
-}));
 
 const imageRoot = `${assetPath}/${imagePath}`;
 
