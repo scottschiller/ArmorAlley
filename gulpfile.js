@@ -149,6 +149,8 @@ const jsPath = 'js';
 const libPath = 'lib';
 const videoPath = 'video';
 
+// special case: extra-reduced font subset for 360K floppy
+const cheddarGothic360K = 'CheddarGothicStencil-subset-floppy-360k.woff2';
 
 const imageRoot = `${assetPath}/${imagePath}`;
 
@@ -672,19 +674,38 @@ function apply360FloppyOverrides() {
   return src(`${srcRoot}/floppy/src-360/**/*`).pipe(dest(srcRoot360));
 }
 
-function tidyThatFloppyCopy() {
+function renameFloppyFont() {
   const floppyDist = `${floppyRoot}/dist`;
+  /**
+   * Rename / replace floppy disk version which has
+   * only lower-case a-z and - and ' characters.
+   * NOTE: shenanigans abound.
+   */
+  const fontDirName = `CheddarGothicStencil`;
+  const fontRoot = `${dp.font}/${fontDirName}`;
+  const fontFrom = `${fontRoot}/${cheddarGothic360K}`;
+  const fontTo = `CheddarGothicStencil-subset.woff2`;
+
+  return src(fontFrom)
+    .pipe(rename(fontTo))
+    .pipe(dest(`${floppyDist}/${fontPath}/${fontDirName}`));
+}
+
+function tidyThatFloppyCopy() {
   const globs = [
     // drop all fonts
     `${dp.font}/**/*.*`,
 
     // empty directories
     `${dp.font}/war-wound`,
+    `${dp.font}/EBGaramond`,
 
     // except certain fonts
     `!${dp.font}/sysfont/*.woff2`,
-    // this one for mobile, in particular
-    `!${dp.font}/CheddarGothicStencil/*.woff2`,
+    `!${dp.font}/Iosevka/Iosevka-Custom-optimized-unicode.woff2`,
+
+    // retain this subset, which will have been overwritten for the 360K version
+    `!${dp.font}/CheddarGothicStencil/CheddarGothicStencil*.woff2`,
 
     // drop non-gzip things
     `${dp.css}/**/*.css`,
@@ -781,6 +802,10 @@ function bootThatFloppy() {
 function lastFloppyCleanup() {
   return clean([
     `${dp.audio}/*.json`,
+
+    // HACKISH: drop this sneaky 360K font that may have been renamed.
+    `${dp.font}/CheddarGothicStencil/${cheddarGothic360K}`,
+
     // ensure the other floppy version didn't sneak in
     `${floppyRoot}/dist/floppy-*`
   ]);
@@ -837,6 +862,7 @@ const floppyTasks360 = [
   ...buildTasks,
   gzipThatFloppy,
   tidyThatFloppyCopy,
+  renameFloppyFont,
   bootThatFloppy,
   lastFloppyCleanup,
   lastFloppyCleanup360
