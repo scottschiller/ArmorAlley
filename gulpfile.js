@@ -82,7 +82,6 @@ const postcss = require('gulp-postcss');
 
 // spritesheet bits
 // https://www.npmjs.com/package/gulp.spritesmith#spritesmithparams
-var buffer = require('vinyl-buffer');
 var merge = require('merge-stream');
 const { pipeline } = require('stream');
 var spritesmith = require('gulp.spritesmith');
