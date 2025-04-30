@@ -809,6 +809,11 @@ function bootThatFloppy() {
 
 function lastFloppyCleanup() {
   return clean([
+
+    // try to avoid mac OS junk
+    `**/._.DS_Store`,
+    `**/.DS_Store`,
+
     `${dp.audio}/*.json`,
 
     // HACKISH: drop this sneaky 360K font that may have been renamed.
