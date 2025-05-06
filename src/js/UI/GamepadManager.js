@@ -366,13 +366,15 @@ const GamepadManager = (options = {}) => {
       lgs.joysticks[i].y = parseFloat(js.y);
       lgs.joysticks[i].button = js.button;
 
+      let a0 = ls[`gp${gpi}/${o.axes[0]}`];
+      let a1 = ls[`gp${gpi}/${o.axes[1]}`];
+
+      // guard against undefined lastState for gamepad/axes, as caught in prod
+      if (a0 === undefined || a1 === undefined) return;
+
       // new live values
-      let x = parseFloat(
-        ls[`gp${gpi}/${o.axes[0]}`].value * (opt?.invertXAxis ? -1 : 1)
-      );
-      let y = parseFloat(
-        ls[`gp${gpi}/${o.axes[1]}`].value * (opt?.invertYAxis ? -1 : 1)
-      );
+      let x = parseFloat(a0.value * (opt?.invertXAxis ? -1 : 1));
+      let y = parseFloat(a1.value * (opt?.invertYAxis ? -1 : 1));
 
       let jp = opt?.precision;
 
