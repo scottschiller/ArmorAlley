@@ -180,7 +180,6 @@ const GamepadManager = (options = {}) => {
   }
 
   function checkForChange(id, value) {
-    let state;
     if (lastState[id].lastValue !== value) {
       changed.push({ id, value });
     }
