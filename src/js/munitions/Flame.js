@@ -4,7 +4,7 @@ import { TYPES, getTypes } from '../core/global.js';
 import { sprites } from '../core/sprites.js';
 import { utils } from '../core/utils.js';
 import { playSound, sounds } from '../core/sound.js';
-import { game } from '../core/Game.js';
+import { game, getObjectById } from '../core/Game.js';
 
 const spriteWidth = 64;
 const spriteHeight = 36;
@@ -74,7 +74,7 @@ const Flame = (options = {}) => {
            * Nullify this object unless infantry / engineers, so we don't
            * hit e.g., a super-bunker repeatedly.
            */
-          if (game.objectsById[targetID]?.data?.type !== TYPES.infantry) {
+          if (getObjectById(targetID)?.data?.type !== TYPES.infantry) {
             data.damagePoints = 0;
           }
         }

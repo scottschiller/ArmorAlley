@@ -2819,7 +2819,7 @@ function dropNextTarget(exports) {
 
   if (!nextMissileTarget) return;
 
-  let oTarget = game.objectsById[nextMissileTarget];
+  let oTarget = getObjectById(nextMissileTarget);
 
   // unmark the target object, if it still exists
   if (oTarget) {
@@ -2845,7 +2845,7 @@ function markTarget(exports, targetID, active) {
 
   // TODO: refactor or drop when 100% on canvas.
 
-  let target = game.objectsById[targetID];
+  let target = getObjectById(targetID);
 
   // target may have been destroyed.
   if (target) {

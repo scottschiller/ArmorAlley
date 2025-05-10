@@ -126,7 +126,7 @@ function jerkCheck(exports, sound) {
   // can't be jerking your chain if there's no balloon, it's not in view, and/or the chain is dead.
   if (
     !objects.balloon ||
-    !game.objectsById[objects.balloon]?.data?.isOnScreen ||
+    !getObjectById(objects.balloon)?.data?.isOnScreen ||
     data.dead
   )
     skipSound(sound);
@@ -188,7 +188,7 @@ function die(exports) {
 
   // remove bunker reference, too
   if (objects.bunker) {
-    let bunker = game.objectsById[objects.bunker];
+    let bunker = getObjectById(objects.bunker);
     if (bunker) {
       bunker.nullifyChain();
       objects.bunker = null;

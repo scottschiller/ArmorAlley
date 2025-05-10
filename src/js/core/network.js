@@ -2,7 +2,7 @@ import { prefsManager } from '../aa.js';
 import { gamePrefs } from '../UI/preferences.js';
 import { aaLoader } from './aa-loader.js';
 import { common } from './common.js';
-import { game } from './Game.js';
+import { game, getObjectById } from './Game.js';
 import {
   defaultSeed,
   defaultSeeds,
@@ -271,7 +271,7 @@ const messageActions = {
   RAW_COORDS: (data) => {
     // mouse and viewport coordinates, "by id."
 
-    let helicopter = game.objectsById[data.id];
+    let helicopter = getObjectById(data.id);
 
     if (!data?.id || !helicopter) {
       console.warn(`RAW_COORDS: No helicopter by ID ${data.id}?`);
@@ -380,7 +380,7 @@ const messageActions = {
     // net.sendMessage({ type: 'REMOTE_ORDER', orderType: type, options, id: player.data.id });
     if (debugNetwork) console.log('RX: REMOTE_ORDER', data);
 
-    if (debugNetwork && !game.objectsById[data.id]) {
+    if (debugNetwork && !getObjectById(data.id)) {
       console.warn(
         'REMOTE_ORDER: WTF, no objectsById for data.id (remote friendly helicopter, co-op?',
         data.id
@@ -391,7 +391,7 @@ const messageActions = {
     game.objects.inventory.order(
       data.orderType,
       data.options,
-      game.objectsById[data.id]
+      getObjectById(data.id)
     );
   },
 

@@ -5,7 +5,7 @@
 import { gameType } from '../aa.js';
 import { utils } from './utils.js';
 import { common } from './common.js';
-import { game } from './Game.js';
+import { game, getObjectById } from './Game.js';
 import { COSTS, getTypes, searchParams, TYPES, worldWidth } from './global.js';
 import { zones } from './zones.js';
 import { sprites } from './sprites.js';
@@ -795,7 +795,7 @@ function recycleTest(obj) {
 function checkRefund(params) {
   let { id } = params;
 
-  let obj = game.objectsById[id];
+  let obj = getObjectById(id);
 
   if (!obj?.data) return;
 
