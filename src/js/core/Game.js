@@ -104,6 +104,14 @@ function setOriginalSeeds() {
 
 setOriginalSeeds();
 
+/**
+ * @param {id} The unique ID of the game object to be looked up
+ * @returns {object} The game object, if found in game.objectsById[].
+ */
+function getObjectById(id) {
+  return id && objectsById[id];
+}
+
 let objectsById = {};
 
 let game = (() => {
@@ -1285,4 +1293,4 @@ window.addEventListener('error', (e) => {
   }
 });
 
-export { game, gameType, screenScale };
+export { game, gameType, getObjectById, screenScale };
