@@ -619,7 +619,7 @@ function die(exports, dieOptions = {}) {
 
   sprites.updateEnergy(exports);
 
-  common.onDie(exports, dieOptions);
+  common.onDie(data.id, dieOptions);
 }
 
 function resetDieExplosion(exports) {

@@ -398,7 +398,7 @@ function die(exports, dieOptions = {}) {
     });
   }
 
-  common.onDie(exports, dieOptions);
+  common.onDie(data.id, dieOptions);
 
   if (options.onDie) {
     options.onDie(exports, dieOptions);
@@ -517,7 +517,7 @@ function bombHitTarget(exports, target) {
     }
   }
 
-  common.hit(target, damagePoints, exports);
+  common.hit(target.data.id, damagePoints, data.id);
 }
 
 function animate(exports) {

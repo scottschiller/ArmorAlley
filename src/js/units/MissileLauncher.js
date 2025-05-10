@@ -129,8 +129,8 @@ const MissileLauncher = (options = {}) => {
       useLookAhead: true,
       // stop moving if we roll up behind a friendly vehicle
       friendlyOnly: true,
-      hit: (target) =>
-        common.friendlyNearbyHit(target, exports, {
+      hit: (targetID) =>
+        common.friendlyNearbyHit(targetID, data.id, {
           resume: exports.resume,
           stop: exports.stop
         }),
@@ -215,7 +215,7 @@ function die(exports, dieOptions = {}) {
 
   radarItem.die(dieOptions);
 
-  common.onDie(exports, dieOptions);
+  common.onDie(data.id, dieOptions);
 }
 
 function dieComplete(exports) {

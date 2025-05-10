@@ -608,7 +608,7 @@ function die(exports, dieOptions = {}) {
   // optional callback
   if (exports.onDie) exports.onDie();
 
-  common.onDie(exports, dieOptions);
+  common.onDie(data.id, dieOptions);
 }
 
 function sparkAndDie(exports, target) {
@@ -626,7 +626,7 @@ function sparkAndDie(exports, target) {
     data.energy -= data.infantryEnergyCost;
 
     // give a hit
-    common.hit(target, target.data.energy, exports);
+    common.hit(target.data.id, target.data.energy, data.id);
 
     // keep on truckin', unless the missile has been killed off.
     if (data.energy > 0) return;

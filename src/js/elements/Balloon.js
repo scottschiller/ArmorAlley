@@ -330,7 +330,7 @@ function die(exports, dieOptions = {}) {
 
   data.dead = true;
 
-  common.onDie(exports, dieOptions);
+  common.onDie(data.id, dieOptions);
 }
 
 function dieComplete(exports) {

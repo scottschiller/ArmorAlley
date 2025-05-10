@@ -192,7 +192,7 @@ function die(exports, force) {
     silent: true
   });
 
-  common.onDie(exports);
+  common.onDie(data.id);
 }
 
 function sparkAndDie(exports, target) {
@@ -235,7 +235,7 @@ function sparkAndDie(exports, target) {
         (tType === TYPES.endBunker || tType === TYPES.superBunker)
       )
     ) {
-      common.hit(target, data.damagePoints, exports);
+      common.hit(target.data.id, data.damagePoints, data.id);
     }
 
     // additional bits of shrapnel, for a helicopter shooting a few specific units

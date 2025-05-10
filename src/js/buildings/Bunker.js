@@ -503,7 +503,7 @@ function die(exports, dieOptions = {}) {
   // check if enemy convoy production should stop or start
   checkProduction();
 
-  common.onDie(exports, dieOptions);
+  common.onDie(data.id, dieOptions);
 
   radarItem.die();
 }

@@ -210,7 +210,7 @@ function die(exports) {
     silent: true
   });
 
-  common.onDie(exports);
+  common.onDie(data.id);
 }
 
 function hitAndDie(exports, target) {
@@ -262,7 +262,7 @@ function hitAndDie(exports, target) {
 
   if (damageTarget) {
     common.hit(
-      target,
+      target.data.id,
       // choppers get double, vans get half-damage.
       data.damagePoints *
         (target.data.type === TYPES.helicopter
@@ -270,7 +270,7 @@ function hitAndDie(exports, target) {
           : target.data.type === TYPES.van
             ? 0.5
             : 1),
-      exports
+      data.id
     );
   }
 

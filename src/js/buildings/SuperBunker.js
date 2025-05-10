@@ -429,7 +429,7 @@ function die(exports) {
   // check if enemy convoy production should stop or start
   checkProduction();
 
-  common.onDie(exports);
+  common.onDie(data.id);
 }
 
 function fire(exports) {

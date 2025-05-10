@@ -697,7 +697,7 @@ const Helicopter = (options = {}) => {
         const tData = target.data;
         if (tData.type === TYPES.chain) {
           // special case: chains do damage, but don't kill.
-          common.hit(exports, tData.damagePoints, target);
+          common.hit(data.id, tData.damagePoints, targetID);
           // and make noise.
           if (sounds.chainSnapping) {
             playSound(sounds.chainSnapping, target);
@@ -706,7 +706,7 @@ const Helicopter = (options = {}) => {
             reactToDamage(exports, target);
           }
           // should the target die, too? ... probably so.
-          common.hit(target, 999, exports);
+          common.hit(targetID, 999, data.id);
         } else if (tData.type === TYPES.infantry) {
           // helicopter landed, not repairing, and friendly, landed infantry (or engineer)?
           if (data.landed && !data.onLandingPad) {
@@ -821,7 +821,7 @@ const Helicopter = (options = {}) => {
           }
           die(exports, { attacker: target });
           // should the target die, too? ... probably so.
-          common.hit(target, 999, exports);
+          common.hit(targetID, 999, data.id);
         }
       }
     },
@@ -2451,7 +2451,7 @@ function die(exports, dieOptions = {}) {
       sounds.helicopter.engine.sound.setVolume(0);
   }
 
-  common.onDie(exports, dieOptions);
+  common.onDie(data.id, dieOptions);
 
   if (!data.deployedParachute) {
     common.addGravestone(exports);

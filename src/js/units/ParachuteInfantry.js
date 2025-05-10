@@ -200,7 +200,7 @@ function die(exports, dieOptions = {}) {
 
   radarItem?.die(dieOptions);
 
-  common.onDie(exports, dieOptions);
+  common.onDie(data.id, dieOptions);
 }
 
 function hit(exports, hitPoints, target) {
@@ -211,7 +211,7 @@ function hit(exports, hitPoints, target) {
     return false;
   }
 
-  return common.hit(exports, hitPoints, target);
+  return common.hit(data.id, hitPoints, target.data.id);
 }
 
 function animate(exports) {

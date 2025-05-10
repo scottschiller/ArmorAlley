@@ -189,7 +189,7 @@ function die(exports) {
     objects.bunker = null;
   }
 
-  common.onDie(exports);
+  common.onDie(data.id);
 }
 
 function setEnemy(exports, isEnemy) {

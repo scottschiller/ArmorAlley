@@ -182,7 +182,7 @@ function die(exports, dieOptions = {}) {
     playSound(sounds.genericExplosion, exports);
   }
 
-  common.onDie(exports, dieOptions);
+  common.onDie(data.id, dieOptions);
 
   common.addGravestone(exports);
 

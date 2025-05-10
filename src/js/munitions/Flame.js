@@ -111,7 +111,7 @@ function die(exports, force) {
 
   sprites.removeNodesAndUnlink(exports);
 
-  common.onDie(exports);
+  common.onDie(data.id);
 }
 
 function animate(exports) {

@@ -122,7 +122,7 @@ const MissileNapalm = (options = {}) => {
           ) {
             return;
           }
-          common.hit(target, data.damagePoints, exports);
+          common.hit(target.data.id, data.damagePoints, data.id);
         }
       }
     },
@@ -158,7 +158,7 @@ function die(exports, force) {
 
   sprites.removeNodesAndUnlink(exports);
 
-  common.onDie(exports);
+  common.onDie(data.id);
 }
 
 function animate(exports) {
