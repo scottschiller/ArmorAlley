@@ -66,7 +66,6 @@ const Flame = (options = {}) => {
     options: {
       source: data.id,
       targets: undefined,
-      hit(target) {
       hit(targetID) {
         if (data.damagePoints) {
           // hit once, then remain until the object animation has completed.
