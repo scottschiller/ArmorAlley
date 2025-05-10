@@ -175,8 +175,9 @@ function animate(exports) {
     }
 
     if (data.fadeFrame > data.fadeFrames) {
-      // animation finished
+      // animation (and object) considered finished
       die(exports);
+      return true;
     }
   }
 
