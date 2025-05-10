@@ -1,4 +1,4 @@
-import { game } from '../core/Game.js';
+import { game, getObjectById } from '../core/Game.js';
 import { EVENTS, gameEvents } from '../core/GameEvents.js';
 import { utils } from '../core/utils.js';
 import { gameType, keyboardMonitor, prefsManager, screenScale } from '../aa.js';
@@ -654,7 +654,7 @@ const Helicopter = (options = {}) => {
     nextMissileTarget,
     objects,
     onHit: (attacker) => onHit(exports, attacker),
-    onKill: (target) => onKill(exports, target),
+    onKill: (targetID) => onKill(exports, targetID),
     onLandingPad: (state, pad) => onLandingPad(exports, state, pad),
     options,
     reactToDamage: (attacker) => reactToDamage(exports, attacker),
@@ -691,9 +691,10 @@ const Helicopter = (options = {}) => {
 
   collision = {
     options: {
-      source: exports,
+      source: data.id,
       targets: undefined,
-      hit(target) {
+      hit(targetID) {
+        let target = getObjectById(targetID);
         const tData = target.data;
         if (tData.type === TYPES.chain) {
           // special case: chains do damage, but don't kill.
@@ -717,7 +718,7 @@ const Helicopter = (options = {}) => {
                 game.objects.notifications.addNoRepeat(
                   'Your helicopter was hit with a grenade. 🚁'
                 );
-                die(exports, { attacker: target });
+                die(exports, { attacker: target.data.id });
                 return;
               }
 
@@ -819,7 +820,7 @@ const Helicopter = (options = {}) => {
             // and go to adjusted position
             moveTo(exports, data.x, data.y);
           }
-          die(exports, { attacker: target });
+          die(exports, { attacker: targetID });
           // should the target die, too? ... probably so.
           common.hit(targetID, 999, data.id);
         }
@@ -1255,7 +1256,7 @@ function stopRepairing(exports) {
 function maybeStartRepairingMedia(exports, force) {
   let { data } = exports;
 
-  const { landingPad } = data;
+  let landingPad = getObjectById(data.landingPad);
 
   const somethingIsEmpty = !data.smartMissiles || !data.bombs || !data.ammo;
 
@@ -1561,7 +1562,7 @@ function repair(exports) {
     }
   }
 
-  sprites.updateEnergy(exports);
+  sprites.updateEnergy(data.id);
 
   updateFuelUI(exports);
   updateStatusUI(exports, updated);
@@ -1704,7 +1705,7 @@ function setRespawning(exports, state) {
     const pads = game.objects[TYPES.landingPad];
     const landingPad = pads[data.isEnemy ? pads.length - 1 : 0];
 
-    data.landingPad = landingPad;
+    data.landingPad = landingPad.data.id;
 
     if (data.isLocal) {
       // "get to the choppa!" (center the view on it, that is.)
@@ -1735,7 +1736,7 @@ function setRespawning(exports, state) {
       updateLives(exports);
     }
 
-    sprites.updateEnergy(exports);
+    sprites.updateEnergy(data.id);
 
     // ensure we're visible.
     data.visible = true;
@@ -1936,7 +1937,7 @@ function onLandingPad(exports, state, pad = null) {
   data.onLandingPad = state;
   data.landed = state;
 
-  // assign the active landing pad.
+  // assign the active landing pad, by ID.
   data.landingPad = pad;
 
   // edge case: helicopter is "live", but not active yet.
@@ -2278,7 +2279,8 @@ function die(exports, dieOptions = {}) {
   // drop this state in a moment.
   common.setFixedFrameTimeout(() => (data.exploding = false), 2000);
 
-  const { attacker } = dieOptions;
+  let attacker = getObjectById(dieOptions.attacker);
+
   const aData = attacker?.data;
 
   if (data.isLocal) {
@@ -2789,8 +2791,7 @@ function maybeDisableTargetUI(exports) {
   if (data.smartMissiles) return;
 
   const activeMissiles = game.objects[TYPES.smartMissile].filter(
-    (m) =>
-      !m.data.dead && game.objectsById[m.data.parent] === game.players.local
+    (m) => !m.data.dead && m.data.parent === game.players.local.data.id
   );
 
   // bail if there are still missiles in the air.
@@ -2818,16 +2819,22 @@ function dropNextTarget(exports) {
 
   if (!nextMissileTarget) return;
 
-  exports.nextMissileTarget.data.isNextMissileTarget = false;
+  let oTarget = game.objectsById[nextMissileTarget];
+
+  // unmark the target object, if it still exists
+  if (oTarget) {
+    oTarget.data.isNextMissileTarget = false;
+  }
+
   exports.nextMissileTarget = null;
 }
 
-function markTarget(exports, target, active) {
+function markTarget(exports, targetID, active) {
   let { data } = exports;
 
   if (!data.isLocal) return;
 
-  if (!target) return;
+  if (!targetID) return;
 
   // hackish: force-disable if pref is off.
   if (!gamePrefs.modern_smart_missiles) {
@@ -2838,15 +2845,21 @@ function markTarget(exports, target, active) {
 
   // TODO: refactor or drop when 100% on canvas.
 
-  target.data.isNextMissileTarget = !!active;
+  let target = game.objectsById[targetID];
+
+  // target may have been destroyed.
+  if (target) {
+    target.data.isNextMissileTarget = !!active;
+  }
 
   // new target
-  if (active) {
-    exports.nextMissileTarget = target;
+  if (active && target) {
+    exports.nextMissileTarget = targetID;
     game.objects.radar.markTarget(target.radarItem);
   }
 
-  if (!active) {
+  // inactive, OR, destroyed target
+  if (!active || !target) {
     exports.nextMissileTarget = null;
     if (data.isLocal) {
       game.objects.radar.clearTarget();
@@ -2867,7 +2880,7 @@ function scanRadar(exports) {
   const newTarget = getNearestObject(exports, {
     useInFront: true,
     ignoreIntersect: true
-  });
+  })?.data?.id;
 
   if (newTarget && newTarget !== lastMissileTarget) {
     markTarget(exports, lastMissileTarget, false);
@@ -3809,11 +3822,13 @@ function onHit(exports, attacker) {
   }
 }
 
-function onKill(exports, target) {
+function onKill(exports, targetID) {
   let { data } = exports;
 
+  let target = getObjectById(targetID);
+
   if (!data.isCPU) return;
-  if (target.data.type !== TYPES.helicopter) return;
+  if (target?.data && target.data.type !== TYPES.helicopter) return;
   // CPU case: stop chasing helicopters, since we got one.
   if (gameType === 'tutorial' || gameType === 'easy') {
     data.targeting.helicopters = false;

@@ -33,7 +33,7 @@ import { levelConfig, levelFlags, levelNumber } from '../levels/default.js';
 import { net } from '../core/network.js';
 import { common } from '../core/common.js';
 import { gameType } from '../aa.js';
-import { game } from '../core/Game.js';
+import { game, getObjectById } from '../core/Game.js';
 import { TURRET_SCAN_RADIUS } from '../buildings/Turret.js';
 
 // low fuel means low fuel. or ammo. or bombs.
@@ -879,11 +879,15 @@ const HelicopterAI = (options = {}) => {
     dropParatroopersAtRandom(rngInt(FPS * 5, TYPES.helicopter), minimalDelay);
   }
 
-  function respondToHit(attacker) {
+  function respondToHit(attackerID) {
     /**
      * At this point, we've been hit by something.
      * If from a helicopter, maybe start targeting choppers.
      */
+
+    let attacker = getObjectById(attackerID);
+
+    if (!attacker?.data) return;
 
     if (
       !data.targeting.helicopters &&
