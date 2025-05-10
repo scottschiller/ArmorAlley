@@ -1,4 +1,4 @@
-import { game } from '../core/Game.js';
+import { game, getObjectById } from '../core/Game.js';
 import { gamePrefs } from '../UI/preferences.js';
 import {
   debugCollision,
@@ -635,8 +635,11 @@ const common = {
     return Object.assign(oMain, oAdd);
   },
 
-  friendlyNearbyHit(target, source, hitOptions) {
+  friendlyNearbyHit(targetID, sourceID, hitOptions) {
     // logic for missile launcher and tank overlap / spacing.
+
+    let target = getObjectById(targetID);
+    let source = getObjectById(sourceID);
 
     const { stop, resume } = hitOptions;
 
