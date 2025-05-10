@@ -248,8 +248,8 @@ function capture(exports, isEnemy) {
   zones.changeOwnership(exports);
 
   // and the attached objects, too.
-  game.objectsById[objects?.chain]?.setEnemy(isEnemy);
-  game.objectsById[objects?.balloon]?.setEnemy(isEnemy);
+  getObjectById(objects?.chain)?.setEnemy(isEnemy);
+  getObjectById(objects?.balloon)?.setEnemy(isEnemy);
 
   playSound(sounds.doorClose, exports);
 
@@ -325,8 +325,9 @@ function repair(exports) {
 
   // fix the balloon, if it's broken - or, rather, flag it for respawn.
   if (objects.balloon) {
-    if (game.objectsById[objects.balloon]?.data?.dead) {
-      game.objectsById[objects.balloon].data.canRespawn = true;
+    let balloon = getObjectById(objects.balloon);
+    if (balloon?.data?.dead) {
+      balloon.data.canRespawn = true;
     }
   } else {
     // make a new one
@@ -348,17 +349,20 @@ function detachBalloon(exports) {
   /**
    * Update height of chain, assuming it's
    * attached to the balloon now free from the base.
-   * 
+   *
    * Once height is assigned, the chain will either
    * hang from the balloon it's attached to, OR, will
    * fall due to gravity (i.e., no base, no balloon.)
    */
-  game.objectsById[objects?.chain]?.applyHeight();
+  let chain = getObjectById(objects?.chain);
+
+  chain?.applyHeight();
 
   if (objects.balloon) {
-    game.objectsById[objects.balloon].attachChain(objects.chain);
-    game.objectsById[objects.balloon].detachFromBunker();
-    game.objectsById[objects.chain]?.detachFromBunker();
+    let balloon = getObjectById(objects.balloon);
+    balloon.attachChain(objects.chain);
+    balloon.detachFromBunker();
+    chain?.detachFromBunker();
     nullifyBalloon(exports);
   }
 }
