@@ -699,26 +699,27 @@ const common = {
     stop();
   },
 
-  hit(target, hitPoints = 1, attacker) {
-    let newEnergy, energyChanged;
+  hit(targetID, hitPoints = 1, attackerID) {
+    let target = getObjectById(targetID);
+    let attacker = getObjectById(attackerID);
 
     /**
      * special case: super-bunkers can only be damaged by tank gunfire.
      * other things can hit super-bunkers, but we don't want damage done in this case.
      */
 
+    const aData = attacker.data;
     const tData = target.data;
 
+    let newEnergy, energyChanged;
+
     // non-tank gunfire will ricochet off of super bunkers.
-    if (
-      tData.type === TYPES.superBunker &&
-      !(attacker?.data?.parentType === TYPES.tank)
-    )
+    if (tData.type === TYPES.superBunker && !(aData?.parentType === TYPES.tank))
       return;
 
     if (tData.type === TYPES.tank) {
       // tanks shouldn't be damaged by shrapnel - but, let the shrapnel die.
-      if (attacker?.data?.parentType === TYPES.shrapnel) {
+      if (aData?.parentType === TYPES.shrapnel) {
         hitPoints = 0;
       }
     }
@@ -735,23 +736,23 @@ const common = {
 
     // special cases for updating state
     if (energyChanged) {
-      target?.updateHealth?.(attacker);
+      target?.updateHealth?.(attackerID);
       // callback-style method, e.g., helicopter was shot
-      target?.onHit?.(attacker);
+      target?.onHit?.(attackerID);
     }
 
-    sprites.updateEnergy(target);
+    sprites.updateEnergy(target.data.id);
 
     if (!tData.energy && target.die) {
       // mutate the object: assign its attacker.
-      tData.attacker = attacker;
+      tData.attacker = attackerID;
 
       if (debugCollision) {
         makeDebugRect(target);
         makeDebugRect(attacker);
       }
 
-      target.die({ attacker });
+      target.die({ attacker: attackerID });
     }
   },
 
