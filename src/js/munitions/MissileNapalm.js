@@ -17,7 +17,7 @@ const MissileNapalm = (options = {}) => {
   data = common.inheritData(
     {
       type: 'missile-napalm',
-      parent: options.parent?.data?.id || null,
+      parent: options.parent || null,
       parentType: options.parentType || null,
       isEnemy: options.isEnemy,
       hostile: true, // for collision: dangerous to all infantry and engineers.
@@ -119,7 +119,7 @@ const MissileNapalm = (options = {}) => {
            */
           if (
             target.data.type === TYPES.helicopter &&
-            game.objectsById[data.parent]?.data?.isEnemy === target.data.isEnemy
+            getObjectById(data.parent)?.data?.isEnemy === target.data.isEnemy
           ) {
             return;
           }

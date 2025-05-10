@@ -166,7 +166,7 @@ const SmartMissile = (options = {}) => {
   data = common.inheritData(
     {
       type,
-      parent: options.parent?.data?.id || null,
+      parent: options.parent || null,
       parentType: options.parentType || null,
       difficultyFactor,
       energy: 1,

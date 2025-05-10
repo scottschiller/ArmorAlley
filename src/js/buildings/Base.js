@@ -116,7 +116,7 @@ function fire(exports) {
   const isLocalTarget = targetHelicopter.data.isLocal;
 
   const params = {
-    parent: exports,
+    parent: data.id,
     parentType: data.type,
     isEnemy: data.isEnemy,
     isBanana: gamePrefs.alt_smart_missiles && data.missileMode === bananaMode,

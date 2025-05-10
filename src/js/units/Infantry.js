@@ -328,7 +328,7 @@ function fire(exports) {
     return;
 
   game.addObject(TYPES.gunfire, {
-    parent: exports,
+    parent: data.id,
     parentType: data.type,
     isEnemy: data.isEnemy,
     // like tanks, allow infantry + engineer gunfire to hit bunkers unless "miss bunkers" is enabled in prefs.

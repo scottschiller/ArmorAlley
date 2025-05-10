@@ -290,7 +290,7 @@ function fire(exports) {
   const params = {
     id: `${data.id}_missile`,
     staticID: true,
-    parent: exports,
+    parent: data.id,
     parentType: data.type,
     isEnemy: data.isEnemy,
     isBanana:

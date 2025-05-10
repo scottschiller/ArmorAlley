@@ -24,7 +24,7 @@ const GunFire = (options = {}) => {
   data = common.inheritData(
     {
       type: 'gunfire',
-      parent: options.parent?.data?.id || null,
+      parent: options.parent || null,
       parentType: options.parentType || null,
       isFading: false,
       isInert: !!options.isInert,
@@ -138,7 +138,7 @@ const GunFire = (options = {}) => {
           target === game.players.local &&
           target.data.isOnScreen
         ) {
-          target.reactToDamage(game.objectsById[data.parent]);
+          target.reactToDamage(getObjectById(data.parent));
         }
       }
     },

@@ -455,7 +455,7 @@ function fire(exports) {
     vec.setMag(Math.min(32, hyp / 10));
 
     game.addObject(TYPES.gunfire, {
-      parent: exports,
+      parent: data.id,
       parentType: data.type,
       isEnemy: data.isEnemy,
       fixedXY: true,

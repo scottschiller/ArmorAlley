@@ -496,7 +496,7 @@ const effects = {
     const damagePoints = data.type === TYPES.bunker ? 10 : undefined;
 
     game.addObject(TYPES.bomb, {
-      parent: exports,
+      parent: data.id,
       parentType: data.type,
       damagePoints,
       hidden: true,

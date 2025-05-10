@@ -2390,7 +2390,7 @@ function die(exports, dieOptions = {}) {
   ) {
     data.deployedParachute = true;
     deployParachuteInfantry({
-      parent: exports,
+      parent: data.id,
       isEnemy: data.isEnemy,
       x: data.x + data.halfWidth,
       y: data.y + data.height - 11,
@@ -2539,7 +2539,7 @@ function getBombParams(exports) {
   }
 
   return {
-    parent: exports,
+    parent: data.id,
     parentType: data.type,
     isEnemy: data.isEnemy,
     x: data.x + data.halfWidth,
@@ -2609,7 +2609,7 @@ function getAimedMissileParams(exports) {
   }
 
   return {
-    parent: exports,
+    parent: data.id,
     parentType: data.type,
     isEnemy: data.isEnemy,
     x:
@@ -2744,7 +2744,7 @@ function getGunfireParams(exports) {
   const damagePoints = 2;
 
   return {
-    parent: exports,
+    parent: data.id,
     parentType: data.type,
     isEnemy: data.isEnemy,
     x,
@@ -2764,7 +2764,7 @@ function getSmartMissileParams(exports, missileTarget) {
     defaultMissileMode;
 
   return {
-    parent: exports,
+    parent: data.id,
     parentType: data.type,
     isEnemy: data.isEnemy,
     x:
@@ -3154,7 +3154,7 @@ function fire(exports) {
         });
       } else {
         deployParachuteInfantry({
-          parent: exports,
+          parent: data.id,
           isEnemy: data.isEnemy,
           x: data.x + data.halfWidth,
           y: data.y + data.height - 11
@@ -3245,7 +3245,7 @@ function eject(exports) {
     // always deploy the pilot...
     deployParachuteInfantry({
       isEnemy: data.isEnemy,
-      parent: exports,
+      parent: data.id,
       // a little variety
       x:
         data.x +
@@ -3316,7 +3316,7 @@ function deployRandomParachuteInfantry(exports) {
 
   deployParachuteInfantry({
     isEnemy: data.isEnemy,
-    parent: exports,
+    parent: data.id,
     // a little variety
     x:
       data.x +

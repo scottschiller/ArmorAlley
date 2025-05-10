@@ -243,7 +243,7 @@ function fire(exports) {
         nearbyData.type.match(/infantry|engineer/i)))
   ) {
     data.flame = game.addObject(TYPES.flame, {
-      parent: exports,
+      parent: data.id,
       parentType: data.type,
       isEnemy: data.isEnemy,
       damagePoints: 2, // tanks fire at half-rate, so double damage.
@@ -258,7 +258,7 @@ function fire(exports) {
   }
 
   game.addObject(TYPES.gunfire, {
-    parent: exports,
+    parent: data.id,
     parentType: data.type,
     isEnemy: data.isEnemy,
     damagePoints: 5,

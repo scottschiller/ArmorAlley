@@ -217,7 +217,7 @@ function fire(exports) {
     return;
 
   fireOptions = {
-    parent: exports,
+    parent: data.id,
     parentType: data.type,
     isEnemy: data.isEnemy,
     collisionItems: nearby.items,
