@@ -1,4 +1,4 @@
-import { game } from '../core/Game.js';
+import { game, getObjectById } from '../core/Game.js';
 import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
 import { gameType } from '../aa.js';
@@ -282,6 +282,8 @@ function die(exports, dieOptions = {}) {
 
   if (data.dead) return;
 
+  let oAttacker = getObjectById(dieOptions.attacker);
+
   // pop!
   if (sounds.balloonExplosion) {
     playSound(sounds.balloonExplosion, exports);
@@ -313,7 +315,7 @@ function die(exports, dieOptions = {}) {
         ? rngInt(3, TYPES.shrapnel)
         : 0),
     velocity: rngInt(4, TYPES.shrapnel),
-    parentVX: dieOptions?.attacker?.data?.vX
+    parentVX: oAttacker?.data?.vX
   });
 
   // sanity check: balloon may be almost immediately restored
@@ -540,7 +542,7 @@ function reset(exports) {
   // and reset
   domCanvas.img = getCanvasBalloon(data);
 
-  sprites.updateEnergy(exports);
+  sprites.updateEnergy(data.id);
 
   // presumably, triggered by an infantry.
   if (sounds.chainRepair) {
@@ -565,10 +567,7 @@ function initBalloon(exports) {
     data.windOffsetY = rngPlusMinus(rng(0.33, data.type), data.type);
   }
 
-  exports.radarItem = game.objects.radar.addItem(
-    exports,
-    { canRespawn: true }
-  );
+  exports.radarItem = game.objects.radar.addItem(exports, { canRespawn: true });
 }
 
 Balloon.radarItemConfig = ({ exports }) => ({
@@ -583,8 +582,7 @@ Balloon.radarItemConfig = ({ exports }) => ({
     const left = pos.left(obj.data.left);
     const scaledWidth = pos.width(width);
     const scaledHeight = pos.height(height);
-    let chain =
-      exports?.objects?.chain && game.objectsById[exports.objects.chain];
+    let chain = getObjectById(exports?.objects?.chain);
     if (chain && !chain.data.dead) {
       const chainX = left + scaledWidth / 2;
       const chainY = obj.data.top + scaledHeight / 2;
