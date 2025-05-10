@@ -1,5 +1,5 @@
 import { gameType } from '../aa.js';
-import { game } from '../core/Game.js';
+import { game, getObjectById } from '../core/Game.js';
 import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
 import { canNotify, collisionTest, getNearestObject } from '../core/logic.js';
@@ -324,11 +324,11 @@ const SmartMissile = (options = {}) => {
 
   collision = {
     options: {
-      source: exports,
+      source: data.id,
       targets: undefined,
       checkTweens: true,
-      hit(target) {
-        sparkAndDie(exports, target);
+      hit(targetID) {
+        sparkAndDie(exports, targetID);
       }
     },
     items: getCollisionItems(exports)
@@ -500,6 +500,8 @@ function die(exports, dieOptions = {}) {
   // slightly hackish: may be passed, or assigned
   attacker = attacker || data.attacker;
 
+  let oAttacker = getObjectById(attacker);
+
   data.energy = 0;
 
   data.dead = true;
@@ -522,12 +524,12 @@ function die(exports, dieOptions = {}) {
       parentVY: data.vY
     });
 
-    if (attacker?.data?.type !== TYPES.infantry) {
+    if (oAttacker?.data?.type !== TYPES.infantry) {
       effects.domFetti(data.id, attacker);
     }
 
     // special-case: shot down by gunfire, vs. generic "boom"
-    if (attacker?.data?.type === TYPES.gunfire && sounds.metalClang) {
+    if (oAttacker?.data?.type === TYPES.gunfire && sounds.metalClang) {
       playSound(sounds.metalClang, game.players.local);
     } else if (sounds.genericBoom) {
       playSound(sounds.genericBoom, game.players.local);
@@ -581,7 +583,7 @@ function die(exports, dieOptions = {}) {
       objects?.target.data.type !== TYPES.turret) ||
       !objects?.target.data.dead)
   ) {
-    if (attacker?.data?.type === TYPES.superBunker) {
+    if (oAttacker?.data?.type === TYPES.superBunker) {
       // "this sucks"
       playSoundWithDelay(sounds.bnb.beavisLostUnit);
     } else {
@@ -611,8 +613,10 @@ function die(exports, dieOptions = {}) {
   common.onDie(data.id, dieOptions);
 }
 
-function sparkAndDie(exports, target) {
+function sparkAndDie(exports, targetID) {
   let { data } = exports;
+
+  let target = getObjectById(targetID);
 
   // if we don't have a target, something is very wrong.
   if (!target) return;
@@ -633,9 +637,9 @@ function sparkAndDie(exports, target) {
   } else {
     // regular hit
     common.hit(
-      target,
+      target.data.id,
       data.armed ? data.damagePoints * data.energy : 1,
-      exports
+      data.id
     );
 
     if (!target.data.dead && data.armed) {
@@ -727,7 +731,7 @@ function sparkAndDie(exports, target) {
     data.didNotify = true;
   }
 
-  die(exports, { attacker: target });
+  die(exports, { attacker: target.data.id });
 }
 
 function animate(exports) {

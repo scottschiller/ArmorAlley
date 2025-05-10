@@ -64,17 +64,18 @@ const Flame = (options = {}) => {
 
   collision = {
     options: {
-      source: exports,
+      source: data.id,
       targets: undefined,
       hit(target) {
+      hit(targetID) {
         if (data.damagePoints) {
           // hit once, then remain until the object animation has completed.
-          common.hit(target, data.damagePoints, exports);
+          common.hit(targetID, data.damagePoints, data.id);
           /**
            * Nullify this object unless infantry / engineers, so we don't
            * hit e.g., a super-bunker repeatedly.
            */
-          if (target.data.type !== TYPES.infantry) {
+          if (game.objectsById[targetID]?.data?.type !== TYPES.infantry) {
             data.damagePoints = 0;
           }
         }

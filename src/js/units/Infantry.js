@@ -1,4 +1,4 @@
-import { game } from '../core/Game.js';
+import { game, getObjectById } from '../core/Game.js';
 import { common } from '../core/common.js';
 import { gamePrefs } from '../UI/preferences.js';
 import { collisionTest, nearbyTest, recycleTest } from '../core/logic.js';
@@ -183,10 +183,11 @@ const Infantry = (options = {}) => {
 
   exports.nearby = {
     options: {
-      source: exports,
+      source: data.id,
       targets: undefined,
       useLookAhead: true,
-      hit(target) {
+      hit(targetID) {
+        let target = getObjectById(targetID);
         const tData = target.data;
         // engineer + turret case? reclaim or repair.
         if (data.role && tData.type === TYPES.turret) {
@@ -256,9 +257,10 @@ const Infantry = (options = {}) => {
 
   exports.collision = {
     options: {
-      source: exports,
+      source: data.id,
       targets: undefined,
-      hit(target) {
+      hit(targetID) {
+        let target = getObjectById(targetID);
         /**
          * bunkers and other objects infantry can interact with have an infantryHit() method.
          * if no infantryHit(), just die.
@@ -276,8 +278,8 @@ const Infantry = (options = {}) => {
           target.data.type !== TYPES.endBunker
         ) {
           // probably a tank.
-          data.attacker = target;
-          die(exports, { attacker: target });
+          data.attacker = targetID;
+          die(exports, { attacker: targetID });
         }
       }
     },
@@ -505,7 +507,7 @@ function die(exports, dieOptions = {}) {
     data.attacker = dieOptions.attacker;
   }
 
-  common.onDie(exports, dieOptions);
+  common.onDie(data.id, dieOptions);
 }
 
 function animate(exports) {

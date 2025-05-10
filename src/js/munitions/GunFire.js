@@ -1,4 +1,4 @@
-import { game } from '../core/Game.js';
+import { game, getObjectById } from '../core/Game.js';
 import { common } from '../core/common.js';
 import { collisionTest } from '../core/logic.js';
 import {
@@ -103,10 +103,11 @@ const GunFire = (options = {}) => {
 
   collision = {
     options: {
-      source: exports,
+      source: data.id,
       targets: undefined,
       checkTweens: !data.isInert,
-      hit(target) {
+      hit(targetID) {
+        let target = getObjectById(targetID);
         /**
          * Special case: let tank gunfire pass thru neutral / hostile super bunkers, since
          * tanks use flame to clear out super bunkers. Gunfire here is meant for others,
@@ -129,7 +130,7 @@ const GunFire = (options = {}) => {
             (target.data.energy === 0 || target.data.isEnemy === data.isEnemy)
           )
         ) {
-          sparkAndDie(exports, target);
+          sparkAndDie(exports, targetID);
         }
         // extra special case: BnB + enemy turret / chopper / infantry etc. firing at player.
         if (
@@ -195,7 +196,7 @@ function die(exports, force) {
   common.onDie(data.id);
 }
 
-function sparkAndDie(exports, target) {
+function sparkAndDie(exports, targetID) {
   let { data, options } = exports;
 
   // hackish: bail if spark -> die already scheduled.
@@ -204,6 +205,8 @@ function sparkAndDie(exports, target) {
   let now;
   let canSpark = true;
   let canDie = true;
+
+  let target = getObjectById(targetID);
 
   const tType = target?.data?.type;
   const pType = data.parentType;

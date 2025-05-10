@@ -1,4 +1,4 @@
-import { game } from '../core/Game.js';
+import { game, getObjectById } from '../core/Game.js';
 import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
 import { gamePrefs } from '../UI/preferences.js';
@@ -129,7 +129,7 @@ const Tank = (options = {}) => {
 
   friendlyNearby = {
     options: {
-      source: exports,
+      source: data.id,
       targets: undefined,
       useLookAhead: true,
       // stop moving if we roll up behind a friendly tank
@@ -149,14 +149,14 @@ const Tank = (options = {}) => {
 
   nearby = {
     options: {
-      source: exports,
+      source: data.id,
       targets: undefined,
       useLookAhead: true,
-      hit(target) {
+      hit(targetID) {
         // determine whether to fire, or resume (if no friendly tank nearby)
-        if (shouldFireAtTarget(exports, target)) {
+        if (shouldFireAtTarget(exports, targetID)) {
           // TODO: lastNearbyTarget to ID
-          data.lastNearbyTarget = target;
+          data.lastNearbyTarget = targetID;
           stop(exports);
         } else {
           // resume, if not also stopped for a nearby friendly tank
@@ -219,9 +219,11 @@ function fire(exports) {
    * a bunker and eventually destroying it while trying to take out an infantry.
    */
 
+  let nearbyData = getObjectById(data.lastNearbyTarget)?.data;
+
   if (
-    data.lastNearbyTarget?.data?.type === TYPES.helicopter ||
-    data.lastNearbyTarget?.data?.type === TYPES.tank
+    (nearbyData && nearbyData.type === TYPES.helicopter) ||
+    nearbyData.type === TYPES.tank
   ) {
     // allow bullets to hit bunkers when firing at a helicopter or tank
     collisionItems = nearby.items.concat(getTypes('bunker', { exports }));
@@ -235,10 +237,10 @@ function fire(exports) {
    * Super Bunkers and End Bunkers always get flames - infantry and engineers depend on level config.
    */
   if (
-    (data.lastNearbyTarget?.data &&
-      data.lastNearbyTarget.data.type.match(/super-bunker|end-bunker/i)) ||
-    (levelConfig.bFlameThrower &&
-      data.lastNearbyTarget.data.type.match(/infantry|engineer/i))
+    nearbyData &&
+    (nearbyData.type.match(/super-bunker|end-bunker/i) ||
+      (levelConfig.bFlameThrower &&
+        nearbyData.type.match(/infantry|engineer/i)))
   ) {
     data.flame = game.addObject(TYPES.flame, {
       parent: exports,
@@ -282,7 +284,7 @@ function moveTo(exports, x, y) {
 }
 
 function updateHealth(exports) {
-  sprites.updateEnergy(exports);
+  sprites.updateEnergy(exports.data.id);
 }
 
 function repair(exports) {
@@ -333,7 +335,9 @@ function die(exports, dieOptions = {}) {
 
   data.dead = true;
 
-  const attackerType = data?.attacker?.data.type;
+  let attacker = getObjectById(data?.attacker);
+
+  const attackerType = attacker?.data.type;
 
   if (!dieOptions.silent) {
     playSound(sounds.genericExplosion, exports);
@@ -452,8 +456,10 @@ function dieComplete(exports) {
   sprites.removeNodesAndUnlink(exports);
 }
 
-function shouldFireAtTarget(exports, target) {
+function shouldFireAtTarget(exports, targetID) {
   let { data } = exports;
+
+  let target = getObjectById(targetID);
 
   if (!target?.data) return false;
 

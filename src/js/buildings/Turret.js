@@ -1,4 +1,4 @@
-import { game } from '../core/Game.js';
+import { game, getObjectById } from '../core/Game.js';
 import { utils } from '../core/utils.js';
 import { gameType } from '../aa.js';
 import {
@@ -571,18 +571,18 @@ function die(exports, dieOptions = {}) {
           sounds.bnb[game.isBeavis ? 'beavisLostUnit' : 'buttheadLostUnit']
         );
       } else {
-        const attacker = dieOptions.attacker?.data;
+        const oAttacker = getObjectById(dieOptions.attacker)?.data;
 
-        if (attacker) {
+        if (oAttacker) {
           // infantry - specifically, dropped or released from helicopter
           const infantryAttacker =
-            attacker?.parentType === TYPES.infantry &&
-            game.objectsById[attacker.parent]?.data?.unassisted === false;
+            oAttacker?.parentType === TYPES.infantry &&
+            getObjectById(oAttacker.parent)?.data?.unassisted === false;
 
           // likewise, from helicopter
           const smartMissileAttacker =
-            attacker.type === TYPES.smartMissile &&
-            attacker.parentType === TYPES.helicopter;
+            oAttacker.type === TYPES.smartMissile &&
+            oAttacker.parentType === TYPES.helicopter;
 
           // on-screen, or helicopter-initiated things
           if (
@@ -617,7 +617,7 @@ function die(exports, dieOptions = {}) {
     playSound(sounds.genericExplosion, exports);
   }
 
-  sprites.updateEnergy(exports);
+  sprites.updateEnergy(data.id);
 
   common.onDie(data.id, dieOptions);
 }
@@ -651,7 +651,7 @@ function repair(exports, engineer, complete) {
 
   if (data.energy < data.energyMax) {
     if (data.frameCount % (data.repairModulus / 2) === 0 || complete) {
-      sprites.updateEnergy(exports);
+      sprites.updateEnergy(data.id);
 
       createSparks(exports, 3);
 

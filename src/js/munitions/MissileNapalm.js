@@ -3,7 +3,7 @@ import { collisionTest } from '../core/logic.js';
 import { FPS, GAME_SPEED, TYPES, getTypes } from '../core/global.js';
 import { sprites } from '../core/sprites.js';
 import { utils } from '../core/utils.js';
-import { game } from '../core/Game.js';
+import { game, getObjectById } from '../core/Game.js';
 
 const width = 22;
 const height = 20;
@@ -97,7 +97,7 @@ const MissileNapalm = (options = {}) => {
 
   collision = {
     options: {
-      source: exports,
+      source: data.id,
       targets: undefined,
       useLookAhead: true,
       /**
@@ -107,7 +107,8 @@ const MissileNapalm = (options = {}) => {
       //
       xLookAhead: width,
       checkTweens: true,
-      hit(target) {
+      hit(targetID) {
+        let target = getObjectById(targetID);
         if (data.damagePoints) {
           /**
            * Special case: missile napalm doesn't burn friendly helicopters

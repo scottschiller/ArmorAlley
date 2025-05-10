@@ -179,7 +179,7 @@ function collisionCheckTweens(source, target, repositionOnHit = true) {
 function collisionCheckObject(options) {
   /**
    * options = {
-   *   source: object - eg., gunfire[0]
+   *   source: object by ID - eg., game.objectsById[source] === gunfire[0]
    *   targets: array - eg., zones.objectsByZone[zoneNumber]['enemy'][tank objects]
    * }
    */
@@ -280,10 +280,10 @@ function collisionCheckObject(options) {
 
         if (options.hit) {
           // provide target, "no specific points", source.
-          options.hit(target, null, options.source);
+          options.hit(tData.id, null, options.source);
 
           // update energy?
-          sprites.updateEnergy(target);
+          sprites.updateEnergy(target.data.id);
         }
       }
     }

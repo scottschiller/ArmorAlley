@@ -1,4 +1,4 @@
-import { game, gameType } from '../core/Game.js';
+import { game, gameType, getObjectById } from '../core/Game.js';
 import {
   DEFAULT_FUNDS,
   TYPES,
@@ -111,10 +111,11 @@ const EndBunker = (options = {}) => {
 
   exports.nearby = {
     options: {
-      source: exports,
+      source: data.id,
       targets: undefined,
       useLookAhead: true,
-      hit(target) {
+      hit(targetID) {
+        let target = getObjectById(targetID);
         const isFriendly = target.data.isEnemy === data.isEnemy;
 
         if (!isFriendly && data.energy) {
@@ -158,7 +159,7 @@ const EndBunker = (options = {}) => {
               // force update of local funds counter
               game.objects.funds.setFunds(data.funds);
             }
-            sprites.updateEnergy(exports);
+            sprites.updateEnergy(data.id);
             // die silently.
             target.die({ silent: true });
             playSound(sounds.doorClose, exports);
@@ -199,7 +200,7 @@ function hit(exports, points, target) {
     target.data?.parentType === TYPES.tank
   ) {
     data.energy = Math.max(0, data.energy - points);
-    sprites.updateEnergy(exports);
+    sprites.updateEnergy(data.id);
   }
 }
 
@@ -370,8 +371,9 @@ function distributeFunds(exports) {
     data.fundsModulus * FPS * (FPS / 30) * GAME_SPEED_RATIOED
   );
 
-  let helicopter =
-    game.objectsById[objects.helicopters[data.isEnemy ? 'right' : 'left']];
+  let helicopter = getObjectById(
+    objects.helicopters[data.isEnemy ? 'right' : 'left']
+  );
 
   // if no helicopter (e.g., tutorial and enemy isn't present yet), bail.
   if (!helicopter) return;
@@ -449,10 +451,12 @@ function updateHealth(exports, attacker) {
 
   if (data.energy) return;
 
-  if (attacker?.data?.parentType !== TYPES.tank) return;
+  let oAttacker = getObjectById(attacker);
+
+  if (oAttacker?.data?.parentType !== TYPES.tank) return;
 
   // we have a tank, after all
-  if (attacker.data.isEnemy !== game.players.local.data.isEnemy) {
+  if (oAttacker.data.isEnemy !== game.players.local.data.isEnemy) {
     game.objects.notifications.addNoRepeat(
       'The enemy neutralized your end bunker 🚩'
     );

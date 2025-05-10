@@ -1,4 +1,4 @@
-import { game } from '../core/Game.js';
+import { game, getObjectById } from '../core/Game.js';
 import { gameType } from '../aa.js';
 import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
@@ -107,11 +107,12 @@ const Bomb = (options = {}) => {
 
   exports.collision = {
     options: {
-      source: exports,
+      source: exports.data.id,
       targets: undefined,
       checkTweens: true,
-      hit(target) {
+      hit(targetID) {
         let { data } = exports;
+        let target = getObjectById(targetID);
         // special case: bomb being hit, eventually shot down by gunfire
         if (target.data.type === TYPES.gunfire && data.energy) {
           data.energy = Math.max(0, data.energy - target.data.damagePoints);
@@ -219,7 +220,8 @@ function die(exports, dieOptions = {}) {
     // restore original scale.
     data.scale = 1;
   } else {
-    if (data?.attacker?.data?.type !== TYPES.helicopter) {
+    let oAttacker = getObjectById(data?.attacker);
+    if (oAttacker?.data?.type !== TYPES.helicopter) {
       // hackish: offset rotation so explosion points upward.
       data.angle -= 90;
       // limit rotation, as well.
@@ -425,7 +427,7 @@ function bombHitTarget(exports, target) {
 
   if (target.data.type === TYPES.smartMissile) {
     die(exports, {
-      attacker: target,
+      attacker: target.data.id,
       type: target.data.type,
       omitSound: true,
       spark: true,
@@ -463,7 +465,7 @@ function bombHitTarget(exports, target) {
     data.bottomAlign = bottomAlign;
 
     die(exports, {
-      attacker: target,
+      attacker: target.data.id,
       type: target.data.type,
       spark,
       hidden,

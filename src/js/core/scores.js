@@ -1,6 +1,6 @@
 import { levelName, levelNumber } from '../levels/default.js';
 import { itemStats } from '../levels/item-stats.js';
-import { game, gameType } from './Game.js';
+import { game, gameType, getObjectById } from './Game.js';
 import { FPS, GAME_SPEED_RATIOED, gameTypeEmoji, TYPES } from './global.js';
 
 // left + right teams' scores, respectively.
@@ -88,12 +88,13 @@ function scoreCreate(o) {
   maybeRefresh();
 }
 
-function scoreDestroy(o) {
+function scoreDestroy(objectID) {
   // e.g., a tank has been destroyed.
 
   // ignore anything destroyed during end sequence.
   if (game.data.battleOver) return;
 
+  let o = getObjectById(objectID);
   if (o.data.hostile) return;
 
   let item = itemStats[o.data.type];

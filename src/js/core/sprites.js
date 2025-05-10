@@ -6,7 +6,7 @@ import {
   FPS,
   GAME_SPEED_RATIOED
 } from '../core/global.js';
-import { game } from './Game.js';
+import { game, getObjectById } from './Game.js';
 import { zones } from './zones.js';
 
 const sprites = {
@@ -276,7 +276,7 @@ const sprites = {
      * Move with "attached" target offset, if there is one -
      * e.g., shrapnel "stuck" to helicopter.
      */
-    let target = data.target && game.objectsById[data.target];
+    let target = getObjectById(data.target);
 
     if (target?.data) {
       sprites.moveTo(
@@ -291,7 +291,12 @@ const sprites = {
     sprites.maybeFade(exports);
   },
 
-  updateEnergy: (object) => {
+  updateEnergy: (objectID) => {
+    let object = getObjectById(objectID);
+
+    // don't render if destroyed
+    if (!object) return;
+
     // only do work if visible, OR "always" shown and needing updates
     if (
       !object.data.isOnScreen &&

@@ -2,7 +2,7 @@ import { getTypes, rndInt, worldHeight } from '../core/global.js';
 import { collisionTest } from '../core/logic.js';
 import { common } from '../core/common.js';
 import { sprites } from '../core/sprites.js';
-import { game } from '../core/Game.js';
+import { game, getObjectById } from '../core/Game.js';
 
 const LandingPad = (options = {}) => {
   let exports;
@@ -72,9 +72,10 @@ const LandingPad = (options = {}) => {
 
   collision = {
     options: {
-      source: exports,
+      source: data.id,
       targets: undefined,
-      hit(target) {
+      hit(targetID) {
+        let target = getObjectById(targetID);
         if (!target.onLandingPad) return;
         /**
          * slightly hackish: landing pad shape doesn't take full height of bounding box.
@@ -87,7 +88,7 @@ const LandingPad = (options = {}) => {
           // "friendly landing pad HIT"
           if (target.data.y + target.data.height >= worldHeight) {
             // provide the "active" landing pad
-            target.onLandingPad(true, exports);
+            target.onLandingPad(true, data.id);
           }
         } else {
           // "friendly landing pad MISS"

@@ -1,4 +1,4 @@
-import { game } from '../core/Game.js';
+import { game, getObjectById } from '../core/Game.js';
 import { utils } from '../core/utils.js';
 import {
   ENEMY_COLOR,
@@ -148,7 +148,7 @@ const SuperBunker = (options = {}) => {
 
   nearby = {
     options: {
-      source: exports,
+      source: data.id,
       targets: undefined,
       fireTargetCount: 0,
       useLookAhead: true,
@@ -161,7 +161,9 @@ const SuperBunker = (options = {}) => {
         // hits may have been counted
         setFiring(exports, nearby.options.fireTargetCount > 0);
       },
-      hit(target) {
+      hit(targetID) {
+        let target = getObjectById(targetID);
+
         let isFriendly = !data.hostile && target.data.isEnemy === data.isEnemy;
 
         const isTargetFriendlyToPlayer =
@@ -277,7 +279,7 @@ const SuperBunker = (options = {}) => {
 
         playSound(sounds.doorClose, exports);
 
-        sprites.updateEnergy(exports);
+        sprites.updateEnergy(data.id);
       },
 
       miss() {
@@ -374,7 +376,10 @@ function updateHealth(exports, attacker) {
    */
   if (data.energy) return;
 
-  const isFriendly = attacker.data.isEnemy === game.players.local.data.isEnemy;
+  let oAttacker = getObjectById(attacker);
+
+  const isFriendly =
+    oAttacker?.data?.isEnemy === game.players.local.data.isEnemy;
 
   // we have a tank, after all
   if (isFriendly) {
@@ -401,7 +406,7 @@ function hit(exports, points, target) {
   ) {
     data.energy = Math.max(0, data.energy - points);
     updateFireModulus();
-    sprites.updateEnergy(exports);
+    sprites.updateEnergy(data.id);
   }
 }
 
@@ -424,7 +429,7 @@ function die(exports) {
   // un-manned, but dangerous to helicopters on both sides.
   updateStatus(exports, { hostile: true });
 
-  sprites.updateEnergy(exports);
+  sprites.updateEnergy(data.id);
 
   // check if enemy convoy production should stop or start
   checkProduction();

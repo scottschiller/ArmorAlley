@@ -124,7 +124,7 @@ const MissileLauncher = (options = {}) => {
 
   exports.friendlyNearby = {
     options: {
-      source: exports,
+      source: data.id,
       targets: undefined,
       useLookAhead: true,
       // stop moving if we roll up behind a friendly vehicle

@@ -1,4 +1,4 @@
-import { game } from '../core/Game.js';
+import { game, getObjectById } from '../core/Game.js';
 import { common } from '../core/common.js';
 import { collisionTest } from '../core/logic.js';
 import {
@@ -127,7 +127,7 @@ const Shrapnel = (options = {}) => {
 
   collision = {
     options: {
-      source: exports,
+      source: data.id,
       targets: undefined,
       checkTweens: true,
       /**
@@ -137,8 +137,8 @@ const Shrapnel = (options = {}) => {
        * TODO: consider returning the adjusted hit coords in future use cases.
        */
       checkTweensRepositionOnHit: false,
-      hit(target) {
-        hitAndDie(exports, target);
+      hit(targetID) {
+        hitAndDie(exports, targetID);
       }
     },
     items:
@@ -213,8 +213,10 @@ function die(exports) {
   common.onDie(data.id);
 }
 
-function hitAndDie(exports, target) {
+function hitAndDie(exports, targetID) {
   let { data } = exports;
+
+  let target = getObjectById(targetID);
 
   let targetType,
     damageTarget = true;

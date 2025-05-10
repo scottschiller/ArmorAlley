@@ -1,4 +1,4 @@
-import { game } from '../core/Game.js';
+import { game, getObjectById } from '../core/Game.js';
 import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
 import { canNotify, collisionTest } from '../core/logic.js';
@@ -142,11 +142,11 @@ const AimedMissile = (options = {}) => {
 
   collision = {
     options: {
-      source: exports,
+      source: data.id,
       targets: undefined,
       checkTweens: true,
-      hit(target) {
-        sparkAndDie(exports, target);
+      hit(targetID) {
+        sparkAndDie(exports, targetID);
       }
     },
     items: getTypes(
@@ -239,8 +239,10 @@ function die(exports, dieOptions = {}) {
 
   effects.inertGunfireExplosion({ exports });
 
+  let oAttacker = getObjectById(attacker);
+
   // special-case: shot down by gunfire, vs. generic "boom"
-  if (attacker?.data?.type === TYPES.gunfire && sounds.metalClang) {
+  if (oAttacker?.data?.type === TYPES.gunfire && sounds.metalClang) {
     playSound(sounds.metalClang, game.players.local);
   } else if (sounds.genericBoom) {
     playSound(sounds.genericBoom, game.players.local);
@@ -266,14 +268,18 @@ function spark(exports) {
   domCanvas.img = effects.spark();
 }
 
-function sparkAndDie(exports, target) {
+function sparkAndDie(exports, targetID) {
   let { data } = exports;
+
+  let target = getObjectById(targetID);
 
   // if we don't have a target, something is very wrong.
   if (!target) return;
 
+  let tData = target.data;
+
   // special case: take a slight hit and "slice through" ground-based infantry and engineers
-  const { bottomAligned, type } = target.data;
+  const { bottomAligned, type } = tData;
 
   // engineers are an infantry sub-type
   if (type == TYPES.infantry && bottomAligned && data.energy > 0) {
@@ -293,7 +299,7 @@ function sparkAndDie(exports, target) {
       data.id
     );
 
-    if (!target.data.dead && data.armed) {
+    if (!tData.dead && data.armed) {
       // a missile hit something, but the target didn't die.
 
       const isWeakened = data.energy < data.energyMax;
@@ -311,19 +317,19 @@ function sparkAndDie(exports, target) {
         exports
       );
       const verb =
-        target.data.type === TYPES.superBunker ? 'crashed into' : 'damaged';
+        tData.type === TYPES.superBunker ? 'crashed into' : 'damaged';
+
       const targetType = game.objects.stats.formatForDisplay(type, target);
       const health =
-        target.data.energy && target.data.energy !== target.data.energyMax
-          ? ` (${Math.floor(
-              (target.data.energy / target.data.energyMax) * 100
-            )}%)`
+        tData.energy && tData.energy !== tData.energyMax
+          ? ` (${Math.floor((tData.energy / tData.energyMax) * 100)}%)`
           : '';
-      const aOrAn = target.data.type === TYPES.infantry ? 'an' : 'a';
+
+      const aOrAn = tData.type === TYPES.infantry ? 'an' : 'a';
 
       const text = `${whose} ${missileType} ${verb} ${aOrAn} ${targetType}${health}`;
 
-      if (canNotify(target.data.type, data.type)) {
+      if (canNotify(tData.type, data.type)) {
         game.objects.notifications.add(text);
       }
     }
@@ -335,13 +341,13 @@ function sparkAndDie(exports, target) {
   sprites.attachToTarget(exports, target);
 
   // bonus "hit" sounds for certain targets
-  if (target.data.type === TYPES.tank || target.data.type === TYPES.turret) {
+  if (tData.type === TYPES.tank || tData.type === TYPES.turret) {
     playSound(sounds.metalHit, game.players.local);
-  } else if (target.data.type === TYPES.bunker) {
+  } else if (tData.type === TYPES.bunker) {
     playSound(sounds.concreteHit, game.players.local);
   }
 
-  die(exports, { attacker: target });
+  die(exports, { attacker: target.data.id });
 }
 
 function animate(exports) {

@@ -1,4 +1,4 @@
-import { game } from '../core/Game.js';
+import { game, getObjectById } from '../core/Game.js';
 import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
 import { gamePrefs } from '../UI/preferences.js';
@@ -105,7 +105,7 @@ const Van = (options = {}) => {
 
   exports.friendlyNearby = {
     options: {
-      source: exports,
+      source: data.id,
       targets: undefined,
       useLookAhead: true,
       // stop moving if we roll up behind a friendly vehicle
@@ -186,7 +186,9 @@ function die(exports, dieOptions = {}) {
 
   common.addGravestone(exports);
 
-  const attackerType = dieOptions.attacker?.data.type;
+  let attacker = getObjectById(dieOptions.attacker);
+
+  const attackerType = attacker?.data.type;
 
   if (
     !net.connected &&

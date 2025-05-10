@@ -1,4 +1,4 @@
-import { game } from '../core/Game.js';
+import { game, getObjectById } from '../core/Game.js';
 import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
 import {
@@ -185,7 +185,7 @@ function createBalloon(exports) {
 
   if (!chain) {
     // create a chain, linking the base and the balloon
-    let oBalloon = game.objectsById[objects.balloon];
+    let oBalloon = getObjectById(objects.balloon);
 
     let newChain = game.addObject(TYPES.chain, {
       isEnemy: data.isEnemy,
@@ -317,7 +317,7 @@ function engineerRepair(exports, engineer) {
     }
   }
 
-  sprites.updateEnergy(exports);
+  sprites.updateEnergy(data.id);
 }
 
 function repair(exports) {
