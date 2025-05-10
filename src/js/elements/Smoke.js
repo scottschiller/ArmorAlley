@@ -127,8 +127,6 @@ function die(exports) {
 function animate(exports) {
   let { data, domCanvas, options } = exports;
 
-  let scale = null;
-
   if (data.vX !== null && data.vY !== null) {
     data.x +=
       data.vX *
