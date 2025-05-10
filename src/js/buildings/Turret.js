@@ -525,7 +525,7 @@ function setFiring(exports, isFiring) {
   }
 
   if (!data.isEnemy) {
-    game.objectsById[objects.cornholio]?.setSpeaking(data.firing);
+    getObjectById(objects.cornholio)?.setSpeaking(data.firing);
   }
 }
 
@@ -541,7 +541,7 @@ function die(exports, dieOptions = {}) {
   data.restoring = false;
   data.dead = true;
 
-  game.objectsById[objects.cornholio]?.hide();
+  getObjectById(objects.cornholio)?.hide();
 
   // hackish: ensure firing is reset.
   setFiring(exports, false);
@@ -725,7 +725,7 @@ function repair(exports, engineer, complete) {
 
           data.queuedSound = null;
 
-          let cornholio = game.objectsById[objects.cornholio];
+          let cornholio = getObjectById(objects.cornholio);
 
           cornholio?.show();
           cornholio?.setSpeaking(true);
@@ -818,7 +818,7 @@ function claim(exports, engineer) {
 
   if (data.claimPoints < data.claimPointsMax) return;
 
-  let cornholio = game.objectsById[objects.cornholio];
+  let cornholio = getObjectById(objects.cornholio);
 
   // change sides.
   if (!data.dead) {
