@@ -136,7 +136,7 @@ function Stats() {
     // note when player destroys MTVIE
     if (
       obj.data.isEnemy &&
-      game.objectsById[obj?.data?.attacker]?.data?.parentType ===
+      getObjectById(obj?.data?.attacker)?.data?.parentType ===
         TYPES.helicopter &&
       youKilledTypes[type]
     ) {
@@ -340,7 +340,7 @@ function Stats() {
   }
 
   function getHelicopterLabel(helicopterID) {
-    let helicopter = game.objectsById[helicopterID];
+    let helicopter = getObjectById(helicopterID);
 
     if (!helicopter?.data) return;
 
@@ -364,26 +364,30 @@ function Stats() {
       // yourself, or your friend in humans_vs_cpu[s]?
       if (data.id === game.players.local.data.id) return `you`;
       return `a friendly helicopter`;
-    } else {
-      if (!net.active) return `the enemy helicopter`;
-      // generic
-      return `an enemy ${helicopter}`;
     }
+
+    if (!net.active) return `the enemy helicopter`;
+
+    // generic
+    return `an enemy ${helicopter}`;
   }
 
-  function getNormalizedAttackerString(attacker) {
+  function getNormalizedAttackerString(attackerID) {
     // common string building: "somebody did something."
 
-    const normalizedType = getNormalizedUnitName(attacker);
+    let attacker = getObjectById(attackerID);
 
     const aData = attacker.data;
+
+    const normalizedType = getNormalizedUnitName(attacker);
 
     // this shouldn't happen.
     if (!normalizedType || !aData) return 'an unknown unit';
 
     // special case: return hostile objects (shrapnel, expired missiles) as-is.
-    if (aData.hostile)
+    if (aData.hostile) {
       return (notifyTypes[aData.type]?.hostilePrefix || '') + normalizedType;
+    }
 
     // treat helicopters as the actor for gunfire, and bombs (e.g., "you bombed a tank") - but not smart missiles, nor shrapnel - e.g., when you died.
     const isHelicopter =
@@ -395,15 +399,14 @@ function Stats() {
     // build out string, based on enemy/non-enemy, local vs. remote player.
     if (isHelicopter) {
       return getHelicopterLabel(
-        aData?.parentType === TYPES.helicopter
-          ? game.objectsById[aData.parent]
-          : attacker
+        aData?.parentType === TYPES.helicopter ? aData.parent : attackerID
       );
     }
 
     // enemy case, e.g., "an enemy tank"
-    if (aData.isEnemy !== game.players.local.data.isEnemy)
+    if (aData.isEnemy !== game.players.local.data.isEnemy) {
       return `an enemy ${normalizedType}`;
+    }
 
     // everything else: "your infantry"
     return `your ${normalizedType}`;
@@ -442,15 +445,15 @@ function Stats() {
     }
 
     // the object responsible for killing the target
-    let attacker = target.data?.attacker?.data;
+    let aData = getObjectById(target.data?.attacker)?.data;
 
     // this should not be common, save for a few units - e.g., a missile launcher that is self-destructing.
-    if (!attacker) return;
+    if (!aData) return;
 
-    let aParent = game.objectsById[attacker.parent];
+    let aParent = getObjectById(aData.parent);
 
     // certain targets can be ignored, too. i.e., bunkers don't kill missiles.
-    if (notifyTypes[attacker.type]?.exclude) {
+    if (notifyTypes[aData.type]?.exclude) {
       // what about the parent - e.g., is this gunfire from an infantry?
       // don't notify if the parent is a helicopter, though - we have those covered separately.
       if (
@@ -460,32 +463,33 @@ function Stats() {
         notifyTypes[aParent.data.type] &&
         !notifyTypes[aParent.data.type].exclude
       ) {
-        attacker = aParent.data;
+        aData = aParent.data;
       } else if (
         // special case: allow "raw" off-screen shrapnel that kills stuff to be reported.
-        !(attacker.type === TYPES.shrapnel && !target.data?.isOnScreen)
+        !(aData.type === TYPES.shrapnel && !target.data?.isOnScreen)
       ) {
         return;
       }
     }
 
     // vans may explode with an invisible "bomb" that can kill infantry, but don't report them.
-    if (attacker.type === TYPES.van) return;
+    if (aData.type === TYPES.van) return;
 
     // user might have turned off notifications for these types
-    if (!canNotify(type, attacker.type)) return;
+    if (!canNotify(type, aData.type)) return;
 
     // certain things can be ignored if in view, i.e., you bomb an on-screen tank.
     // if you throw a bomb off-screen and it hits something, then it makes sense to notify.
-    if (target.data.isOnScreen && notifyTypes[attacker.type]?.offScreenOnly)
+    if (target.data.isOnScreen && notifyTypes[aData.type]?.offScreenOnly) {
       return;
+    }
 
     // did a helicopter die?
     const isHelicopter = type === TYPES.helicopter;
 
     // action word based on attacker type; e.g., gunfire = "shot", bomb = "bombed" etc.
     // allow for object-specific interactions also, e.g., gunfire hitting a balloon -> `gunfire = { balloon_verb: 'popped' }`
-    const attackerItem = notifyTypes[attacker.type] || {};
+    const attackerItem = notifyTypes[aData.type] || {};
 
     const verb =
       attackerItem[`verb_${type}`] || attackerItem.verb || UNKNOWN_VERB;
@@ -495,8 +499,8 @@ function Stats() {
         `${UNKNOWN_VERB} for type / target`,
         type,
         target.data,
-        attacker?.type,
-        attacker,
+        aData?.type,
+        aData,
         attackerItem
       );
       return;
@@ -509,16 +513,16 @@ function Stats() {
 
     // check the parent, if it's gunfire.
     // e.g., player helicopter's gunfire hitting the CPU helicopter.
-    if (attacker.type === TYPES.gunfire) {
-      isSameType = attacker.parentType === type;
+    if (aData.type === TYPES.gunfire) {
+      isSameType = aData.parentType === type;
     } else {
       // perhaps two missiles, etc., took each other out.
-      isSameType = attacker.type === type;
+      isSameType = aData.type === type;
 
       // check for helicopter collision - with other helicopter, or a building or ground unit.
       if (isHelicopter) {
         // extra-special case: player + CPU helicopters collided.
-        if (attacker.type === TYPES.helicopter) {
+        if (aData.type === TYPES.helicopter) {
           game.objects.notifications.add(
             `You collided with the enemy. ${emoji.skull}${emoji.skull}`
           );
@@ -529,11 +533,12 @@ function Stats() {
         // if the helicopter collided with a non-munition - i.e., ground unit or building - bail.
         // this avoids a duplicate notification, e.g., "a balloon hit a helicopter."
         if (
-          attacker.type !== TYPES.smartMissile &&
-          attacker.type !== TYPES.bomb &&
-          attacker.type !== TYPES.chain
-        )
+          aData.type !== TYPES.smartMissile &&
+          aData.type !== TYPES.bomb &&
+          aData.type !== TYPES.chain
+        ) {
           return;
+        }
       }
     }
 
@@ -541,12 +546,13 @@ function Stats() {
     // the reverse is covered, e.g., "you were smoked by an enemy smart missile."
     if (
       target.data.type === TYPES.smartMissile &&
-      attacker.type === TYPES.helicopter
-    )
+      aData.type === TYPES.helicopter
+    ) {
       return;
+    }
 
     // if (e.g.) two tanks fought, determine who won. "your" or "their" (attacking) tank "took out one of theirs / yours."
-    let didYoursWin = isSameType && !attacker.isEnemy;
+    let didYoursWin = isSameType && !aData.isEnemy;
 
     // if two tanks, ignore becuse tanks handle that themselves.
     if (isSameType && type === TYPES.tank) return;
@@ -562,7 +568,7 @@ function Stats() {
       target.data.id === game.players.local.data.id
     ) {
       // hacks
-      if (attacker.type === TYPES.chain) {
+      if (aData.type === TYPES.chain) {
         text = `You ${verb} ${getNormalizedAttackerString(
           target.data.attacker
         )}`;
@@ -585,7 +591,7 @@ function Stats() {
           ? didYoursWin
             ? youWonText
             : theyWonText
-          : (attacker.hostile
+          : (aData.hostile
               ? target.data.isEnemy
                 ? 'an enemy '
                 : 'your '
@@ -645,10 +651,11 @@ function Stats() {
     if (
       target.data.isOnScreen &&
       !isHelicopter &&
-      attacker.type !== TYPES.helicopter &&
-      attacker?.parentType !== TYPES.helicopter
-    )
+      aData.type !== TYPES.helicopter &&
+      aData?.parentType !== TYPES.helicopter
+    ) {
       return;
+    }
 
     // HACK: one more exception: interaction between two "same" units - e.g., "An enemy infantry shot your <span ...>" - should be "yours", of course.
     if (text.includes('your <')) {
