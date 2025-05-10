@@ -1,4 +1,4 @@
-import { game } from '../core/Game.js';
+import { game, getObjectById } from '../core/Game.js';
 import { common } from '../core/common.js';
 import { FPS, GAME_SPEED, TYPES } from '../core/global.js';
 
@@ -68,7 +68,7 @@ function RadarItem(options) {
     data.stepOffset = data.stepFrames[data.stepFrame];
 
     // hackish: assign to parent
-    game.objectsById[data.oParent].data.stepOffset = data.stepOffset;
+    getObjectById(data.oParent).data.stepOffset = data.stepOffset;
 
     data.stepActive = true;
   }
@@ -99,7 +99,7 @@ function RadarItem(options) {
     data.stepOffset = data.stepFrames[data.stepFrame];
 
     // hackish: assign to parent
-    game.objectsById[data.oParent].data.stepOffset = data.stepOffset;
+    getObjectById(data.oParent).data.stepOffset = data.stepOffset;
 
     if (data.stepFrame >= data.stepFrames.length - 1) {
       data.stepActive = false;
@@ -110,7 +110,7 @@ function RadarItem(options) {
     type: 'radar-item',
     excludeLeftScroll: true, // don't include battlefield scroll in transform(x)
     isOnScreen: true, // radar items are always within view
-    oParent: options.oParent.data.id,
+    oParent: options.oParent,
     parentType: options.parentType,
     dead: false,
     visible: true,
@@ -123,7 +123,7 @@ function RadarItem(options) {
     stepFrames: []
   };
 
-  oParent = options.oParent.data.id;
+  oParent = options.oParent;
 
   exports = {
     animate,
@@ -137,9 +137,11 @@ function RadarItem(options) {
     dismiss
   };
 
-  if (options.oParent?.domCanvas?.radarItem) {
+  let liveParent = getObjectById(options.oParent);
+
+  if (liveParent?.domCanvas?.radarItem) {
     // inherit
-    exports.domCanvas = options.oParent.domCanvas.radarItem;
+    exports.domCanvas = liveParent.domCanvas.radarItem;
   }
 
   return exports;

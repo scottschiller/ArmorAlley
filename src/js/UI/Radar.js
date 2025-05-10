@@ -1,4 +1,4 @@
-import { game } from '../core/Game.js';
+import { game, getObjectById } from '../core/Game.js';
 import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
 import { gamePrefs } from './preferences.js';
@@ -131,7 +131,7 @@ const Radar = () => {
 
     itemObject = RadarItem({
       parentType: item.data.type,
-      oParent: item,
+      oParent: item.data.id,
       canRespawn: !!itemOptions?.canRespawn,
       isStatic: false,
       // width + height, determined after append
@@ -317,7 +317,7 @@ const Radar = () => {
   }
 
   function updateTargetMarker(targetItem, allowTransition) {
-    let targetParent = game.objectsById[targetItem?.oParent];
+    let targetParent = getObjectById(targetItem?.oParent);
 
     /**
      * Ignore while jammed by van or level flags OR, "target is helicopter but hidden for this battle
@@ -585,7 +585,7 @@ const Radar = () => {
       // additionally: "this is a throttled update", OR, this is a type that gets updated every frame.
       // exception: bases and bunkers may be "dirty" due to resize, `isStale` will be set. force a refresh in that case.
 
-      oParent = game.objectsById[objects.items[i].oParent];
+      oParent = getObjectById(objects.items[i].oParent);
 
       if (!oParent) {
         /**

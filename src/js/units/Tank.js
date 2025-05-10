@@ -316,7 +316,7 @@ function isAttackerValid(exports) {
 
   // normalize object to check: gunfire -> tank (for example), vs. helicopter crashing into a tank
   const actor = attacker.parentType
-    ? game.objectsById[attacker.parent]?.data
+    ? getObjectById(attacker.parent)?.data
     : attacker.data;
 
   // just in case

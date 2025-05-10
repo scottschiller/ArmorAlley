@@ -1,4 +1,4 @@
-import { game } from '../core/Game.js';
+import { game, getObjectById } from '../core/Game.js';
 import { utils } from '../core/utils.js';
 import { oneOf, rndInt, TYPES } from '../core/global.js';
 import { common } from '../core/common.js';
@@ -11,7 +11,7 @@ const Cornholio = (options = {}) => {
     if (data.visible === visible) return;
 
     // BnB pref change can fire this; make sure turret is also live.
-    data.visible = !game.objectsById[data.oParent].data.dead && visible;
+    data.visible = !getObjectById(data.oParent).data.dead && visible;
   }
 
   function setActiveSound(sound, turretFiring = null) {

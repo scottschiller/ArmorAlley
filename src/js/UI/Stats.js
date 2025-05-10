@@ -71,8 +71,12 @@ function Stats() {
   }
 
   function normalizeObj(obj) {
-    if (obj && !obj.data && obj.oParent) {
-      obj = game.objectsById[obj.oParent];
+    // given a string or object, return the object or its parent.
+    if (typeof obj === 'string') {
+      obj = getObjectById(obj);
+    }
+    if (obj.oParent) {
+      obj = getObjectById(obj.oParent);
     }
     return obj;
   }
