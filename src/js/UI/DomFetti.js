@@ -1,4 +1,4 @@
-import { game } from '../core/Game.js';
+import { game, getObjectById } from '../core/Game.js';
 import { FPS, GAME_SPEED, TYPES, isiPhone } from '../core/global.js';
 import { ctxOptionsById } from './DomCanvas.js';
 
@@ -537,7 +537,10 @@ function confetti(
   return animateFetti(fettis, decay, callback);
 }
 
-function domFettiBoom(source, target, x, y) {
+function domFettiBoom(sourceID, targetID, x, y) {
+  let source = getObjectById(sourceID);
+  let target = getObjectById(targetID);
+
   if (!source?.data) return;
 
   checkContext();
