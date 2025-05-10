@@ -756,44 +756,48 @@ const common = {
     }
   },
 
-  onDie(target, dieOptions = {}) {
+  onDie(targetID, dieOptions = {}) {
     /**
      * A generic catch-all for battlefield item `die()` events.
      */
 
+    let target = getObjectById(targetID);
+
     // NOTE: attacker may not always be defined.
     const attacker = dieOptions.attacker || target?.data?.attacker;
+
+    let oAttacker = getObjectById(attacker);
 
     if (!game.objects.editor && !dieOptions.silent) {
       /**
        * Ignore "silent" deaths - e.g., infantry being picked up by helicopter
        * or unit being recycled after reaching the other end of the battlefield
        */
-      scoreDestroy(target);
-      game.objects.stats.destroy(target, dieOptions);
+      scoreDestroy(targetID);
+      game.objects.stats.destroy(targetID, dieOptions);
     }
 
     if (dieOptions.recycled) {
-      game.objects.stats.recycle(target);
+      game.objects.stats.recycle(targetID);
     }
 
     // callback-style methods
-    let attackerParent = game.objectsById[attacker?.data?.parent];
+    let attackerParent = game.objectsById[oAttacker?.data?.parent];
 
     if (attackerParent?.onKill) {
       // e.g., helicopter shot target with gunfire
-      attackerParent.onKill(target);
+      attackerParent.onKill(targetID);
     }
 
-    if (attacker?.onKill) {
+    if (oAttacker?.onKill) {
       // e.g., helicopter crashed directly into target
-      attacker.onKill(target);
+      oAttacker.onKill(targetID);
     }
 
     if (!net.active) return;
 
     if (debugCollision) {
-      if (attacker && attacker.data.type === TYPES.helicopter)
+      if (oAttacker && attacker.data.type === TYPES.helicopter)
         makeDebugRect(attacker);
       if (target && target.data.type === TYPES.helicopter)
         makeDebugRect(target);
@@ -823,7 +827,7 @@ const common = {
     // by the time this lands, the remote object may have already died, been removed and be in the "boneyard" - that's fine.
     net.sendDelayedMessage({
       type: 'GAME_EVENT',
-      id: target.data.id,
+      id: targetID,
       method: 'die',
       params
     });
@@ -872,7 +876,7 @@ const common = {
 
   initNearby(nearby, exports) {
     // map options.source -> exports
-    nearby.options.source = exports;
+    nearby.options.source = exports.data.id;
   },
 
   fetch(url, callback) {
