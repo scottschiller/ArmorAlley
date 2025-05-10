@@ -1,4 +1,4 @@
-import { game } from '../core/Game.js';
+import { game, getObjectById } from '../core/Game.js';
 import { common } from '../core/common.js';
 import { utils } from '../core/utils.js';
 import { playSound, skipSound, sounds } from '../core/sound.js';
@@ -178,15 +178,22 @@ function die(exports) {
   data.dead = true;
 
   // detach balloon, if applicable
-  if (objects.balloon && game.objectsById[objects.balloon]) {
-    game.objectsById[objects.balloon].detachFromBunker();
+  let balloon = getObjectById(objects.balloon);
+
+  if (balloon) {
+    balloon.detachFromBunker();
     objects.balloon = null;
+    balloon = null;
   }
 
   // remove bunker reference, too
-  if (objects.bunker && game.objectsById[objects.bunker]) {
-    game.objectsById[objects.bunker].nullifyChain();
-    objects.bunker = null;
+  if (objects.bunker) {
+    let bunker = game.objectsById[objects.bunker];
+    if (bunker) {
+      bunker.nullifyChain();
+      objects.bunker = null;
+      bunker = null;
+    }
   }
 
   common.onDie(data.id);
@@ -213,8 +220,8 @@ function animate(exports) {
 
   // move if attached, fall if not
 
-  let balloon = objects.balloon && game.objectsById[objects.balloon];
-  let bunker = objects.bunker && game.objectsById[objects.bunker];
+  let balloon = getObjectById(objects.balloon);
+  let bunker = getObjectById(objects.bunker);
 
   if (bunker && !bunker.data.dead) {
     if (balloon) {
