@@ -71,6 +71,7 @@ const Bomb = (options = {}) => {
   );
 
   exports.domCanvas = {
+    img: spriteConfig,
     radarItem: {
       width: 1.25,
       height: 2.5,
@@ -141,10 +142,8 @@ const Bomb = (options = {}) => {
     dieComplete: () => dieComplete(exports),
     bombHitTarget: (target) => bombHitTarget(exports, target),
     animate: () => animate(exports),
-    initBomb: () => initBomb(exports)
+    init: () => initBomb(exports)
   });
-
-  exports.initBomb();
 
   return exports;
 };
@@ -564,8 +563,6 @@ function animate(exports) {
 
 function initBomb(exports) {
   let { data } = exports;
-
-  exports.domCanvas.img = spriteConfig;
 
   if (data.hidden) return;
 
