@@ -260,7 +260,7 @@ function sparkAndDie(exports, target) {
 
       data.domFetti.startVelocity = Math.abs(data.vX) + Math.abs(data.vY);
 
-      effects.domFetti(exports, target);
+      effects.domFetti(data.id, targetID);
     } else if (
       tType === TYPES.tank ||
       tType === TYPES.helicopter ||
@@ -351,7 +351,7 @@ function sparkAndDie(exports, target) {
         angle: 0
       };
 
-      effects.domFetti(exports, target);
+      effects.domFetti(data.id, targetID);
     }
   }
 }

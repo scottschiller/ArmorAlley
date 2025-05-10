@@ -529,7 +529,7 @@ const Helicopter = (options = {}) => {
             noInitialSmoke: true
           });
 
-          effects.smokeRing(exports);
+          effects.smokeRing(data.id);
 
           effects.inertGunfireExplosion({ exports, count: 4 + rndInt(4) });
         } else {
@@ -2295,7 +2295,7 @@ function die(exports, dieOptions = {}) {
       (aData.type === TYPES.gunfire && aData.parentType === TYPES.turret))
   ) {
     // hit by other helicopter, missile, or turret gunfire? big smoke ring.
-    effects.smokeRing(exports, {
+    effects.smokeRing(data.id, {
       count: 20,
       velocityMax: 20,
       offsetY: data.height - 2,
@@ -2372,7 +2372,7 @@ function die(exports, dieOptions = {}) {
 
   //
 
-  effects.smokeRing(exports, { parentVX: data.vX, parentVY: data.vY });
+  effects.smokeRing(data.id, { parentVX: data.vX, parentVY: data.vY });
 
   effects.inertGunfireExplosion({ exports, count: 8 + rndInt(8) });
 
@@ -2406,9 +2406,10 @@ function die(exports, dieOptions = {}) {
   data.energy = 0;
 
   // ensure any health bar is updated and hidden ASAP
-  sprites.updateEnergy(exports);
+  sprites.updateEnergy(data.id);
 
-  effects.domFetti(exports, attacker);
+  // there may be no attacker if, e.g., we crashed into the ground.
+  effects.domFetti(data.id, attacker?.data?.id);
 
   // randomize for next time
   data.domFetti.elementCount = 256 + rndInt(512);

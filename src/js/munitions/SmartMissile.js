@@ -523,7 +523,7 @@ function die(exports, dieOptions = {}) {
     });
 
     if (attacker?.data?.type !== TYPES.infantry) {
-      effects.domFetti(exports);
+      effects.domFetti(data.id, attacker);
     }
 
     // special-case: shot down by gunfire, vs. generic "boom"
@@ -687,7 +687,7 @@ function sparkAndDie(exports, target) {
   }
 
   if (data.isBanana || !data.armed) {
-    effects.smokeRing(exports, {
+    effects.smokeRing(data.id, {
       count: data.armed ? 16 : 8,
       velocityMax: data.armed ? 24 : 12,
       offsetX: target.data.width / 2,

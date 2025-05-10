@@ -178,7 +178,7 @@ function die(exports, dieOptions = {}) {
 
     effects.inertGunfireExplosion({ exports });
 
-    effects.domFetti(exports, dieOptions.attacker);
+    effects.domFetti(data.id, dieOptions.attacker);
 
     // only cause damage if there was an attacker.
     // otherwise, regular self-destruct case will also stop the missile. ;)

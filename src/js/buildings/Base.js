@@ -193,7 +193,7 @@ function smallBoom(exports) {
   let { data } = exports;
 
   if (rnd(1) >= 0.66) {
-    effects.domFetti(exports);
+    effects.domFetti(data.id);
   }
 
   effects.shrapnelExplosion(data, {
@@ -203,7 +203,7 @@ function smallBoom(exports) {
     noInitialSmoke: true
   });
 
-  effects.smokeRing(exports, {
+  effects.smokeRing(data.id, {
     offsetX: data.width * 0.33 + rnd(data.width * 0.33),
     offsetY: rnd(data.height / 4),
     count: 5 + rndInt(5),
@@ -355,7 +355,7 @@ function nukeTheBase(exports) {
         // first one is always big.
         const isBigBoom = !iteration || rnd(0.75);
 
-        effects.smokeRing(exports, {
+        effects.smokeRing(data.id, {
           velocityMax: 64,
           count: isBigBoom ? 12 : 3,
           offsetX: data.width * 0.25 + rnd(data.halfWidth),

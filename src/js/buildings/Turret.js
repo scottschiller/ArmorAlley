@@ -609,9 +609,9 @@ function die(exports, dieOptions = {}) {
 
     effects.damageExplosion(exports);
 
-    effects.domFetti(exports, dieOptions?.attacker);
+    effects.domFetti(data.id, dieOptions?.attacker);
 
-    effects.smokeRing(exports, { isGroundUnit: true });
+    effects.smokeRing(data.id, { isGroundUnit: true });
 
     playSound(sounds.metalHitBreak, exports);
     playSound(sounds.genericExplosion, exports);

@@ -349,9 +349,9 @@ function die(exports, dieOptions = {}) {
 
     effects.inertGunfireExplosion({ exports });
 
-    effects.domFetti(exports, dieOptions.attacker);
+    effects.domFetti(data.id, dieOptions.attacker);
 
-    effects.smokeRing(exports, { isGroundUnit: true });
+    effects.smokeRing(data.id, { isGroundUnit: true });
 
     data.timers.deadTimer = common.frameTimeout.set('dieComplete', 1500);
 

@@ -166,7 +166,7 @@ function die(exports, dieOptions = {}) {
     velocity: 3 + rngInt(3, TYPES.shrapnel)
   });
 
-  effects.domFetti(exports, dieOptions.attacker);
+  effects.domFetti(data.id, dieOptions.attacker);
 
   effects.inertGunfireExplosion({ exports });
 

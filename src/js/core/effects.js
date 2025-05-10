@@ -1,5 +1,5 @@
 import { FPS, GAME_SPEED, oneOf, rng, worldHeight } from '../core/global.js';
-import { game } from '../core/Game.js';
+import { game, getObjectById } from '../core/Game.js';
 import { domFettiBoom } from '../UI/DomFetti.js';
 import { gamePrefs } from '../UI/preferences.js';
 import { rnd, rndInt, plusMinus, rad2Deg, TYPES } from '../core/global.js';
@@ -75,9 +75,11 @@ function canvasExplosion(exports, options = {}) {
 
 const effects = {
   animate: nextShrapnel,
-  smokeRing: (item, smokeOptions) => {
+  smokeRing: (objectID, smokeOptions) => {
+    let item = getObjectById(objectID);
+
     // don't create if not visible
-    if (!item.data.isOnScreen) return;
+    if (!item?.data?.isOnScreen) return;
 
     smokeOptions = smokeOptions || {};
 
@@ -248,7 +250,7 @@ const effects = {
             : -(data.vY || 0.25) + rnd(-2),
       // show smoke on battlefield, but not on radar when cloaked.
       parentWasCloaked: data.type === TYPES.helicopter && data.cloaked,
-      oParent: exports.data.id
+      oParent: data.id
     });
   },
 
@@ -286,17 +288,23 @@ const effects = {
     }
   },
 
-  domFetti: (exports = {}, target = {}) => {
+  domFetti: (sourceID, targetID) => {
     if (!gamePrefs.domfetti) return;
 
+    let source = getObjectById(sourceID);
+
+    let sData = source?.data;
+
+    if (!sData) {
+      console.warn('domFetti: no target data?', targetID);
+      return;
+    }
+
     // target needs to be on-screen, or "nearby"
-
-    const eData = exports.data;
-
-    if (!eData.isOnScreen && game.players.local) {
+    if (!sData.isOnScreen && game.players.local) {
       // ignore if too far away
       if (
-        Math.abs(game.players.local.data.x - eData.x) >
+        Math.abs(game.players.local.data.x - sData.x) >
         game.objects.view.data.browser.twoThirdsWidth
       )
         return;
@@ -306,18 +314,18 @@ const effects = {
 
     // hackish: for bomb explosions
 
-    if (eData.explosionWidth && eData.bottomAlign) {
-      widthOffset = eData.explosionWidth / 2;
-      heightOffset = eData.explosionHeight;
+    if (sData.explosionWidth && sData.bottomAlign) {
+      widthOffset = sData.explosionWidth / 2;
+      heightOffset = sData.explosionHeight;
     } else {
-      widthOffset = eData.halfWidth || 0;
-      heightOffset = eData.halfHeight || 0;
+      widthOffset = sData.halfWidth || 0;
+      heightOffset = sData.halfHeight || 0;
     }
 
-    const x = eData.x + widthOffset;
-    const y = eData.y + heightOffset;
+    const x = sData.x + widthOffset;
+    const y = sData.y + heightOffset;
 
-    game.objects.domFetti.push(domFettiBoom(exports, target, x, y));
+    game.objects.domFetti.push(domFettiBoom(sourceID, targetID, x, y));
   },
 
   shrapnelExplosion: (options = {}, shrapnelOptions = {}) => {

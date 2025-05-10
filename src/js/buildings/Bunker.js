@@ -370,9 +370,9 @@ function die(exports, dieOptions = {}) {
 
   effects.damageExplosion(exports);
 
-  effects.domFetti(exports, dieOptions.attacker);
+  effects.domFetti(data.id, dieOptions.attacker);
 
-  effects.smokeRing(exports, {
+  effects.smokeRing(data.id, {
     count: 24,
     velocityMax: 16,
     offsetY: data.height - 2,

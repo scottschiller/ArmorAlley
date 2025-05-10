@@ -295,9 +295,9 @@ function die(exports, dieOptions = {}) {
 
   effects.inertGunfireExplosion({ exports });
 
-  effects.domFetti(exports, dieOptions.attacker);
+  effects.domFetti(data.id, dieOptions.attacker);
 
-  effects.smokeRing(exports, {
+  effects.smokeRing(data.id, {
     parentVX: data.vX,
     parentVY: data.vY,
     offsetX: 3,
