@@ -8,7 +8,7 @@ import {
 } from '../core/global.js';
 import { common } from '../core/common.js';
 import { sprites } from '../core/sprites.js';
-import { game } from '../core/Game.js';
+import { game, getObjectById } from '../core/Game.js';
 import { utils } from '../core/utils.js';
 import { gamePrefs } from '../UI/preferences.js';
 import { levelFlags } from '../levels/default.js';
@@ -17,7 +17,7 @@ const Smoke = (options = {}) => {
   let domCanvas, data, exports;
 
   // live reference
-  let oParent = game.objectsById[options.oParent];
+  let oParent = getObjectById(options.oParent);
 
   data = common.inheritData(
     {
