@@ -184,7 +184,7 @@ const effects = {
     exports,
     chance = 1 - exports?.data?.energy / exports?.data?.energyMax
   ) => {
-    if (!exports || !exports.data || !exports.dom) return;
+    if (!exports || !exports.data) return;
 
     // 60fps: only run every fourth frame of animation by object, or game if unspecified.
     if (
