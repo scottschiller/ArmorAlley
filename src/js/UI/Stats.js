@@ -1,5 +1,5 @@
 import { TYPES } from '../core/global.js';
-import { game } from '../core/Game.js';
+import { game, getObjectById } from '../core/Game.js';
 import { gameEvents, EVENTS } from '../core/GameEvents.js';
 import { common } from '../core/common.js';
 import { gamePrefs } from './preferences.js';
@@ -105,9 +105,14 @@ function Stats() {
     }
   }
 
-  function destroy(obj, options) {
+  function destroy(objID, options) {
     // exclude during level previews, and battle-over destruction sequences
     if (!game.data.started || game.data.battleOver) return;
+
+    let obj = getObjectById(objID);
+
+    // guard
+    if (!obj?.data) return;
 
     // ignore radar items.
     if (obj.data.type === 'radar-item') return;
@@ -142,9 +147,13 @@ function Stats() {
     }
   }
 
-  function recycle(obj) {
+  function recycle(objID) {
     // exclude during level previews, and battle-over destruction sequences
     if (!game.data.started || game.data.battleOver) return;
+
+    let obj = getObjectById(objID);
+
+    if (!obj?.data) return;
 
     // ignore radar items.
     if (obj.data.type === 'radar-item') return;
@@ -326,7 +335,9 @@ function Stats() {
     return formatForDisplay(type, item);
   }
 
-  function getHelicopterLabel(helicopter) {
+  function getHelicopterLabel(helicopterID) {
+    let helicopter = game.objectsById[helicopterID];
+
     if (!helicopter?.data) return;
 
     const { data } = helicopter;
