@@ -246,7 +246,8 @@ function fire(exports) {
 
   for (i = 0, j = game.objects[TYPES.smartMissile].length; i < j; i++) {
     if (
-      game.objects[TYPES.smartMissile][i].objects.target === targetHelicopter
+      game.objects[TYPES.smartMissile][i].objects.target ===
+      targetHelicopter.data.id
     ) {
       similarMissileCount++;
     }
