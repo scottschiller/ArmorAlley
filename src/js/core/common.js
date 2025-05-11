@@ -796,6 +796,17 @@ const common = {
 
     if (!net.active) return;
 
+    /**
+     * TODO: debug root cause of missing objects.
+     * May be guest_ vs. host_, and/or objects that've already been destroyed.
+     */
+    if (!target) {
+      if (!aaLoader.isProd()) {
+        console.warn('no target?', targetID, target);
+      }
+      return;
+    }
+
     if (debugCollision) {
       if (oAttacker && attacker.data.type === TYPES.helicopter)
         makeDebugRect(attacker);
