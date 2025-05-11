@@ -193,6 +193,18 @@ function collisionCheckObject(options) {
     return false;
   }
 
+  // options.source as a string ID vs. object.
+  const sData =
+    typeof options.source === 'string'
+      ? getObjectById(options.source)?.data
+      : options.source;
+
+  if (typeof options.source !== 'string') {
+    console.log(
+      'collisionCheckObject: options.source NOT a string',
+      options.source
+    );
+  }
 
   // don't check if the object is dead or inert. If expired, only allow the object if it's also "hostile" (can still hit things)
   if (
