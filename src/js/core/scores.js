@@ -95,6 +95,10 @@ function scoreDestroy(objectID) {
   if (game.data.battleOver) return;
 
   let o = getObjectById(objectID);
+  if (!o) {
+    return;
+  }
+
   if (o.data.hostile) return;
 
   let item = itemStats[o.data.type];
