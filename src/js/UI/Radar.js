@@ -335,9 +335,6 @@ const Radar = () => {
 
     dom.targetMarker.style.opacity = 1;
 
-    // sanity check: ensure this object still exists.
-    if (!targetParent?.dom?.o) return;
-
     // layout may have been nuked; recalculate, if so.
     // TODO: fix missile launcher + turret layout stuff
     if (
