@@ -333,8 +333,6 @@ const Radar = () => {
       return;
     }
 
-    dom.targetMarker.style.opacity = 1;
-
     // layout may have been nuked; recalculate, if so.
     // TODO: fix missile launcher + turret layout stuff
     if (
@@ -358,6 +356,7 @@ const Radar = () => {
 
     // new target, hasn't been assigned yet
     if (allowTransition && data.radarTarget !== targetItem) {
+      dom.targetMarker.style.opacity = 1;
       utils.css.add(dom.targetMarker, 'transition-active');
     }
 
