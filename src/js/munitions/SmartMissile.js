@@ -773,12 +773,13 @@ function animate(exports) {
    *
    * if retargeting finds nothing at the moment the original is lost, the missile will die.
    */
-  const tData = objects?.target?.data;
+  const tData = getObjectById(objects.target)?.data;
 
   if (
     !data.expired &&
     gamePrefs.modern_smart_missiles &&
     (!objects.target ||
+      !tData ||
       tData?.dead ||
       tData?.wentIntoHiding ||
       (tData?.isEnemy === data.isEnemy && !tData?.hostile))
@@ -789,10 +790,12 @@ function animate(exports) {
         : data.parent === game.players.local.data.id
           ? `Your`
           : `A friendly`;
+
     const missileType = game.objects.stats.formatForDisplay(data.type, exports);
 
     // stop tracking the old one, as applicable.
     if (
+      !tData ||
       tData?.dead ||
       tData?.wentIntoHiding ||
       tData?.isEnemy === data.isEnemy
@@ -930,7 +933,7 @@ function animate(exports) {
       data.y -
       data.height;
   } else {
-    // target is gone
+    // no target, no delta.
     targetHalfWidth = 0;
     deltaX = 0;
     deltaY = 0;
