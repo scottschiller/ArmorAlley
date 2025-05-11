@@ -423,7 +423,7 @@ const DomCanvas = () => {
 
   function startShadowBlur(ctx, exports) {
     const { data } = exports;
-    const ss = game.objects.view.data.screenScale;
+    const ss = game.objects.view.data.screenScale * (gamePrefs.gfx_hi_dpi ? 2 : 1);
 
     const tracking =
       !data.dead && (data.smartMissileTracking || data.isNextMissileTarget);

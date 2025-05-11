@@ -469,7 +469,7 @@ function die(exports, dieOptions = {}) {
     nukeConfig
   );
 
-  data.shadowBlur = 8;
+  data.shadowBlur = 8 * (gamePrefs.gfx_hi_dpi ? 2 : 1);
   data.shadowColor = '#fff';
 
   // burning sprite
@@ -560,7 +560,10 @@ function animate(exports) {
     // we made smoke on this frame
     data.smokeFramesLeft--;
     // cut size in half over time
-    data.shadowBlur = 8 * (data.smokeFramesLeft / data.smokeFramesMax);
+    data.shadowBlur =
+      8 *
+      (data.smokeFramesLeft / data.smokeFramesMax) *
+      (gamePrefs.gfx_hi_dpi ? 2 : 1);
     // ... and fade blur out
     data.shadowColor = `rgba(255, 255, 255, ${
       data.smokeFramesLeft / data.smokeFramesMax

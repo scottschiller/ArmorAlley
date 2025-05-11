@@ -12,6 +12,7 @@ import {
   isiPhone,
   isMobile,
   oneOf,
+  onPreferHiDPIChange,
   setFrameRate,
   soundManager,
   tutorialMode,
@@ -1859,7 +1860,8 @@ function PrefsManager() {
         }
       },
 
-      gfx_hi_dpi: () => {
+      gfx_hi_dpi: (newValue) => {
+        onPreferHiDPIChange(newValue);
         common?.domCanvas?.onGFXHiDPIChange();
         updateDomFettiContext();
       },

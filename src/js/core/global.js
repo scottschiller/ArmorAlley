@@ -93,6 +93,16 @@ function updateClientFeatures(data) {
   clientFeatures = Object.assign(clientFeatures, data);
 }
 
+/**
+ * Hackish: global which will update with preferences.
+ * This is primarily for utils.js, which tl;dr, can't import prefs.
+ */
+let preferHiDPI = false;
+
+function onPreferHiDPIChange(newValue) {
+  preferHiDPI = newValue;
+}
+
 const enemyColors = {
   classic: {
     color: 'rgba(153, 107, 46, 0.9)', // previously: '#9c9f08',
@@ -544,6 +554,8 @@ export {
   bananaMode,
   float,
   oneOf,
+  preferHiDPI,
+  onPreferHiDPIChange,
   originalSeedCopy,
   rnd,
   rng,

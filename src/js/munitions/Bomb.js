@@ -20,6 +20,7 @@ import { playSound, sounds } from '../core/sound.js';
 import { sprites } from '../core/sprites.js';
 import { effects } from '../core/effects.js';
 import { aaLoader } from '../core/aa-loader.js';
+import { gamePrefs } from '../UI/preferences.js';
 
 const Bomb = (options = {}) => {
   let exports = {
@@ -269,7 +270,7 @@ function die(exports, dieOptions = {}) {
           };
         })();
 
-        data.shadowBlur = 4;
+        data.shadowBlur = 4 * (gamePrefs.gfx_hi_dpi ? 2 : 1);
         data.shadowColor = 'rgba(255, 255, 255, 0.5)';
 
         exports.domCanvas.dieExplosion = common.domCanvas.canvasAnimation(

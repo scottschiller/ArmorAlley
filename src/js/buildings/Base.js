@@ -432,7 +432,7 @@ function nukeTheBase(exports) {
       );
     }
 
-    data.shadowBlur = 32;
+    data.shadowBlur = 32 * (gamePrefs.gfx_hi_dpi ? 2 : 1);
   }, 25);
 }
 

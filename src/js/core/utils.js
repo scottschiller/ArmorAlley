@@ -1,6 +1,11 @@
 import { atkinson } from '../UI/atkinson.js';
 import { aaLoader } from './aa-loader.js';
-import { IMAGE_ROOT, SPRITESHEET_URL, imageSpriteConfig } from './global.js';
+import {
+  IMAGE_ROOT,
+  SPRITESHEET_URL,
+  imageSpriteConfig,
+  preferHiDPI
+} from './global.js';
 
 // temporary / prototype stuff
 let useAtkinson = window.location.href.match(/atkinson/i);
@@ -181,9 +186,9 @@ function applyShadowBlur(originalSrc, img, blurData, callback) {
    * A function allows for dynamic calculation, e.g., glow effect based on the frame number.
    */
   blurCanvasCtx.shadowBlur =
-    blurData.config.blur instanceof Function
+    (blurData.config.blur instanceof Function
       ? blurData.config.blur(originalSrc, blurData)
-      : blurData.config.blur;
+      : blurData.config.blur) * (preferHiDPI ? 2 : 1);
 
   blurCanvasCtx.shadowColor = blurData.config.color;
 
