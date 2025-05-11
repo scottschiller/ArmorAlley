@@ -2880,7 +2880,7 @@ function scanRadar(exports) {
   const newTarget = getNearestObject(exports, {
     useInFront: true,
     ignoreIntersect: true
-  })?.data?.id;
+  });
 
   if (newTarget && newTarget !== lastMissileTarget) {
     markTarget(exports, lastMissileTarget, false);
@@ -3072,12 +3072,18 @@ function fire(exports) {
         missileTarget = getNearestObject(exports, { useInFront: true });
       }
 
+      let liveTarget = getObjectById(missileTarget);
+
       if (
         !data.missileReloading &&
         missileTarget &&
-        !missileTarget.data.cloaked
+        !liveTarget?.data?.cloaked
       ) {
-        const params = getSmartMissileParams(exports, missileTarget);
+        // hackish: ensure missileTarget param is an ID, string.
+        const params = getSmartMissileParams(
+          exports,
+          missileTarget?.data?.id || missileTarget
+        );
 
         game.addObject(TYPES.smartMissile, params);
 

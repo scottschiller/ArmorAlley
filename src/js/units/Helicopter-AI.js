@@ -277,12 +277,12 @@ const HelicopterAI = (options = {}) => {
       if (newTarget) {
         lastTarget = target;
         target = newTarget;
-        tData = target.data;
+        tData = getObjectById(target)?.data;
       } else if (levelFlags.bullets && data.ammo) {
         // fallback: try for balloons, if we have bullets and not "aimed" missiles.
         newTarget = findEnemy(data, TYPES.balloon);
         if (newTarget.length) {
-          target = newTarget[0];
+          target = getObjectById(newTarget[0]);
           tData = target.data;
         }
       }
@@ -321,10 +321,12 @@ const HelicopterAI = (options = {}) => {
     }
 
     if (data.targeting.men && data.bombs) {
-      let nearbyMan = objectInView(data, {
-        items: [TYPES.infantry, TYPES.engineer],
-        triggerDistance: data.width * 2
-      });
+      let nearbyMan = getObjectById(
+        objectInView(data, {
+          items: [TYPES.infantry, TYPES.engineer],
+          triggerDistance: data.width * 2
+        })
+      );
 
       if (nearbyMan) {
         maybeBombTarget(nearbyMan);
@@ -332,10 +334,12 @@ const HelicopterAI = (options = {}) => {
     }
 
     if (data.targeting.vans && data.bombs) {
-      let nearbyVan = objectInView(data, {
-        items: TYPES.van,
-        triggerDistance: data.width * 2
-      });
+      let nearbyVan = getObjectById(
+        objectInView(data, {
+          items: TYPES.van,
+          triggerDistance: data.width * 2
+        })
+      );
 
       if (nearbyVan) {
         maybeBombTarget(nearbyVan);
@@ -345,10 +349,12 @@ const HelicopterAI = (options = {}) => {
     // maybe bomb turrets, too?
     if (data.targeting.turrets || data.cloaked) {
       // scan for turrets, before entering their firing range
-      let nearbyTurret = objectInView(data, {
-        items: TYPES.turret,
-        triggerDistance: TURRET_SCAN_RADIUS * 1.5
-      });
+      let nearbyTurret = getObjectById(
+        objectInView(data, {
+          items: TYPES.turret,
+          triggerDistance: TURRET_SCAN_RADIUS * 1.5
+        })
+      );
 
       if (nearbyTurret) {
         maybeBombTarget(nearbyTurret);
@@ -366,7 +372,7 @@ const HelicopterAI = (options = {}) => {
     if (missileLaunchTimer) return;
     if (tData?.type === TYPES.helicopter) return;
 
-    let mTarget = objectInView(data, { items: TYPES.turret });
+    let mTarget = getObjectById(objectInView(data, { items: TYPES.turret }));
 
     if (!mTarget) return;
 
@@ -394,7 +400,7 @@ const HelicopterAI = (options = {}) => {
 
       // "AI" target for helicopter missile launch method
       // (predetermined rather than real-time, because reasons.)
-      missileTarget = mTarget;
+      missileTarget = mTarget.data.id;
 
       // it's possible the CPU is being chased, needs to flip to fire.
       options.exports.checkFacingTarget(mTarget);
@@ -428,7 +434,7 @@ const HelicopterAI = (options = {}) => {
 
     let nearbyThreats = findEnemy(data, types, 192);
 
-    let threat = nearbyThreats[0];
+    let threat = getObjectById(nearbyThreats[0]);
 
     if (!threat) return;
 
@@ -844,6 +850,8 @@ const HelicopterAI = (options = {}) => {
          * Paratrooper / infantry must be moving toward the target - not already past it.
          * Account for enemy and "friendly" CPUs, since human players can have friendly CPUs in network games.
          */
+        f = getObjectById(f);
+        if (!f) return;
         return (
           (f.data.isEnemy && f.data.x > tData.x + tData.halfWidth) ||
           (!f.data.isEnemy && f.data.x + f.data.width < tData.x)
@@ -970,7 +978,9 @@ const HelicopterAI = (options = {}) => {
     if (!data.smartMissiles) return;
 
     // look for nearby helicopter
-    let mTarget = objectInView(data, { items: TYPES.helicopter });
+    let mTarget = getObjectById(
+      objectInView(data, { items: TYPES.helicopter })
+    );
 
     if (!mTarget) return;
 

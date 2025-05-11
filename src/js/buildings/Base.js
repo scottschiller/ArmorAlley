@@ -1,4 +1,4 @@
-import { game } from '../core/Game.js';
+import { game, getObjectById } from '../core/Game.js';
 import { gameType } from '../aa.js';
 import {
   bananaMode,
@@ -98,10 +98,12 @@ function fire(exports) {
 
   let targetHelicopter;
 
-  targetHelicopter = enemyHelicopterNearby(
-    data,
-    // standard base visibility?
-    320
+  targetHelicopter = getObjectById(
+    enemyHelicopterNearby(
+      data,
+      // standard base visibility?
+      320
+    )
   );
 
   if (!targetHelicopter) return;
@@ -125,7 +127,7 @@ function fire(exports) {
     // position roughly around "launcher" point of base
     x: data.x + data.width * (data.isEnemy ? 1 / 4 : 3 / 4),
     y: data.y,
-    target: targetHelicopter,
+    target: targetHelicopter.data.id,
     onDie: () => onSmartMissileDie(exports)
   };
 
@@ -162,10 +164,12 @@ function onSmartMissileDie(exports) {
   let { data } = exports;
 
   // check again, within a screen's distance.
-  const targetHelicopter = enemyHelicopterNearby(
-    data,
-    // standard base visibility range?
-    320
+  const targetHelicopter = getObjectById(
+    enemyHelicopterNearby(
+      data,
+      // standard base visibility range?
+      320
+    )
   );
 
   if (!targetHelicopter) return;

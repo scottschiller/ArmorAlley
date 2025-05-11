@@ -292,10 +292,12 @@ function animate(exports) {
 
     if (data.frameCount % data.radarJammerModulus === 0) {
       // look for nearby bad guys
-      enemyHelicopter = enemyHelicopterNearby(
-        data,
-        // safe van jamming default?
-        levelConfig.vanJammingI
+      enemyHelicopter = getObjectById(
+        enemyHelicopterNearby(
+          data,
+          // safe van jamming default?
+          levelConfig.vanJammingI
+        )
       );
 
       if (!data.jamming && enemyHelicopter) {

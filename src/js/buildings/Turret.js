@@ -384,7 +384,9 @@ function fire(exports) {
   let deltaX, deltaY, angle, otherTargets, target, moveOK;
 
   if (!data.targetGroundUnits) {
-    target = enemyHelicopterNearby(data, data.scanDistance, data.hasScanNode);
+    target = getObjectById(
+      enemyHelicopterNearby(data, data.scanDistance, data.hasScanNode)
+    );
   }
 
   // alternate target(s) within range?

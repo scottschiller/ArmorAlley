@@ -22,6 +22,7 @@ import { steerTowardTarget } from './Helicopter-steering.js';
 import { common } from '../core/common.js';
 import { levelFlags } from '../levels/default.js';
 import { gameType } from '../aa.js';
+import { getObjectById } from '../core/Game.js';
 
 const debugCanvas = searchParams.get('debugCanvas');
 const whiskerColor = '#888';
@@ -301,7 +302,10 @@ function avoidBuildings(data) {
 
   let steerTarget;
 
-  buildings?.forEach?.((b) => {
+  let b;
+
+  buildings?.forEach?.((id) => {
+    b = getObjectById(id);
     // IF the closest thing is a free-floating balloon, seek it out - IF we have ammo and it's targetable...
     if (
       b.data.type === 'balloon' &&
@@ -412,7 +416,7 @@ function avoidNearbyMunition(data) {
   let validObstacle;
   let gunfireObstacles = findEnemy(data, TYPES.gunfire, 192);
 
-  nearbyObstacle = gunfireObstacles[0];
+  nearbyObstacle = getObjectById(gunfireObstacles[0]);
 
   let isTurretGunfire;
   let isSmartMissile;
@@ -460,7 +464,7 @@ function avoidNearbyMunition(data) {
       [TYPES.smartMissile, TYPES.aimedMissile],
       192
     );
-    nearbyObstacle = gunfireObstacles[0];
+    nearbyObstacle = getObjectById(gunfireObstacles[0]);
     validObstacle = !!nearbyObstacle;
     isSmartMissile =
       validObstacle && nearbyObstacle.data.type === TYPES.smartMissile;
@@ -471,7 +475,7 @@ function avoidNearbyMunition(data) {
   if (!validObstacle) {
     // bombs
     gunfireObstacles = findEnemy(data, TYPES.bomb, 64);
-    nearbyObstacle = gunfireObstacles[0];
+    nearbyObstacle = getObjectById(gunfireObstacles[0]);
     validObstacle = !!nearbyObstacle;
   }
 

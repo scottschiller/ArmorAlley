@@ -116,7 +116,14 @@ function collisionCheckWithOffsets(rect1, rect2, r1XOffset = 0, r1YOffset = 0) {
   );
 }
 
-function collisionCheckTweens(source, target, repositionOnHit = true) {
+/**
+ *
+ * @param {obj} sData source object data
+ * @param {obj} tData target object data
+ * @param {Boolean} repositionOnHit whether to move to the point of collision
+ * @returns {Boolean} whether there was a collision.
+ */
+function collisionCheckTweens(sData, tData, repositionOnHit = true) {
   /**
    * Given two objects with location and velocity coordinates,
    * step through the movement and check collision "in between" frames.
@@ -125,12 +132,10 @@ function collisionCheckTweens(source, target, repositionOnHit = true) {
    * so, backtrack, and then step forward.
    */
 
-  if (!source || !target) {
-    console.warn('collisionCheckTweens(): WTF no source or target?');
+  if (!sData || !tData) {
+    console.warn('collisionCheckTweens(): WTF no source or target data?');
+    return;
   }
-
-  const sData = source.data,
-    tData = target.data;
 
   // special exemption: ignore expired, non-hostile objects - e.g., expired gunfire.
   if ((sData.expired && !sData.hostile) || (tData.expired && !tData.hostile))
@@ -188,10 +193,14 @@ function collisionCheckObject(options) {
     return false;
   }
 
-  const sData = options.source.data;
 
   // don't check if the object is dead or inert. If expired, only allow the object if it's also "hostile" (can still hit things)
-  if (sData.dead || sData.isInert || (sData.expired && !sData.hostile)) {
+  if (
+    !sData ||
+    sData.dead ||
+    sData.isInert ||
+    (sData.expired && !sData.hostile)
+  ) {
     return false;
   }
 
@@ -214,9 +223,9 @@ function collisionCheckObject(options) {
     xLookAhead = 0;
   }
 
-  let target, id, tData;
+  let target, targetID, tData;
 
-  for (id in options.targets) {
+  for (targetID in options.targets) {
     // edge case: safeguard in case this becomes undefined during the loop.
     if (!options?.targets) {
       console.warn(
@@ -226,7 +235,7 @@ function collisionCheckObject(options) {
       return;
     }
 
-    target = options.targets[id];
+    target = getObjectById(targetID);
 
     tData = target?.data;
 
@@ -268,8 +277,8 @@ function collisionCheckObject(options) {
         collisionCheck(sData, tData, xLookAhead) ||
         (options.checkTweens &&
           collisionCheckTweens(
-            options.source,
-            target,
+            sData,
+            tData,
             options.checkTweensRepositionOnHit
           )) ||
         (tData.type === TYPES.helicopter &&
@@ -478,7 +487,9 @@ function getNearestObject(source, options = {}) {
     }
   }
 
-  if (!localObjects.length) return !options?.getAll ? null : localObjects;
+  if (!localObjects.length) {
+    return !options?.getAll ? null : localObjects.map((obj) => obj.data.id);
+  }
 
   // sort by distance
   localObjects.sort(utils.array.compare('totalDistance'));
@@ -511,10 +522,10 @@ function getNearestObject(source, options = {}) {
   }
 
   // optional/hackish: return array.
-  if (options?.getAll) return localObjects.map((object) => object.obj);
+  if (options?.getAll) return localObjects.map((object) => object.obj.data.id);
 
   // default: return the best single candidate.
-  return localObjects[0]?.obj;
+  return localObjects[0]?.obj.data.id;
 }
 
 function isFacingTarget(tData, sData) {
@@ -592,14 +603,14 @@ function objectsInView(
     }
   });
 
-  if (!results.length) return results;
+  if (!results.length) return results.map((o) => o.data.id)
 
   // sort and return the closest, based on X.
   results.sort(
     (o1, o2) => Math.abs(o1.data.x - data.x) - Math.abs(o2.data.x - data.x)
   );
 
-  return results;
+  return results.map((o) => o.data.id);
 }
 
 function objectInView(data, options = {}) {
@@ -706,7 +717,7 @@ function enemyNearby(data, targets, triggerDistance = 512) {
 function enemyHelicopterNearby(data, triggerDistance = 512, useCircleMath) {
   if (game.data.battleOver) return;
 
-  let i, j, result;
+  let i, j;
 
   const helicopter = game.objects[TYPES.helicopter];
   let hData;
@@ -745,17 +756,15 @@ function enemyHelicopterNearby(data, triggerDistance = 512, useCircleMath) {
             triggerDistance
           )
         ) {
-          result = helicopter[i];
-          break;
+          return helicopter[i].data.id;
         }
       } else if (Math.abs(hData.x - data.x) < triggerDistance) {
-        result = helicopter[i];
-        break;
+        return helicopter[i].data.id;
       }
     }
   }
 
-  return result;
+  return null;
 }
 
 function recycleTest(obj) {

@@ -1,4 +1,4 @@
-import { game } from '../core/Game.js';
+import { game, getObjectById } from '../core/Game.js';
 import { utils } from '../core/utils.js';
 import { common } from '../core/common.js';
 import {
@@ -229,12 +229,14 @@ function fire(exports) {
   if (data.frameCount % data.fireModulus !== 0) return;
 
   // is an enemy helicopter nearby?
-  targetHelicopter = enemyHelicopterNearby(
-    data,
-    data.scanDistance +
-      MISSILE_LAUNCHER_SCAN_BUFFER +
-      data.halfWidth * (data.isEnemy ? -1 : 1),
-    data.hasScanNode
+  targetHelicopter = getObjectById(
+    enemyHelicopterNearby(
+      data,
+      data.scanDistance +
+        MISSILE_LAUNCHER_SCAN_BUFFER +
+        data.halfWidth * (data.isEnemy ? -1 : 1),
+      data.hasScanNode
+    )
   );
 
   if (!targetHelicopter) return;
@@ -301,7 +303,7 @@ function fire(exports) {
       game.objects.view.data.missileMode === rubberChickenMode,
     x: data.x + data.width / 2,
     y: data.y,
-    target: targetHelicopter
+    target: targetHelicopter.data.id
   };
 
   const missile = game.addObject(TYPES.smartMissile, params);

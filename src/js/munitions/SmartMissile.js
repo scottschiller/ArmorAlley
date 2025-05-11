@@ -359,7 +359,11 @@ function moveTo(exports, x, y, angle) {
   let { data, objects } = exports;
 
   // prevent from "crashing" into terrain, only if not expiring and target is still alive
-  if (!data.expired && !objects.target.data.dead && y >= data.yMax) {
+  if (
+    !data.expired &&
+    !getObjectById(objects.target)?.data?.dead &&
+    y >= data.yMax
+  ) {
     y = data.yMax;
   }
 
@@ -452,8 +456,10 @@ function maybeTargetDecoy(exports, decoyTarget) {
     getAll: true
   });
 
+  let decoyID = decoyTarget.data.id;
+
   // too far away
-  if (!nearby?.includes(decoyTarget)) return;
+  if (!nearby?.includes(decoyID)) return;
 
   data.foundDecoy = true;
 
@@ -461,8 +467,8 @@ function maybeTargetDecoy(exports, decoyTarget) {
   setTargetTracking(exports, false);
 
   // we've got a live one!
-  objects.target = decoyTarget;
-  objects.lastTarget = decoyTarget;
+  objects.target = decoyID;
+  objects.lastTarget = decoyID;
 
   if (launchSound) {
     launchSound.stop();
@@ -483,7 +489,13 @@ function setTargetTracking(exports, tracking) {
   let { objects } = exports;
 
   if (!objects.target) return;
-  objects.target.data.smartMissileTracking = !!tracking;
+
+  let target = getObjectById(objects.target);
+
+  // guard, just in case.
+  if (!target) return;
+
+  target.data.smartMissileTracking = !!tracking;
 }
 
 function die(exports, dieOptions = {}) {
@@ -571,6 +583,8 @@ function die(exports, dieOptions = {}) {
     }
   }
 
+  let tData = getObjectById(objects.target)?.data;
+
   // special case: added sound for first hit of a bunker (or turret), but not the (nuclear) explosion sequence.
   if (
     gamePrefs.bnb &&
@@ -579,9 +593,9 @@ function die(exports, dieOptions = {}) {
     !data.expired &&
     !data.isEnemy &&
     data.parentType === TYPES.helicopter &&
-    ((objects.target.data.type !== TYPES.bunker &&
-      objects?.target.data.type !== TYPES.turret) ||
-      !objects?.target.data.dead)
+    tData &&
+    ((tData.type !== TYPES.bunker && tData.type !== TYPES.turret) ||
+      !tData.dead)
   ) {
     if (oAttacker?.data?.type === TYPES.superBunker) {
       // "this sucks"
@@ -603,7 +617,7 @@ function die(exports, dieOptions = {}) {
   }
 
   // if targeting the player, ensure the expiry warning sound is stopped.
-  if (objects?.target === game.players.local) {
+  if (objects?.target === game.players.local.data.id) {
     stopSound(sounds.missileWarningExpiry);
   }
 
@@ -798,7 +812,9 @@ function animate(exports) {
       objects.target = null;
     }
 
-    newTarget = getNearestObject(exports);
+    let newTargetID = getNearestObject(exports);
+
+    newTarget = getObjectById(newTargetID);
 
     const newTD = newTarget?.data;
 
@@ -816,7 +832,7 @@ function animate(exports) {
        * re-target the second tank. Notifying here feels redundant.
        */
       if (
-        newTD.type !== objects.lastTarget?.data?.type &&
+        newTD.type !== getObjectById(objects.lastTarget)?.data?.type &&
         !newTarget.data.isOnScreen &&
         gamePrefs[`notify_${data.type}`]
       ) {
@@ -824,8 +840,8 @@ function animate(exports) {
       }
 
       // we've got a live one!
-      objects.target = newTarget;
-      objects.lastTarget = newTarget;
+      objects.target = newTargetID;
+      objects.lastTarget = newTargetID;
 
       if (launchSound) {
         launchSound.stop();
@@ -844,13 +860,15 @@ function animate(exports) {
     }
   }
 
+  let target = getObjectById(objects.target);
+
   // volume vs. distance
   if (
     (data.isBanana || data.isRubberChicken) &&
     launchSound &&
     !data.expired &&
-    objects.target &&
-    !objects.target.data.dead
+    target &&
+    !target.data.dead
   ) {
     // launchSound.setVolume((launchSound.soundOptions.onScreen.volume || 100) * getVolumeFromDistance(objects.target, game.players.local));
     // hackish: bananas are 50%, default chicken volume is 20%.
@@ -866,8 +884,8 @@ function animate(exports) {
   if (
     !data.expired &&
     (data.frameCount > data.expireFrameCount ||
-      !objects.target ||
-      objects.target.data.dead ||
+      !target ||
+      target.data.dead ||
       game.data.battleOver)
   ) {
     data.blink = true;
@@ -895,21 +913,28 @@ function animate(exports) {
     setTargetTracking(exports);
   }
 
-  targetData = objects.target?.data || objects.lastTarget?.data;
+  targetData = target?.data || getObjectById(objects.lastTarget)?.data;
 
-  targetHalfWidth = targetData.halfWidth || targetData.width / 2;
+  if (targetData) {
+    targetHalfWidth = targetData.halfWidth || targetData.width / 2;
 
-  // delta of x/y between this and target
-  deltaX = targetData.x + targetHalfWidth - data.x;
+    // delta of x/y between this and target
+    deltaX = targetData.x + targetHalfWidth - data.x;
 
-  // Always aim for "y", plus half height - minus own height.
-  deltaY =
-    targetData.y +
-    (targetData.type === TYPES.balloon
-      ? data.vY
-      : targetData.halfHeight || targetData.height / 2) -
-    data.y -
-    data.height;
+    // Always aim for "y", plus half height - minus own height.
+    deltaY =
+      targetData.y +
+      (targetData.type === TYPES.balloon
+        ? data.vY
+        : targetData.halfHeight || targetData.height / 2) -
+      data.y -
+      data.height;
+  } else {
+    // target is gone
+    targetHalfWidth = 0;
+    deltaX = 0;
+    deltaY = 0;
+  }
 
   let { difficultyFactor } = data;
 

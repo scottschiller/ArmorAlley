@@ -384,7 +384,7 @@ function die(exports, dieOptions = {}) {
     }
   }
 
-  effects.domFetti(data.id, dieOptions.target);
+  effects.domFetti(data.id, dieOptions.target?.data?.id);
 
   effects.inertGunfireExplosion({
     exports,

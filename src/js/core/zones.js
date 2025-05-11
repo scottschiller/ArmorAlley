@@ -142,9 +142,11 @@ function enterZone(zone, obj, group = 'all') {
     objectsByZone[zone][group][obj.data.type] = {};
   }
 
-  // add this to its respective object collection, e.g., tanks in zone 5 by ID
-  objectsByZone[zone][group][obj.data.type][obj.data.id] =
-    game.objectsById[obj.data.id];
+  /**
+   * Add this to its respective object collection, e.g., tanks in zone 5 by ID.
+   * Not concerned with the value, just the key (ID) itself.
+   */
+  objectsByZone[zone][group][obj.data.type][obj.data.id] = true; // obj.data.id;
 
   if (group === 'all') {
     /**
