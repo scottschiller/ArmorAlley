@@ -317,6 +317,8 @@ const Radar = () => {
   }
 
   function updateTargetMarker(targetItem, allowTransition) {
+    if (!game.data.started) return;
+
     let targetParent = getObjectById(targetItem?.oParent);
 
     /**
