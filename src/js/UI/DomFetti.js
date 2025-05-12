@@ -541,8 +541,6 @@ function domFettiBoom(sourceID, targetID, x, y) {
   let source = getObjectById(sourceID);
   let target = getObjectById(targetID);
 
-  if (!source?.data) return;
-
   checkContext();
 
   is60FPS = FPS === 60;
@@ -609,7 +607,7 @@ function domFettiBoom(sourceID, targetID, x, y) {
     spread: 25 + elementCount + rnd(100),
     elementCount: int(elementCount),
     // include any per-object overrides
-    ...source.data.domFetti,
+    ...source?.data?.domFetti,
     // and calculated colors
     ...colorConfig
   };
