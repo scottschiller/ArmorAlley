@@ -341,7 +341,7 @@ const Radar = () => {
     // TODO: fix missile launcher + turret layout stuff
     if (
       !targetItem.layout?.width ||
-      targetParent.data.type === TYPES.missileLauncher
+      (targetParent && targetParent.data.type === TYPES.missileLauncher)
     ) {
       // HACK
       let parentDomCanvas = targetParent.domCanvas;
