@@ -276,8 +276,8 @@ const HelicopterAI = (options = {}) => {
 
       if (newTarget) {
         lastTarget = target;
-        target = newTarget;
-        tData = getObjectById(target)?.data;
+        target = getObjectById(newTarget);
+        tData = target?.data;
       } else if (levelFlags.bullets && data.ammo) {
         // fallback: try for balloons, if we have bullets and not "aimed" missiles.
         newTarget = findEnemy(data, TYPES.balloon);
