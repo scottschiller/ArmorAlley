@@ -340,7 +340,8 @@ const Radar = () => {
     // layout may have been nuked; recalculate, if so.
     // TODO: fix missile launcher + turret layout stuff
     if (
-      !targetItem.layout?.width ||
+      !targetItem.layout ||
+      !targetItem.layout.width ||
       (targetParent && targetParent.data.type === TYPES.missileLauncher)
     ) {
       // HACK
