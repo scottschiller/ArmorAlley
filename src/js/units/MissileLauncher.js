@@ -151,6 +151,7 @@ const MissileLauncher = (options = {}) => {
 
 function refreshSprite(exports) {
   let { domCanvas, data } = exports;
+  if (!domCanvas?.img) return;
   domCanvas.img.src = utils.image.getImageObject(
     data.isEnemy ? 'missile-launcher-enemy.png' : 'missile-launcher.png'
   );
