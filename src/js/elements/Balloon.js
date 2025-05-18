@@ -14,7 +14,8 @@ import {
   isSafari,
   rngBool,
   FPS,
-  isMobile
+  isMobile,
+  isMaybeiPad
 } from '../core/global.js';
 import { playSound, sounds } from '../core/sound.js';
 import { zones } from '../core/zones.js';
@@ -622,7 +623,7 @@ Balloon.radarItemConfig = ({ exports }) => ({
         (isSafari ? 0.5 : 4);
 
       // TODO: check if mobile Chrome on Android needs this, too.
-      if (isSafari && isMobile) {
+      if (isSafari && isMobile && !isMaybeiPad) {
         renderedWidth *= 0.5;
         renderedHeight *= 0.5;
       }
