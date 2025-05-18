@@ -96,6 +96,15 @@ if (isSafari) {
  */
 const isMobile = !!ua.match(/mobile|iphone|ipad/i) || forceAppleMobile;
 
+/**
+ * iPad may report only macOS, but with touch support
+ * that desktops don't have... at time of writing, 05/2025. ;)
+ */
+let isMaybeiPad =
+  (isMac || ua.match(/ipad/i)) &&
+  !ua.match(/iphone/i) &&
+  navigator?.maxTouchPoints >= 2;
+
 // "inferences" about client capabilities, based on live events
 let clientFeatures = {
   touch: forceAppleMobile ? true : null,
@@ -558,6 +567,7 @@ export {
   isMobile,
   isiPhone,
   isMac,
+  isMaybeiPad,
   debug,
   debugCollision,
   DEFAULT_VOLUME,
