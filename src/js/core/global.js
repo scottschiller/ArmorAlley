@@ -20,7 +20,7 @@ const winloc = window.location.href.toString();
 
 const ua = navigator.userAgent;
 
-// N.B.: You get four choppers, as the original "lives remaining" UI goes down to 0.
+// You get four choppers, as the original "lives remaining" UI goes down to 0.
 const DEFAULT_LIVES = 3;
 
 // how many seconds to show the unit energy UI, on the "sometimes" pref
@@ -36,12 +36,20 @@ let GAME_SPEED_RATIO = FPS === 60 ? 0.5 : 1;
 let GAME_SPEED_RATIOED;
 let FRAMERATE = 1000 / FPS;
 
-// you should never do user-agent sniffing, ever - except for when you have to, for some very good reason. :X
+/**
+ * You should never do user-agent sniffing, ever...
+ * ...except for when you have to, for some very good reason. :X
+ */
 const isWebkit = ua.match(/webkit/i);
-const isChrome = !!ua.match(/chrome/i); // MS' Edge is likely to include Chrome + 'edg' as an identifier.
+
+// MS' Edge is likely to include Chrome + 'edg' as an identifier.
+const isChrome = !!ua.match(/chrome/i);
+
 const isFirefox = !!ua.match(/firefox/i);
 const isSafari = isWebkit && !isChrome && !!ua.match(/safari/i);
-const isMac = !!ua.match(/mac/i); // note: macIntel reported even on Apple M2 silicon as of 11/2023.
+
+// note: macIntel reported even on Apple M2 silicon as of 11/2023.
+const isMac = !!ua.match(/mac/i);
 
 // special use, for recording screencasts
 const demo = searchParams.get('demo');
@@ -51,17 +59,19 @@ const noRadar = searchParams.get('noRadar');
 const minimal = searchParams.get('minimal');
 
 /**
- * 11/2023: Experimental iPad hack (tested on "iPad Pro 11-inch 1st-gen" and newer in XCode Simulator)
+ * 11/2023: Experimental iPad hack
+ * (tested on "iPad Pro 11-inch 1st-gen" and newer in XCode Simulator)
  * Test for Safari, `TouchEvent`, and `navigator.maxTouchPoints`.
- * Reported issue: iPad Pro wasn't showing mobile controls. iPad defaults to "desktop" UA,
- * but doesn't quite render correctly. iPad treated as "mobile" works much more as expected.
+ * Reported issue: iPad Pro wasn't showing mobile controls.
+ * iPad defaults to "desktop" UA, but doesn't quite render correctly.
+ * iPad treated as "mobile" works much more as expected.
  */
 let forceAppleMobile;
 
 if (isSafari) {
   let maybeHasTouch;
   try {
-    // on non-touch devices, this may throw "DOMException: Operation is not supported"
+    // may throw "DOMException: Operation is not supported" on non-touch
     document.createEvent('TouchEvent');
     maybeHasTouch = true;
   } catch (e) {
@@ -80,7 +90,10 @@ if (isSafari) {
   }
 }
 
-// iOS devices if they report as such, e.g., iPad when "request mobile website" is selected (vs. "request desktop website")
+/**
+ * iOS devices if they report as such, e.g., iPad when
+ * "request mobile website" is selected (vs. "request desktop website")
+ */
 const isMobile = !!ua.match(/mobile|iphone|ipad/i) || forceAppleMobile;
 
 // "inferences" about client capabilities, based on live events
@@ -295,7 +308,10 @@ function updateOriginalSeedCopy() {
 updateOriginalSeedCopy();
 
 function setSeedsByType() {
-  // TYPES include camelCase entries e.g., missileLauncher, those will be ignored here.
+  /**
+   * TYPES include camelCase entries e.g., missileLauncher,
+   * those will be ignored here.
+   */
   for (let type in TYPES) {
     if (!type.match(/[A-Z]/)) {
       seedsByType[type] = Math.floor(defaultSeed);
@@ -375,9 +391,9 @@ function oneOf(array) {
 
 function getTypes(typeString, options = { group: 'enemy', exports: null }) {
   /**
-   * Used for collision and nearby checks, e.g., ground units that tanks look out for
+   * Used for collision and nearby logic, e.g., ground units that tanks fire at
    * typeString: String to array, e.g., 'tank, van, infantry' mapped to TYPES
-   * options object: group = all, friendly, or enemy - reducing # of objects to check.
+   * options{}: group = all, friendly, or enemy - reduced # of object checks.
    */
 
   if (!typeString?.split) return [];
@@ -423,8 +439,11 @@ function determineGroup(group = 'all', exports) {
   }
 
   if (exports.data.isEnemy || exports.data.hostile) {
-    // "bad guy" - whatever they're looking for, maps to the opposite array in-game.
-    // e.g., enemy tank seeking an enemy = lookups in "friendly" game object array.
+    /**
+     * "bad guy" - whatever they're looking for, maps to the opposite array
+     * in-game. e.g., enemy tank seeking an enemy = lookups in "friendly"
+     * game object array.
+     */
     group = enemyGroupMap[group];
   }
 
