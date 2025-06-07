@@ -482,6 +482,8 @@ function PrefsManager() {
         events.onChat('Still connecting...😅');
 
         window.setTimeout(() => {
+          if (knownFailure()) return;
+
           updateNetworkStatus(trouble);
 
           events.onChat(
