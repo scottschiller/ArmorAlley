@@ -983,6 +983,8 @@ const net = {
 
       if (net.connected) return;
 
+      console.log(msg);
+
       let { onChat } = prefsManager;
 
       // if "server-error", add some context?
