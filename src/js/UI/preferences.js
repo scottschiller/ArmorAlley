@@ -448,6 +448,10 @@ function PrefsManager() {
     };
   }
 
+  function knownFailure() {
+    return net.peerJS['peer-unavailable'] || net.peerJS['server-error'];
+  }
+
   function startNetwork() {
     updateNetworkStatus('Initializing...');
 
@@ -463,11 +467,16 @@ function PrefsManager() {
       window.setTimeout(() => {
         if (net.connected) return;
 
+        // rejection by peerJS server case, effectively immediate and known.
+        if (knownFailure()) return;
+
         updateNetworkStatus(`Connecting... ${appleWatch}☎️`);
       }, 1000);
 
       window.setTimeout(() => {
         if (net.connected) return;
+
+        if (knownFailure()) return;
 
         updateNetworkStatus(`Still connecting... ${appleWatch}😅`);
         events.onChat('Still connecting...😅');
