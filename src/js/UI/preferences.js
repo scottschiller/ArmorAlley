@@ -679,7 +679,7 @@ function PrefsManager() {
           'Discuss options amongst yourselves, and click "READY" to proceed.'
         );
 
-        events.onChat('Set your name by typing /name [your name here]');
+        events.onChat('Set your name by typing <b>/name [your name here]</b>');
 
         const chatInput = document.getElementById('network-chat-input');
 
