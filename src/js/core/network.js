@@ -800,6 +800,9 @@ let rxQueue = [];
 const net = {
   coop,
 
+  // dirty "error strings-to-booleans" mapping, e.g., 'peer-unavailable': true
+  peerJS: {},
+
   debugNetwork,
   connected: false,
   halfTrip: 0,
@@ -965,6 +968,17 @@ const net = {
         // you are the guest, connecting to the host.
         net.connect(remoteID, onInitCallback);
       }
+    });
+
+    peer.on('error', (e) => {
+      /**
+       * 06/2025: ignore if network has already connected.
+       * This handler was added to help debug initial connection trouble.
+       */
+      let err = e?.type || 'unknown';
+
+      // track the error type
+      net.peerJS[err] = true;
     });
 
     peer.on('connection', (conn) => {
