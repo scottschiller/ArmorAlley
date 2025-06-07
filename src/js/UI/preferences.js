@@ -482,22 +482,21 @@ function PrefsManager() {
         events.onChat('Still connecting...😅');
 
         window.setTimeout(() => {
-          updateNetworkStatus(`Connection trouble 😬😒`);
+          updateNetworkStatus(trouble);
+
           events.onChat(
-            '<b>Unable to connect; apologies.</b> Try reloading, then getting a new invite link.'
+            '<br />This game uses PeerJS to create peer-to-peer WebRTC connections. It may fail in a "double NAT" scenario, with routers and firewalls often found at offices and schools. 😞'
           );
           events.onChat(
-            'This game uses PeerJS to establish a peer-to-peer WebRTC session.'
+            `<br />If you are on the same local (home or school, etc.) network and technically inclined, you can try <a href="https://github.com/peers/peerjs-server" title="PeerJS Server, GitHub" target="_blank">running the PeerJS server locally</a> - it's a one-line install if you have "npm" already installed. You can then specify your server IP and port as URL parameters, e.g., <b>server=192.168.1.1:9000</b> and the game will use that intead of PeeerJS' default "cloud" server.`
           );
-          events.onChat(
-            'This may fail in a "double NAT" case from some routers &amp; firewalls, often used at offices and schools. 😞'
-          );
+
           if (!net.debugNetwork) {
             events.onChat(
-              'For technical detail, try reloading with network debug logging.'
+              '<br />For technical detail, try reloading with network debug logging.'
             );
             events.onChat(
-              `<button type="button" onclick="window.location.href += '&debugNetwork=1'">Network debug mode</button>`
+              `<br /><button type="button" onclick="window.location.href += '&debugNetwork=1'">Network debug mode</button>`
             );
           }
         }, 6500);
