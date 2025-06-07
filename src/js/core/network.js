@@ -976,9 +976,37 @@ const net = {
        * This handler was added to help debug initial connection trouble.
        */
       let err = e?.type || 'unknown';
+      let msg = `peerJS error: ${err}`;
 
       // track the error type
       net.peerJS[err] = true;
+
+      if (net.connected) return;
+
+      let { onChat } = prefsManager;
+
+      // if "server-error", add some context?
+      if (err === 'server-error') {
+        onChat('<b>Cannot connect to peerJS server.</b>');
+        prefsManager.updateNetworkStatus(`peerJS server trouble? 😬😒`);
+        if (serverOpts) {
+          onChat(
+            `Check that the server at ${serverOpts.host}:${serverOpts.port} is running and reachable.`
+          );
+        } else {
+          onChat(
+            'Your client may be blocking connections to the free peerJS cloud server, or the service may be temporarily unavailable; try checking the <a href="https://status.peerjs.com/" title="PeerJS cloud server status" target="_blank">status page</a>.'
+          );
+        }
+      } else if (err === 'peer-unavailable') {
+        // rejection by server; old invite link, or expired or something else.
+        prefsManager.updateNetworkStatus(`Expired invite link? ⛓️‍💥🤔`);
+        onChat(
+          '<b>Unable to connect; apologies.</b> The server says your link is invalid.<br />Try getting a new invite link from your friend.'
+        );
+      } else {
+        onChat(`peerJS network error: ${err}`);
+      }
     });
 
     peer.on('connection', (conn) => {

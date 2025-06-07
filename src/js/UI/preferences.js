@@ -2263,6 +2263,7 @@ function PrefsManager() {
     show,
     updateForm,
     updateGamepadList,
+    updateNetworkStatus,
     writePrefsToStorage
   };
 }
