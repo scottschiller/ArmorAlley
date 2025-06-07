@@ -453,7 +453,7 @@ function PrefsManager() {
   }
 
   function startNetwork() {
-    updateNetworkStatus('Initializing...');
+    updateNetworkStatus(`Initializing...&thinsp;${appleWatch}`);
 
     resetPlayerNames();
 
