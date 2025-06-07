@@ -459,9 +459,9 @@ function PrefsManager() {
 
     events.onChat('Welcome to network chat!');
 
-    if (net.isHost) {
-      events.onChat('Waiting for the guest to join...');
-    } else {
+    if (!net.isHost) {
+      let trouble = `Connection trouble 😬😒`;
+
       events.onChat('Connecting...');
 
       window.setTimeout(() => {
@@ -1385,9 +1385,14 @@ function PrefsManager() {
     utils.css.remove(dom.oFormSubmit, 'attention');
   }
 
+  function getConnectHTML() {
+    // common status strings
+    return net.connected ? 'Connected ⛓️' : 'Disconnected ⛓️‍💥';
+  }
+
   function updateReadyUI() {
     if (game.data.started) {
-      updateNetworkStatus(net.connected ? 'Connected' : 'Disconnected');
+      updateNetworkStatus(getConnectHTML());
       return;
     }
 
@@ -1409,7 +1414,7 @@ function PrefsManager() {
       }... <span class="mac-system-waiting"></span>`;
     } else {
       // hopefully, still connected.
-      html = net.connected ? 'Connected' : 'Disconnected';
+      html = getConnectHTML();
     }
 
     updateNetworkStatus(html);
@@ -1507,7 +1512,7 @@ function PrefsManager() {
 
       events.onChat('Network connected. Testing ping...');
 
-      updateNetworkStatus('Connected');
+      updateNetworkStatus(getConnectHTML());
 
       dom.oFormSubmit.disabled = false;
     },
@@ -1517,7 +1522,7 @@ function PrefsManager() {
 
       events.onChat('Network connection closed.');
 
-      updateNetworkStatus('Disconnected');
+      updateNetworkStatus(getConnectHTML());
 
       events.onRemoteReady({ ready: false });
 
