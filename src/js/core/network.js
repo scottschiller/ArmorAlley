@@ -32,6 +32,8 @@ const debugPingPong = searchParams.get('debugPingPong');
 
 const debugNetworkStats = searchParams.get('debugNetworkStats');
 
+let server = searchParams.get('server');
+
 const getIdFromURL = () => searchParams.get('id');
 
 // object properties that point to live objects, e.g., a helicopter.
@@ -887,15 +889,64 @@ const net = {
 
     console.log(`Using ${reliable ? 'reliable' : 'fast'} delivery`);
 
-    if (remoteID && debugNetwork) {
-      prefsManager.onChat('DEBUG MODE: See JS console for full details.');
-      console.log('Connecting...');
+    /**
+     * Self-hosted PeerJS server option (URL parameter): `server=ip:port`
+     * URL example for clients to use...
+     * server=192.168.0.1:8888
+     * server=192.168.0.1 (will use default port)
+     *
+     * https://github.com/peers/peerjs-server
+     *
+     * npm example and defaults, here:
+     * > npm install peer
+     * > peerjs --port 9000 --key peerjs --path /myapp
+     */
+
+    let defaults = {
+      port: 9000,
+      // peerJS server default / example values
+      key: 'peerjs',
+      path: '/myapp'
+    };
+
+    if (server) {
+      // "security" 101.
+      server = server.replace(/[<>]/g, '');
     }
+
+    // e.g., peerJS=192.168.0.1:8080
+    let serverBits = server?.split?.(':');
+
+    // `ip:port`
+    let serverOpts = server && {
+      host: serverBits?.[0] || server || '',
+      port: parseInt(serverBits?.[1], 10) || defaults.port,
+      key: defaults.key,
+      path: defaults.path
+    };
 
     // PeerJS options
     const peerConfig = {
-      debug: debugNetwork ? 3 : 0
+      debug: debugNetwork ? 3 : 0,
+      ...serverOpts
     };
+
+    if (remoteID) {
+      let details = serverOpts
+        ? ` to ${serverOpts.host}:${serverOpts.port}`
+        : ``;
+      let connectMsg = `Connecting${details}...`;
+
+      if (debugNetwork) {
+        prefsManager.onChat('DEBUG MODE: See JS console for full details.');
+        console.log(connectMsg);
+      }
+
+      // show IP and port, if specified, in UI.
+      if (details) {
+        prefsManager.onChat(connectMsg);
+      }
+    }
 
     peer = new window.Peer(peerConfig);
 
