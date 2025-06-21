@@ -2699,7 +2699,7 @@ function getGunfireParams(exports) {
 
       if (target) {
         // ignore targets that would make gunfire movement look unrealistically wacky.
-        if (Math.abs(target.data.y - data.y) > 24) {
+        if (target.data && Math.abs(target.data.y - data.y) > 24) {
           target = null;
         } else {
           // hackish: make target the data structure, as ammoTarget normally expects.
