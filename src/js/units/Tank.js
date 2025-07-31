@@ -205,32 +205,18 @@ function refreshSprite(exports) {
 function fire(exports) {
   let { data, nearby } = exports;
 
-  let collisionItems;
-
   if (data.frameCount % data.fireModulus !== 0) return;
 
   /**
-   * Special case: tanks don't stop to shoot bunkers, but allow gunfire to hit and damage bunkers
-   * ONLY IF the tank is targeting a helicopter (i.e., defense) or another tank.
+   * Special case: tanks don't stop to shoot bunkers, but allow gunfire to hit and damage them.
    *
-   * Otherwise, let bullets pass through bunkers and kill whatever "lesser" units the tank is firing at.
-   *
-   * This should be an improvement from the original game, where tanks could get "stuck" shooting into
-   * a bunker and eventually destroying it while trying to take out an infantry.
+   * This is in alignment with the original game behaviour, where tanks might take out a bunker
+   * while trying to hit (e.g.,) an infantry in range.
    */
 
   let nearbyData = getObjectById(data.lastNearbyTarget)?.data;
 
-  if (
-    (nearbyData && nearbyData.type === TYPES.helicopter) ||
-    nearbyData.type === TYPES.tank
-  ) {
-    // allow bullets to hit bunkers when firing at a helicopter or tank
-    collisionItems = nearby.items.concat(getTypes('bunker', { exports }));
-  } else if (gamePrefs.tank_gunfire_miss_bunkers) {
-    // bullets "pass through" bunkers when targeting infantry, engineers, missile launchers, and vans.
-    collisionItems = nearby.items;
-  }
+  let collisionItems = nearby.items.concat(getTypes('bunker', { exports }));
 
   /**
    * Is this target flamethrower-eligible?

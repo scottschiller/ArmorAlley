@@ -124,7 +124,6 @@ const defaultPrefs = {
   'modern_smart_missiles': true,
   'engineers_repair_bunkers': true,
   'engineers_rob_the_bank': true,
-  'tank_gunfire_miss_bunkers': true,
   'ground_unit_traffic_control': true,
   'clouds_on_radar': true,
   'weapons_interval_classic': false,

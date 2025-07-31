@@ -114,7 +114,6 @@ const GunFire = (options = {}) => {
          *  e.g., a turret or tank overlapping or behind a super bunker being targeted.
          */
         if (
-          gamePrefs.tank_gunfire_miss_bunkers &&
           target.data.type === TYPES.superBunker &&
           target.data.hostile &&
           data.parentType === TYPES.tank

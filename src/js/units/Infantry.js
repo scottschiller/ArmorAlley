@@ -331,10 +331,7 @@ function fire(exports) {
     parent: data.id,
     parentType: data.type,
     isEnemy: data.isEnemy,
-    // like tanks, allow infantry + engineer gunfire to hit bunkers unless "miss bunkers" is enabled in prefs.
-    collisionItems: gamePrefs.tank_gunfire_miss_bunkers
-      ? defaultItems
-      : nearby.items,
+    collisionItems: nearby.items,
     x: data.x + (data.width + 1) * (data.isEnemy ? 0 : 1),
     y: data.y + data.halfHeight - 2,
     vX: data.vX, // same velocity
