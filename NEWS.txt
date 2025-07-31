@@ -49,6 +49,10 @@ This is a summary of work in progress. For code-level details, see the changelog
 
 `Munitions, Weapons &amp; Units 💣`
 
+· Tank gunfire hits and can destroy bunkers like original, e.g., when firing at some other target.
+
+· Tank gunfire passes thru super bunkers, like original. (Tanks use flamethrowers to "clear out" super bunkers and end bunkers.)
+
 · "Napalm" battle flag: bombs spark on the ground, vs. wider explosion when equipped with napalm - more effective at taking out infantry + engineers.
 
 · "Stealth" battle flag: Enemy helicopter is always hidden on radar.
