@@ -84,13 +84,6 @@ const keyboardMonitor = KeyboardMonitor();
 
 let stats;
 
-// used by the "exit [game type]" link
-window.aa = {
-  exit() {
-    // delete stored preference
-    utils.storage.remove(prefs.gameType);
-  }
-};
 
 if (soundManager) {
   // OGG is available, so MP3 is not required.
