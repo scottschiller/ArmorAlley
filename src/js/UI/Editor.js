@@ -599,7 +599,7 @@ const Editor = () => {
         // special super-bunker case: forcefully remove.
         // this should be cleaned up on the next `gameLoop.animate()`.
         if (gameObject.data.type === TYPES.superBunker) {
-          gameObject.destroy();
+          gameObject.destroy?.();
         }
 
         // deselect if the DOM node has been removed.
