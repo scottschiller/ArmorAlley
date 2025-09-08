@@ -6,7 +6,6 @@ import {
   TYPES,
   isMobile,
   isSafari,
-  FPS,
   GAME_SPEED,
   updateGameSpeed,
   GAME_SPEED_RATIOED,
