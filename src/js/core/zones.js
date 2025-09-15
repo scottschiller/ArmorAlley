@@ -358,7 +358,7 @@ function debugZone(obj) {
   if (obj.dom?.oDebug) {
     const { zones } = obj.data;
 
-    // e.g., friendly,enemy,all -> f,a,e: take first character of group if thers's a match, and ignore empties.
+    // e.g., friendly,enemy,all -> f,a,e: take first character of group if there's a match, and ignore empties.
     let inGroups = groups
       .map((group) =>
         objectsByZone[zones[0]][group]?.[obj.data.type]?.[obj.data.id]
