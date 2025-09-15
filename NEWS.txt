@@ -1,5 +1,9 @@
-`The latest and greatest: April 2025 Edition 🗞️`
+`The latest and greatest: June 2025 Edition 🗞️`
 This is a summary of work in progress. For code-level details, see the changelog section below.
+
+`Network Multiplayer`
+
+· Custom peerJS server option (used to initiate peer-to-peer connections): server=ip:port (port optional) in URL, e.g., &server=192.168.0.1 - https://github.com/peers/peerjs-server - this may apply only to specific LAN scenarios, and/or "offline" use.
 
 `Graphics / Performance`
 
