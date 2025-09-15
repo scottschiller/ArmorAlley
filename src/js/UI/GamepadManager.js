@@ -225,6 +225,9 @@ const GamepadManager = (options = {}) => {
     // gamepad config is always keyed off the gamepad's full ID.
     let gpc = gpConfig[gp.id];
 
+    // sanity check - in case gamepad has unexpectedly disappeared?
+    if (!gpc) return;
+
     // if no mapping for the given vendor and product, use standard.
     // this should probably just be attached to the config object.
     let map = gpMap[vpid] || gpMap[`${STD}/${STD}`];
