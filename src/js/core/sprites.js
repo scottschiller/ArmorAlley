@@ -234,9 +234,6 @@ const sprites = {
 
       o.data.isOnScreen = true;
 
-      // object may be in the process of being destroyed
-      if (!o?.dom?.o) return;
-
       // callback, if defined
       o.isOnScreenChange?.(o.data.isOnScreen);
     } else if (o.data.isOnScreen !== false) {
