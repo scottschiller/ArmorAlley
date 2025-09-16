@@ -369,13 +369,11 @@ function animate(exports) {
     makeSmoke(exports);
   }
 
+  let heightOffset = (data.height / 2) * data.relativeScale;
+
   // did we hit the ground?
-  if (data.y - data.height >= worldHeight) {
-    moveTo(
-      exports,
-      data.x,
-      worldHeight - (data.height / 2) * data.relativeScale
-    );
+  if (data.y - heightOffset >= worldHeight) {
+    moveTo(exports, data.x, worldHeight - heightOffset);
     // take longer to "burn out"
     data.fadeFrames *= 3;
     die(exports);
