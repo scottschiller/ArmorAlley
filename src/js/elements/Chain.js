@@ -288,7 +288,7 @@ function animate(exports) {
       x = balloon.data.x + balloon.data.halfWidth - 3;
 
       y = balloon.data.y + balloon.data.height - 1;
-    } else {
+    } else if (!data.dead) {
       // free-falling, detached chain
       y = data.y;
 
