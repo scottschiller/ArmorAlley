@@ -776,10 +776,6 @@ const common = {
       game.objects.stats.destroy(targetID, dieOptions);
     }
 
-    if (dieOptions.recycled) {
-      game.objects.stats.recycle(targetID);
-    }
-
     // callback-style methods
     let attackerParent = game.objectsById[oAttacker?.data?.parent];
 

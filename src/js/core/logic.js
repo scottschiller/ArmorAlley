@@ -827,8 +827,11 @@ function checkRefund(params) {
   // if object was killed at the last second, no refund! ;)
   if (data.dead) return;
 
-  // die silently, and go away.
-  obj.die({ silent: true, recycled: true });
+  // count stats before any destruction
+  game.objects.stats.recycle(id);
+
+  // die silently, no explosion etc.
+  obj.die({ silent: true });
 
   let costObj, refund, type;
 
