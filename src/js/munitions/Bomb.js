@@ -546,7 +546,7 @@ function animate(exports) {
   );
 
   // hit bottom?
-  if (data.y - data.height > game.objects.view.data.battleField.height) {
+  if (data.y > game.objects.view.data.battleField.height) {
     data.hasHitGround = true;
     die(exports, {
       hidden: data.hidden,
