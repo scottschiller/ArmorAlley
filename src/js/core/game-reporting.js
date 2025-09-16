@@ -50,6 +50,31 @@ function getGameDuration() {
   return time.join(':');
 }
 
+// "items to avoid" e.g., { dom: true }
+const keysToSkip = {};
+
+[
+  'dom',
+  'css',
+  'parent',
+  'objects',
+  'options',
+  'domCanvas',
+  'friendlyNearby',
+  'nearby',
+  'lastNearbyTarget',
+  'radarItem',
+  'funds',
+  'queue',
+  'stars',
+  'gameTips',
+  'tips',
+  'star',
+  'domFetti'
+].forEach((k) => (keysToSkip[k] = true));
+
+const patternToSkip = /terrain|sound/i;
+
 function copy(aObject) {
   // guard
   if (!aObject) return aObject;
@@ -68,34 +93,7 @@ function copy(aObject) {
 
     // don't copy redundant stuff, and references to other objects.
     // TODO: fix this hackish mess when serialize-friendly data model lands.
-    if (
-      key === 'dom' ||
-      key === 'css' ||
-      key === 'parent' ||
-      key === 'oParent' ||
-      key === 'objects' ||
-      key === 'options' ||
-      key === 'target' ||
-      key === 'lastTarget' ||
-      key === 'attacker' ||
-      key === 'domCanvas' ||
-      key === 'friendlyNearby' ||
-      key === 'nearby' ||
-      key === 'collision' ||
-      key === 'lastNearbyTarget' ||
-      key === 'radarItem' ||
-      key === 'funds' ||
-      key === 'queue' ||
-      key === 'stars' ||
-      key === 'gameTips' ||
-      key === 'tips' ||
-      key.match(/terrain/i) ||
-      key === 'star' ||
-      key === 'domFetti' ||
-      // sound objects are likely to include circular references.
-      key.match(/sound/i)
-    )
-      continue;
+    if (keysToSkip[key] || patternToSkip.test(key)) continue;
 
     bObject[key] =
       typeof aObject[key] === 'object' ? copy(aObject[key]) : aObject[key];
