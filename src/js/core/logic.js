@@ -615,7 +615,7 @@ function objectsInView(
     }
   });
 
-  if (!results.length) return results.map((o) => o.data.id)
+  if (!results.length) return results.map((o) => o.data.id);
 
   // sort and return the closest, based on X.
   results.sort(
