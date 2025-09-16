@@ -204,7 +204,7 @@ function die(exports, dieOptions = {}) {
       }
     }
   } else {
-    dieComplete();
+    dieComplete(exports);
   }
 
   // stop moving while exploding
