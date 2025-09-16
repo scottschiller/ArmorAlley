@@ -489,8 +489,6 @@ function die(exports, dieOptions = {}) {
     common.addGravestone(exports);
   }
 
-  sprites.removeNodesAndUnlink(exports);
-
   data.energy = 0;
 
   // stop moving while exploding
@@ -505,6 +503,8 @@ function die(exports, dieOptions = {}) {
   }
 
   common.onDie(data.id, dieOptions);
+
+  sprites.removeNodesAndUnlink(exports);  
 }
 
 function animate(exports) {

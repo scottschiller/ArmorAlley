@@ -171,8 +171,6 @@ function die(exports) {
 
   if (data.dead) return;
 
-  sprites.removeNodesAndUnlink(exports);
-
   data.energy = 0;
 
   data.dead = true;
@@ -197,6 +195,8 @@ function die(exports) {
   }
 
   common.onDie(data.id);
+
+  sprites.removeNodesAndUnlink(exports);
 }
 
 function setEnemy(exports, isEnemy) {

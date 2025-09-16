@@ -192,8 +192,6 @@ function die(exports, dieOptions = {}) {
     common.addGravestone(exports);
   }
 
-  sprites.removeNodesAndUnlink(exports);
-
   data.energy = 0;
 
   data.dead = true;
@@ -201,6 +199,8 @@ function die(exports, dieOptions = {}) {
   radarItem?.die(dieOptions);
 
   common.onDie(data.id, dieOptions);
+
+  sprites.removeNodesAndUnlink(exports);
 }
 
 function hit(exports, hitPoints, target) {

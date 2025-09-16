@@ -109,9 +109,9 @@ function die(exports, force) {
 
   data.dead = true;
 
-  sprites.removeNodesAndUnlink(exports);
-
   common.onDie(data.id);
+
+  sprites.removeNodesAndUnlink(exports);
 }
 
 function animate(exports) {

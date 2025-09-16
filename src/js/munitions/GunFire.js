@@ -186,13 +186,13 @@ function die(exports, force) {
   // avoid redundant remove/unlink work.
   if (data.canDestroy) return;
 
-  sprites.removeNodesAndUnlink(exports);
-
   radarItem?.die({
     silent: true
   });
 
   common.onDie(data.id);
+
+  sprites.removeNodesAndUnlink(exports);
 }
 
 function sparkAndDie(exports, targetID) {

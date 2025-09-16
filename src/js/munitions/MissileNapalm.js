@@ -157,9 +157,9 @@ function die(exports, force) {
     silent: true
   });
 
-  sprites.removeNodesAndUnlink(exports);
-
   common.onDie(data.id);
+
+  sprites.removeNodesAndUnlink(exports);
 }
 
 function animate(exports) {
