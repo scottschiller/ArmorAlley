@@ -392,6 +392,9 @@ const common = {
     // drop "links" from zones, and objects by ID.
     if (!obj?.data?.id) return;
 
+    // TODO: reduce redundant calls across object die / fade lifecycle.
+    if (!game.objectsById[obj.data.id]) return;
+
     if (obj.data.frontZone !== null || obj.data.rearZone !== null) {
       zones.leaveAllZones(obj);
     }
