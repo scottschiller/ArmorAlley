@@ -36,11 +36,11 @@
     "gulp-terser": "^2.1.0",
     "postcss-image-inliner": "^7.0.1",
     "prettier": "3.6.2",
-    "rollup": "^4.50.1"
+    "rollup": "^4.50.2"
   },
   "dependencies": {
-    "browserslist": "^4.26.0",
-    "del": "^8.0.0",
+    "browserslist": "^4.26.2",
+    "del": "^8.0.1",
     "gulp-audiosprite": "^1.1.0",
     "gulp-fluent-ffmpeg": "^2.0.0",
     "gulp-gzip": "^1.4.2",
