@@ -30,12 +30,17 @@ function refreshCanvasConfig() {
     {
       id: `${radar}-canvas`,
       name: radar,
-      ctxOptions: { imageSmoothingEnabled: true, useDevicePixelRatio: true }
+      ctxOptions: {
+        alpha: false,
+        imageSmoothingEnabled: true,
+        useDevicePixelRatio: true
+      }
     },
     {
       id: `${battlefield}-canvas`,
       name: battlefield,
       ctxOptions: {
+        alpha: false,
         imageSmoothingEnabled: false,
         useDevicePixelRatio: !!gamePrefs.gfx_hi_dpi
       }
