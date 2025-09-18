@@ -143,7 +143,7 @@ function makeDebugRect(obj, viaNetwork) {
       isEnemy: data.isEnemy
     };
 
-    if (data.parent?.data.id) {
+    if (data.parent?.data?.id) {
       basicData.parent = {
         data: {
           id: data.parent.data.id
