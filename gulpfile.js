@@ -692,8 +692,7 @@ const copyThatFloppyTasks = [
       `!dist/${videoPath}/**/*`,
       `!dist/${imagePath}/unused/**/*`,
       `!dist/${imagePath}/unused`,
-      { encoding: false }
-    ]).pipe(dest(`${floppyRoot}/dist`));
+    ], { encoding: false }).pipe(dest(`${floppyRoot}/dist`));
   }
 ];
 
