@@ -36,7 +36,7 @@
     "gulp-terser": "^2.1.0",
     "postcss-image-inliner": "^7.0.1",
     "prettier": "3.6.2",
-    "rollup": "^4.50.2"
+    "rollup": "^4.52.0"
   },
   "dependencies": {
     "browserslist": "^4.26.2",
