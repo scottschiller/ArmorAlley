@@ -1,3 +1,4 @@
+import { aaLoader } from './aa-loader.js';
 import { game } from './Game.js';
 import { TYPES, worldWidth } from './global.js';
 
@@ -176,15 +177,17 @@ function leaveZone(zone, obj, group = 'all') {
 
   // This may happen after an ownership change, i.e., a balloon or a super-bunker becomes hostile.
   if (!objectsByZone[zone][group][obj.data.type]) {
-    console.warn(
-      'leaveZone: WTF no objects by zone for type?',
-      zone,
-      group,
-      obj.data.type,
-      obj.data.id,
-      Object.keys(objectsByZone[zone][group]),
-      objectsByZone[zone][group]
-    );
+    if (!aaLoader.isProd()) {
+      console.warn(
+        'leaveZone: WTF no objects by zone for type?',
+        zone,
+        group,
+        obj.data.type,
+        obj.data.id,
+        Object.keys(objectsByZone[zone][group]),
+        objectsByZone[zone][group]
+      );
+    }
     return;
   }
 
