@@ -657,16 +657,30 @@ function cleanThatFloppy() {
   return clean([floppyRoot]);
 }
 
-function copyThatFloppy() {
+/**
+ * TODO: reduce to single task, console output is noisy.
+ */
+const copyThatFloppyTasks = [
   // copy select assets into a separate build path
-  return merge([
-    // gotta have a favicon.ico, of course...
-    src(`assets/${imagePath}/app-icons/favicon.ico`).pipe(dest(floppyRoot)),
-    src('index.html').pipe(dest(floppyRoot)),
-    // batch file to start the HTTP server
-    src(`${srcRoot}/floppy/aa.bat`).pipe(dest(floppyRoot)),
-    // note: ignore all dot-files, e.g., .DS_Store and friends
-    src([
+  // gotta have a favicon.ico, of course...
+  function floppyFavicon() {
+    return src(`assets/${imagePath}/app-icons/favicon.ico`).pipe(
+      dest(floppyRoot)
+    );
+  },
+
+  function floppyIndex() {
+    return src('index.html').pipe(dest(floppyRoot));
+  },
+
+  // batch file to start the HTTP server
+  function floppyBat() {
+    return src(`${srcRoot}/floppy/aa.bat`).pipe(dest(floppyRoot));
+  },
+
+  // note: ignore all dot-files, e.g., .DS_Store and friends
+  function floppyCopy() {
+    return src([
       'dist/**/*',
       // exclude any floppy versions, too
       '!dist/{floppy-*,floppy-*/**}',
@@ -677,9 +691,9 @@ function copyThatFloppy() {
       `!dist/${videoPath}/**/*`,
       `!dist/${imagePath}/unused/**/*`,
       `!dist/${imagePath}/unused`
-    ]).pipe(dest(`${floppyRoot}/dist`))
-  ]);
-}
+    ]).pipe(dest(`${floppyRoot}/dist`));
+  }
+];
 
 function copy360FloppySource() {
   // duplicate `src/`
@@ -766,69 +780,83 @@ function tidyThatFloppyCopy() {
   return clean(globs);
 }
 
-function gzipThatFloppy() {
-  const gzipOptions = {
-    level: 9
-  };
+const gzipOptions = {
+  level: 9
+};
 
-  return merge([
+/**
+ * TODO: reduce to single task, console output is noisy.
+ */
+const gzipThatFloppyTasks = [
+  function floppyGZJS() {
     // index.html -> index.html.gz (a new index.html "boot loader" will be created)
-    src(`index.html`)
+    return src(`index.html`)
       .pipe(minifyInline(minifyInlineOpts))
       .pipe(htmlmin(htmlminOpts))
       .pipe(gzip(gzipOptions))
-      .pipe(dest(floppyRoot)),
+      .pipe(dest(floppyRoot));
+  },
 
+  function floppyGZCSS() {
     // CSS
-    src(distCSS('*'))
+    return src(distCSS('*'))
       .pipe(lightningcss(lightningOptions))
       .pipe(gzip(gzipOptions))
-      .pipe(dest(dp.css)),
+      .pipe(dest(dp.css));
+  },
 
+  function floppyGZHTML() {
     // HTML
-    src(`${dp.html}/*.html`)
+    return src(`${dp.html}/*.html`)
       .pipe(minifyInline(minifyInlineOpts))
       .pipe(htmlmin(htmlminOpts))
       .pipe(gzip(gzipOptions))
-      .pipe(dest(dp.html)),
+      .pipe(dest(dp.html));
+  },
 
+  function floppyGZJSBoot() {
     // JS (excluding aa-boot_bundle)
-    src([distJS('*'), `!${distJS('aa-boot_bundle')}`])
-      // note: re-run through terser to drop header comment.
-      .pipe(terser(terserOpts(true)))
-      .pipe(gzip(gzipOptions))
-      .pipe(dest(dp.js))
-  ]);
-}
+    return (
+      src([distJS('*'), `!${distJS('aa-boot_bundle')}`])
+        // note: re-run through terser to drop header comment.
+        .pipe(terser(terserOpts(true)))
+        .pipe(gzip(gzipOptions))
+        .pipe(dest(dp.js))
+    );
+  }
+];
 
-function bootThatFloppy() {
+/**
+ * Rewrite <script> to point to `dist/js/`
+ * Potentially dangerous: greedy pattern.
+ */
+let pattern = '<script src="';
+
+const bootThatFloppyTasks = [
   // floppy boot -> index.html "boot loader"
   // this will fetch the actual game at index.html.gz
 
-  /**
-   * Rewrite <script> to point to `dist/js/`
-   * Potentially dangerous: greedy pattern.
-   */
-  let pattern = '<script src="';
+  function floppyBootLoader() {
+    return (
+      src('src/floppy/index-floppy.html')
+        .pipe(minifyInline(minifyInlineOpts))
+        .pipe(htmlmin(htmlminOpts))
+        // some.js -> dist/some.js
+        .pipe(replace(pattern, `${pattern}${distRootPath}/${jsPath}/`))
+        .pipe(rename('index.html'))
+        .pipe(dest(floppyRoot))
+    );
+  },
 
-  return merge([
-    src('src/floppy/index-floppy.html')
-      .pipe(minifyInline(minifyInlineOpts))
-      .pipe(htmlmin(htmlminOpts))
-      // some.js -> dist/some.js
-      .pipe(replace(pattern, `${pattern}${distRootPath}/${jsPath}/`))
-      .pipe(rename('index.html'))
-      .pipe(dest(floppyRoot)),
-
-    src('src/floppy/*.js')
+  function floppyJS() {
+    return src('src/floppy/*.js')
       .pipe(terser(terserOpts(true)))
-      .pipe(dest(dp.js))
-  ]);
-}
+      .pipe(dest(dp.js));
+  }
+];
 
 function lastFloppyCleanup() {
   return clean([
-
     // try to avoid mac OS junk
     `**/._.DS_Store`,
     `**/.DS_Store`,
@@ -878,26 +906,26 @@ const audioTasks = [
 
 const floppyTasks1200 = [
   cleanThatFloppy,
-  copyThatFloppy,
+  ...copyThatFloppyTasks,
   ...buildTasks,
-  gzipThatFloppy,
+  ...gzipThatFloppyTasks,
   tidyThatFloppyCopy,
   hearThatFloppy,
-  bootThatFloppy,
+  ...bootThatFloppyTasks,
   lastFloppyCleanup
 ];
 
 const floppyTasks360 = [
   cleanThatFloppy,
-  copyThatFloppy,
+  ...copyThatFloppyTasks,
   copy360FloppySource,
   apply360FloppyOverrides,
   build360FloppyBundle,
   ...buildTasks,
-  gzipThatFloppy,
+  ...gzipThatFloppyTasks,
   tidyThatFloppyCopy,
   renameFloppyFont,
-  bootThatFloppy,
+  ...bootThatFloppyTasks,
   lastFloppyCleanup,
   lastFloppyCleanup360
 ];
