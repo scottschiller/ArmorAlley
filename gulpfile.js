@@ -486,30 +486,55 @@ function buildAudioSpriteConfig() {
     .pipe(dest(dp.config));
 }
 
-function copyStaticResources() {
-  // all the regular images, icons, manifest.json and so forth.
-  // note: some assets may not always be included. ;)
-  const bnb = { allowEmpty: true };
+// all the regular images, icons, manifest.json and so forth.
+// note: some assets may not always be included. ;)
+const bnb = { allowEmpty: true };
 
-  return merge([
-    src(`${assetPath}/${fontPath}/**/*`).pipe(dest(dp.font)),
+/**
+ * TODO: reduce to single task, console output is noisy.
+ */
+const copyStaticResourcesTasks = [
+  function fonts() {
+    return src(`${assetPath}/${fontPath}/**/*`, { encoding: false }).pipe(
+      dest(dp.font)
+    );
+  },
+
+  function images() {
     // copy all image subdirectories, ignoring .png files inside image/ itself which are bundled into a spritesheet.
     // UI/ images are largely (but not entirely) redundant as anything < 2 KB is base64-encoded in CSS.
-    src([
-      `${assetPath}/${imagePath}/**/*`,
-      `!${assetPath}/${imagePath}/*.png`
-    ]).pipe(dest(dp.image)),
-    src(`${assetPath}/manifest.json`).pipe(dest('dist')),
-    src(`${assetPath}/${audioPath}/mp3/bnb/*.*`, bnb).pipe(
+    return src(
+      [`${assetPath}/${imagePath}/**/*`, `!${assetPath}/${imagePath}/*.png`],
+      { encoding: false }
+    ).pipe(dest(dp.image));
+  },
+
+  function manifest() {
+    return src(`${assetPath}/manifest.json`).pipe(dest('dist'));
+  },
+
+  function mp3() {
+    return src(`${assetPath}/${audioPath}/mp3/bnb/*.*`, bnb).pipe(
       dest(`${dp.audio}/mp3/bnb`)
-    ),
-    src(`${assetPath}/${audioPath}/ogg/bnb/*.*`, bnb).pipe(
+    );
+  },
+
+  function ogg() {
+    return src(`${assetPath}/${audioPath}/ogg/bnb/*.*`, bnb).pipe(
       dest(`${dp.audio}/ogg/bnb`)
-    ),
-    src(`${assetPath}/${videoPath}/aa-*.*`).pipe(dest(dp.video)),
-    src(`${assetPath}/${videoPath}/bnb/*.*`, bnb).pipe(dest(`${dp.video}/bnb`))
-  ]);
-}
+    );
+  },
+
+  function aaVideo() {
+    return src(`${assetPath}/${videoPath}/aa-*.*`).pipe(dest(dp.video));
+  },
+
+  function bnbVideo() {
+    return src(`${assetPath}/${videoPath}/bnb/*.*`, bnb).pipe(
+      dest(`${dp.video}/bnb`)
+    );
+  }
+];
 
 function getAudioOptions() {
   return {
@@ -620,19 +645,13 @@ function cleanup() {
   ]);
 }
 
-function minifyCode() {
-  return merge(
-    minifyBootBundle(),
-    minifyJS(),
-    minifyLibs(),
-    minifyCSS(),
-    minifyHTML()
-  );
-}
-
-function copyFiles() {
-  return merge(headerCSS(), headerJS(), copyStaticResources());
-}
+const minifyCodeTasks = [
+  minifyBootBundle,
+  minifyJS,
+  minifyLibs,
+  minifyCSS,
+  minifyHTML
+];
 
 function cleanThatFloppy() {
   return clean([floppyRoot]);
@@ -835,14 +854,16 @@ function lastFloppyCleanup360() {
   ]);
 }
 
+const copyFilesTasks = [headerCSS, headerJS, ...copyStaticResourcesTasks];
+
 const buildTasks = [
   bundleBootFile,
   buildSpriteSheet,
   buildSpriteSheetConfig,
   bundleJS,
-  minifyCode,
+  ...minifyCodeTasks,
   minifyImages,
-  copyFiles,
+  ...copyFilesTasks,
   cleanup
 ];
 
