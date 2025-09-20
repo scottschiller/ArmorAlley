@@ -371,7 +371,7 @@ function minifyImages(callback) {
       const imagemin = imageminModule.default;
       const imageminWebp = webpModule.default;
       pipeline(
-        src(`${dp.image}/${spriteSheet.png}`),
+        src(`${dp.image}/${spriteSheet.png}`, { encoding: false }),
         imagemin(
           [
             // https://www.npmjs.com/package/imagemin-webp
@@ -383,7 +383,8 @@ function minifyImages(callback) {
         dest(dp.image),
         // battlefield sprite which compresses well
         src(
-          `${assetPath}/${imagePath}/battlefield/standalone/deviantart-Dirt-Explosion-774442026.png`
+          `${assetPath}/${imagePath}/battlefield/standalone/deviantart-Dirt-Explosion-774442026.png`,
+          { encoding: false }
         ),
         // https://www.npmjs.com/package/gulp-image-resize
         imageResize({ percentage: 50, imageMagick: true }),
@@ -488,7 +489,7 @@ function buildAudioSpriteConfig() {
 
 // all the regular images, icons, manifest.json and so forth.
 // note: some assets may not always be included. ;)
-const bnb = { allowEmpty: true };
+const bnb = { allowEmpty: true, encoding: false };
 
 /**
  * TODO: reduce to single task, console output is noisy.
@@ -526,7 +527,7 @@ const copyStaticResourcesTasks = [
   },
 
   function aaVideo() {
-    return src(`${assetPath}/${videoPath}/aa-*.*`).pipe(dest(dp.video));
+    return src(`${assetPath}/${videoPath}/aa-*.*`, { encoding: false }).pipe(dest(dp.video));
   },
 
   function bnbVideo() {
@@ -556,13 +557,13 @@ const audioSpriteFiles = [`assets/${audioPath}/wav/*.wav`].concat(
 );
 
 function createAudioSpriteMP3() {
-  return src(audioSpriteFiles)
+  return src(audioSpriteFiles, { encoding: false })
     .pipe(audiosprite(getAudioOptions()))
     .pipe(dest(dp.audio));
 }
 
 function createAudioSpriteOGG() {
-  return src(audioSpriteFiles)
+  return src(audioSpriteFiles, { encoding: false })
     .pipe(
       audiosprite({
         ...getAudioOptions(),
@@ -577,7 +578,7 @@ function createAudioSpriteOGG() {
 function hearThatFloppy(callback) {
   pipeline(
     // lo-fi OGG sprite for floppy version
-    src(audioSpriteFiles),
+    src(audioSpriteFiles, { encoding: false }),
     audiosprite({
       ...getAudioOptions(),
       export: 'ogg',
@@ -595,7 +596,7 @@ function encodeStandaloneFiles() {
 }
 
 function encodeStandaloneMP3() {
-  return src(standaloneFiles)
+  return src(standaloneFiles, { encoding: false })
     .pipe(
       ffmpeg('mp3', function (cmd) {
         return cmd
@@ -608,7 +609,7 @@ function encodeStandaloneMP3() {
 }
 
 function encodeStandaloneOgg() {
-  return src(standaloneFiles)
+  return src(standaloneFiles, { encoding: false })
     .pipe(
       ffmpeg('ogg', function (cmd) {
         return cmd
@@ -664,7 +665,7 @@ const copyThatFloppyTasks = [
   // copy select assets into a separate build path
   // gotta have a favicon.ico, of course...
   function floppyFavicon() {
-    return src(`assets/${imagePath}/app-icons/favicon.ico`).pipe(
+    return src(`assets/${imagePath}/app-icons/favicon.ico`, { encoding: false }).pipe(
       dest(floppyRoot)
     );
   },
@@ -690,14 +691,15 @@ const copyThatFloppyTasks = [
       `!dist/${audioPath}/**/*`,
       `!dist/${videoPath}/**/*`,
       `!dist/${imagePath}/unused/**/*`,
-      `!dist/${imagePath}/unused`
+      `!dist/${imagePath}/unused`,
+      { encoding: false }
     ]).pipe(dest(`${floppyRoot}/dist`));
   }
 ];
 
 function copy360FloppySource() {
   // duplicate `src/`
-  return src(`${srcRoot}/**/*`).pipe(dest(srcRoot360));
+  return src(`${srcRoot}/**/*`, { encoding: false }).pipe(dest(srcRoot360));
 }
 
 function build360FloppyBundle(callback) {
@@ -710,7 +712,7 @@ function build360FloppyBundle(callback) {
 
 function apply360FloppyOverrides() {
   // floppy-specific source file overrides
-  return src(`${srcRoot}/floppy/src-360/**/*`).pipe(dest(srcRoot360));
+  return src(`${srcRoot}/floppy/src-360/**/*`, { encoding: false }).pipe(dest(srcRoot360));
 }
 
 function renameFloppyFont() {
@@ -725,7 +727,7 @@ function renameFloppyFont() {
   const fontFrom = `${fontRoot}/${cheddarGothic360K}`;
   const fontTo = `CheddarGothicStencil-subset.woff2`;
 
-  return src(fontFrom)
+  return src(fontFrom, { encoding: false })
     .pipe(rename(fontTo))
     .pipe(dest(`${floppyDist}/${fontPath}/${fontDirName}`));
 }
