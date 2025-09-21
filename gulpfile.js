@@ -210,6 +210,14 @@ const bootBundleFile = () => distJS('aa-boot_bundle');
 const mainJSFile = () => js('aa');
 const bundleFile = () => distJS('aa');
 
+function binarySrc() {
+  /**
+   * Gulp 5+ defaults to UTF-8 encoding for streams,
+   * which will corrupt binaries. Hence, this method.
+   */
+  return src(...arguments, { encoding: false });
+}
+
 const htmlminOpts = {
   collapseWhitespace: true,
   // needed to retain spacing in some modals
@@ -347,7 +355,7 @@ function minifyHTML() {
 
 function buildSpriteSheet() {
   // Battlefield sprites
-  var spriteData = src(spriteSheet.glob, { encoding: false }).pipe(
+  var spriteData = binarySrc(spriteSheet.glob).pipe(
     spritesmith({
       imgName: spriteSheet.png,
       cssName: spriteSheet.json,
@@ -371,7 +379,7 @@ function minifyImages(callback) {
       const imagemin = imageminModule.default;
       const imageminWebp = webpModule.default;
       pipeline(
-        src(`${dp.image}/${spriteSheet.png}`, { encoding: false }),
+        binarySrc(`${dp.image}/${spriteSheet.png}`),
         imagemin(
           [
             // https://www.npmjs.com/package/imagemin-webp
@@ -382,9 +390,8 @@ function minifyImages(callback) {
         rename(spriteSheet.webp),
         dest(dp.image),
         // battlefield sprite which compresses well
-        src(
-          `${assetPath}/${imagePath}/battlefield/standalone/deviantart-Dirt-Explosion-774442026.png`,
-          { encoding: false }
+        binarySrc(
+          `${assetPath}/${imagePath}/battlefield/standalone/deviantart-Dirt-Explosion-774442026.png`
         ),
         // https://www.npmjs.com/package/gulp-image-resize
         imageResize({ percentage: 50, imageMagick: true }),
@@ -496,18 +503,16 @@ const bnb = { allowEmpty: true, encoding: false };
  */
 const copyStaticResourcesTasks = [
   function fonts() {
-    return src(`${assetPath}/${fontPath}/**/*`, { encoding: false }).pipe(
-      dest(dp.font)
-    );
+    return binarySrc(`${assetPath}/${fontPath}/**/*`).pipe(dest(dp.font));
   },
 
   function images() {
     // copy all image subdirectories, ignoring .png files inside image/ itself which are bundled into a spritesheet.
     // UI/ images are largely (but not entirely) redundant as anything < 2 KB is base64-encoded in CSS.
-    return src(
-      [`${assetPath}/${imagePath}/**/*`, `!${assetPath}/${imagePath}/*.png`],
-      { encoding: false }
-    ).pipe(dest(dp.image));
+    return src([
+      `${assetPath}/${imagePath}/**/*`,
+      `!${assetPath}/${imagePath}/*.png`
+    ]).pipe(dest(dp.image));
   },
 
   function manifest() {
@@ -527,7 +532,7 @@ const copyStaticResourcesTasks = [
   },
 
   function aaVideo() {
-    return src(`${assetPath}/${videoPath}/aa-*.*`, { encoding: false }).pipe(dest(dp.video));
+    return binarySrc(`${assetPath}/${videoPath}/aa-*.*`).pipe(dest(dp.video));
   },
 
   function bnbVideo() {
@@ -557,13 +562,13 @@ const audioSpriteFiles = [`assets/${audioPath}/wav/*.wav`].concat(
 );
 
 function createAudioSpriteMP3() {
-  return src(audioSpriteFiles, { encoding: false })
+  return binarySrc(audioSpriteFiles)
     .pipe(audiosprite(getAudioOptions()))
     .pipe(dest(dp.audio));
 }
 
 function createAudioSpriteOGG() {
-  return src(audioSpriteFiles, { encoding: false })
+  return binarySrc(audioSpriteFiles)
     .pipe(
       audiosprite({
         ...getAudioOptions(),
@@ -578,7 +583,7 @@ function createAudioSpriteOGG() {
 function hearThatFloppy(callback) {
   pipeline(
     // lo-fi OGG sprite for floppy version
-    src(audioSpriteFiles, { encoding: false }),
+    binarySrc(audioSpriteFiles),
     audiosprite({
       ...getAudioOptions(),
       export: 'ogg',
@@ -596,7 +601,7 @@ function encodeStandaloneFiles() {
 }
 
 function encodeStandaloneMP3() {
-  return src(standaloneFiles, { encoding: false })
+  return binarySrc(standaloneFiles)
     .pipe(
       ffmpeg('mp3', function (cmd) {
         return cmd
@@ -609,7 +614,7 @@ function encodeStandaloneMP3() {
 }
 
 function encodeStandaloneOgg() {
-  return src(standaloneFiles, { encoding: false })
+  return binarySrc(standaloneFiles)
     .pipe(
       ffmpeg('ogg', function (cmd) {
         return cmd
@@ -665,7 +670,7 @@ const copyThatFloppyTasks = [
   // copy select assets into a separate build path
   // gotta have a favicon.ico, of course...
   function floppyFavicon() {
-    return src(`assets/${imagePath}/app-icons/favicon.ico`, { encoding: false }).pipe(
+    return binarySrc(`assets/${imagePath}/app-icons/favicon.ico`).pipe(
       dest(floppyRoot)
     );
   },
@@ -681,7 +686,7 @@ const copyThatFloppyTasks = [
 
   // note: ignore all dot-files, e.g., .DS_Store and friends
   function floppyCopy() {
-    return src([
+    return binarySrc([
       'dist/**/*',
       // exclude any floppy versions, too
       '!dist/{floppy-*,floppy-*/**}',
@@ -691,14 +696,14 @@ const copyThatFloppyTasks = [
       `!dist/${audioPath}/**/*`,
       `!dist/${videoPath}/**/*`,
       `!dist/${imagePath}/unused/**/*`,
-      `!dist/${imagePath}/unused`,
-    ], { encoding: false }).pipe(dest(`${floppyRoot}/dist`));
+      `!dist/${imagePath}/unused`
+    ]).pipe(dest(`${floppyRoot}/dist`));
   }
 ];
 
 function copy360FloppySource() {
   // duplicate `src/`
-  return src(`${srcRoot}/**/*`, { encoding: false }).pipe(dest(srcRoot360));
+  return binarySrc(`${srcRoot}/**/*`).pipe(dest(srcRoot360));
 }
 
 function build360FloppyBundle(callback) {
@@ -711,7 +716,7 @@ function build360FloppyBundle(callback) {
 
 function apply360FloppyOverrides() {
   // floppy-specific source file overrides
-  return src(`${srcRoot}/floppy/src-360/**/*`, { encoding: false }).pipe(dest(srcRoot360));
+  return binarySrc(`${srcRoot}/floppy/src-360/**/*`).pipe(dest(srcRoot360));
 }
 
 function renameFloppyFont() {
@@ -726,7 +731,7 @@ function renameFloppyFont() {
   const fontFrom = `${fontRoot}/${cheddarGothic360K}`;
   const fontTo = `CheddarGothicStencil-subset.woff2`;
 
-  return src(fontFrom, { encoding: false })
+  return binarySrc(fontFrom)
     .pipe(rename(fontTo))
     .pipe(dest(`${floppyDist}/${fontPath}/${fontDirName}`));
 }
