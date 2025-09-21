@@ -494,8 +494,10 @@ function buildAudioSpriteConfig() {
     .pipe(dest(dp.config));
 }
 
-// all the regular images, icons, manifest.json and so forth.
-// note: some assets may not always be included. ;)
+/**
+ * All the regular images, icons, manifest.json and so forth.
+ * Note: some assets may not always be included. ;)
+ */
 const bnb = { allowEmpty: true, encoding: false };
 
 /**
