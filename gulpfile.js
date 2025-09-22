@@ -942,14 +942,18 @@ const floppyTasks360 = [
   lastFloppyCleanup360
 ];
 
+function setFloppyRoot(path, callback) {
+  floppyRoot = `${distRootPath}/${path}`;
+  distRoot = `${floppyRoot}/${distRootPath}`;
+  updateDistPaths();
+  callback();
+}
+
 function floppy360KTask() {
   isFloppy = true;
   return series(
     function set360Root(callback) {
-      floppyRoot = `${distRootPath}/${floppyTypes._360}`;
-      distRoot = `${floppyRoot}/${distRootPath}`;
-      updateDistPaths();
-      callback();
+      setFloppyRoot(floppyTypes._360, callback);
     },
     ...floppyTasks360
   );
@@ -960,10 +964,7 @@ function floppy1200KTask() {
   isFloppy = true;
   return series(
     function set1200Root(callback) {
-      floppyRoot = `${distRootPath}/${floppyTypes._1200}`;
-      distRoot = `${floppyRoot}/${distRootPath}`;
-      updateDistPaths();
-      callback();
+      setFloppyRoot(floppyTypes._1200, callback);
     },
     ...floppyTasks1200
   );
