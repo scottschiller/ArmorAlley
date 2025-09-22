@@ -1,27 +1,31 @@
 /**
- * To be used with `gulp-cli` - e.g., running `gulp` will use this file for the build process.
+ * Armor Alley: Gulp "task runner" build/compile script.
+ * Use via `npx gulp`, or install `gulp-cli` and run `gulp`.
+ *
+ * Initial setup:
+ *  `npm install`
+ *
  * https://www.npmjs.com/package/gulp-cli
  * For more details, see src/README.md.
  *
  * ADDITIONAL REQUIREMENTS
  * `ffmpeg` with `libmp3lame` and `libvorbis` are required for encoding audio.
- * `imagemagick` is required for generating the image spritesheet used by the game.
+ * `imagemagick` is required for generating the image spritesheet.
  *
- * Setup:
- *  `npm install`
+ * Default task, "compiled" game in `dist/` path:
+ *  `gulp` (with `gulp-cli`), or `npx gulp`
  *
- * Default build using `gulp-cli`, full game (audio + image sprite + assets, placed into `dist/`):
- *  `gulp`
- *
- * Faster build, once the audio sprites have been generated:
+ * Faster build, excluding audio sprites (handy for code changes):
  *  `gulp build`
  *
- * The audio "sprite" (single file with many sounds) can take some time to run.
- * Once this task has run, a `build` or default task will include the new sprite + config.
+ * MP3 + OGG "audio sprite" files take some time to encode.
+ * This is included in the default task, but not "build."
+ * Once this task has run, `build` will include the new sprite + config.
+ * This can be run if you only want to update the audio sprites.
  *  `gulp audio`
  *
- * Audio and image "sprites" have configuration / definition JS files, which are built and stored in src/config.
- * These config modules are loaded by the game JS and rolled up into the bundle at build time.
+ * Audio and image sprites have some related configuration / mapping,
+ * generated in `src/config` and rolled up in the build process.
  */
 
 function aa(callback) {
