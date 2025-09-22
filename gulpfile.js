@@ -971,36 +971,39 @@ function floppy1200KTask() {
 }
 
 /**
- * `gulp build-floppy`
- * 💾 Special case: floppy disk-specific builds.
- * This builds a version of the game intended for loading from 3.5" and 5.25" FDD media.
- * This references the stock build, so run `build` at least once before this task.
- * ---
+ * `gulp`
+ * Default task: compile the game into `dist/`
+ *
+ * This task generates the audio and image sprites, then builds the game
+ * including dynamically-built sprite configurations.
+ *
+ * For faster "rebuilds", use `gulp build` after the default task has run once.
+ *
+ * The floppy build tasks are separate.
  */
-task('build-floppy', series(aa, floppy1200KTask(), floppy360KTask()));
-
-// 360 KB version of floppy build.
-task('build-floppy-360k', series(aa, floppy360KTask()));
-
-// 1.2-MB version of floppy build.
-task('build-floppy-1200k', series(aa, floppy1200KTask()));
+task('default', series(aa, cleanDist, ...audioTasks, ...buildTasks));
 
 /**
  * `gulp build`
- * Builds the game, without generating or re-building the audio sprite portion.
- * ---
- * This is handy for regular development and build testing.
- * Once built, the audio sprite only needs rebuilding if the audio assets change.
+ * Builds the game, without re-encoding the audio sprites (saves 15+ seconds.)
+ *
+ * At least one full build is required first, to generate the audio sprites.
+ * Once built, this task is handy for regular development and testing.
+ * A full rebuild is needed only if the underlying audio assets change.
  */
 task('build', series(aa, cleanDist, ...buildTasks));
 
 /**
- * `gulp`
- * Default task: full build of audio sprites, and game assets into dist/
- * ---
- * This task builds the audio and image sprites, then builds the game including dynamically-built sprite configurations.
- * For a faster build, use `gulp build` once the audio sprite has been generated at least once.
- * The audio task can be run separately, via `gulp audio`.
- * The floppy build is also separate, and not included here.
+ * `gulp build-floppy`
+ * 💾 Special case: 360K + 1.2MB floppy disk-specific versions.
+ *
+ * This builds versions of the game optimized for 3.5" and 5.25" FDD media.
+ * This references the default build, so run `gulp` at least once beforehand.
  */
-exports.default = series(aa, cleanDist, ...audioTasks, ...buildTasks);
+task('build-floppy', series(aa, floppy1200KTask(), floppy360KTask()));
+
+// 360 KB floppy version.
+task('build-floppy-360k', series(aa, floppy360KTask()));
+
+// 1.2 MB floppy version.
+task('build-floppy-1200k', series(aa, floppy1200KTask()));
