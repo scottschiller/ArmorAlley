@@ -981,15 +981,6 @@ task('build-floppy-360k', series(aa, floppy360KTask()));
 task('build-floppy-1200k', series(aa, floppy1200KTask()));
 
 /**
- * `gulp audio`
- * Builds the audio sprite + config JS module.
- * ---
- * Run default build task to roll these changes into the full bundle.
- * This applies only when source audio files have changed, or need re-encoding.
- */
-task('audio', series(aa, ...audioTasks));
-
-/**
  * `gulp build`
  * Builds the game, without generating or re-building the audio sprite portion.
  * ---
