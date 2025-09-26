@@ -903,8 +903,9 @@ body.prefs-modal-open #notification-toasts {
 }
 
 body.is_firefox.prefs-modal-open #game-menu-wrapper,
-body.is_firefox.prefs-modal-open #home-menu-video {
-  /* pink video compositing fix */
+body.is_firefox.prefs-modal-open #home-menu-video,
+body.is_firefox #tv-display #tv {
+  /* pink video compositing fixes */
   filter: none;
 }
 
