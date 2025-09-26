@@ -10,7 +10,8 @@ import {
   updateGameSpeed,
   GAME_SPEED_RATIOED,
   soundManager,
-  tutorialMode
+  tutorialMode,
+  isFirefox
 } from '../core/global.js';
 import { frameTimeoutManager } from '../core/GameLoop.js';
 import { zones } from './zones.js';
@@ -986,6 +987,7 @@ const common = {
         wzTimer = common.setFrameTimeout(() => {
           wzTimer = null;
           fs.remove();
+          utils.css.remove(document.body, 'has_fs');
         }, 550);
       }
       if (!fileName) return;
@@ -1057,6 +1059,7 @@ const common = {
     const useFS = fileName.match(/wz|desert/i);
 
     if (useFS) {
+      utils.css.add(document.body, 'has_fs');
       fs = document.createElement('div');
       fs.id = 'fs';
       Object.assign(fs.style, {

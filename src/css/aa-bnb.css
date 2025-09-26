@@ -31,6 +31,15 @@
   height: 320px;
 }
 
+body.has_fs.is_firefox #tv-display,
+body.has_fs.is_firefox #fs {
+  /**
+   * "Full-screen" video causes pink rendering issues on Firefox.
+   * FS video goes pink on transition, TV is pink on display.
+   */
+  transition: none !important;
+}
+
 #mtv-bnb-in {
   background-position: 0 0;
   background-repeat: no-repeat;
