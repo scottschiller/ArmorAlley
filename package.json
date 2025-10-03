@@ -25,7 +25,7 @@
   "homepage": "https://github.com/scottschiller/ArmorAlley#readme",
   "devDependencies": {
     "clean-css": "^5.3.3",
-    "eslint": "^9.36.0",
+    "eslint": "^9.37.0",
     "gulp": "^5.0.1",
     "gulp-clean-css": "^4.3.0",
     "gulp-cli": "^3.1.0",
@@ -36,10 +36,10 @@
     "gulp-terser": "^2.1.0",
     "postcss-image-inliner": "^7.0.1",
     "prettier": "3.6.2",
-    "rollup": "^4.52.0"
+    "rollup": "^4.52.4"
   },
   "dependencies": {
-    "browserslist": "^4.26.2",
+    "browserslist": "^4.26.3",
     "del": "^8.0.1",
     "gulp-audiosprite": "^1.1.0",
     "gulp-fluent-ffmpeg": "^2.0.0",
