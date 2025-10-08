@@ -215,6 +215,9 @@ const effects = {
     // reduce certain structures' chance of smoke, as they smoke too much when damaged a lot.
     if ((isBunker || isTurret) && Math.random() <= 0.25) return;
 
+    const isHelicopter = data.type === TYPES.helicopter;
+    const isBalloon = data.type === TYPES.balloon;
+
     // bunkers can smoke across the whole thing
     const fractionWidth = isBunker ? data.halfWidth : data.halfWidth * 0.5;
 
@@ -223,13 +226,11 @@ const effects = {
       x: data.x + data.halfWidth + plusMinus(rnd(fractionWidth)),
       y:
         data.y +
-        (data.type !== TYPES.helicopter &&
-        data.type !== TYPES.balloon &&
-        (!data.bottomAligned || data.type === TYPES.bunker)
+        (!isHelicopter && !isBalloon && (!data.bottomAligned || isBunker)
           ? data.halfHeight
           : 0) +
         rnd(data.halfHeight) *
-          (data.type === TYPES.balloon ? 0 : isBunker ? 0.5 : 0.25) *
+          (isBalloon ? 0 : isBunker ? 0.5 : 0.25) *
           (data.vY <= 0 ? -1 : 1),
       // if undefined or zero, allow smoke to go left or right
       // special handling for helicopters and turrets. this should be moved into config options.
@@ -244,11 +245,11 @@ const effects = {
       vY:
         isBunker || isTurret
           ? -rnd(6 * Math.max(0.33, chance))
-          : data.type === TYPES.helicopter
+          : isHelicopter
             ? -rnd(3 * chance)
             : -(data.vY || 0.25) + rnd(-2),
       // show smoke on battlefield, but not on radar when cloaked.
-      parentWasCloaked: data.type === TYPES.helicopter && data.cloaked,
+      parentWasCloaked: isHelicopter && data.cloaked,
       oParent: data.id
     });
   },
