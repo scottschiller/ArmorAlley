@@ -184,13 +184,12 @@ const effects = {
     exports,
     chance = 1 - exports?.data?.energy / exports?.data?.energyMax
   ) => {
-    if (!exports || !exports.data) return;
+    if (!exports?.data) return;
 
     // 60fps: only run every fourth frame of animation by object, or game if unspecified.
     if (
       FPS === 60 &&
-      (exports?.data?.frameCount || game.objects.gameLoop.data.frameCount) %
-        4 !==
+      (exports.data.frameCount || game.objects.gameLoop.data.frameCount) % 4 !==
         0
     )
       return;
@@ -198,7 +197,7 @@ const effects = {
     const { data } = exports;
 
     // no damage = no smoke.
-    if (exports.data.energy === exports.data.energyMax) return;
+    if (data.energy === data.energyMax) return;
 
     // don't show if not in view, AND no "smoke on radar."
     if (!data.isOnScreen && !gamePrefs.radar_enhanced_fx) return;
