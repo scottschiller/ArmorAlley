@@ -243,7 +243,7 @@ const Notifications = () => {
 
     const gameTypes = {
       tutorial: 'This is the tutorial. <span class="inline-emoji">📖</span>',
-      other: `You are playing <b>${levelName}</b>. <span class="inline-emoji">${emoji[gameType]}</span>`
+      other: `You are playing ${levelName}. <span class="inline-emoji">${emoji[gameType]}</span>`
     };
 
     let playingMessage;
