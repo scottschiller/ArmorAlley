@@ -515,7 +515,7 @@ const copyStaticResourcesTasks = [
   function images() {
     // copy all image subdirectories, ignoring .png files inside image/ itself which are bundled into a spritesheet.
     // UI/ images are largely (but not entirely) redundant as anything < 2 KB is base64-encoded in CSS.
-    return src([
+    return binarySrc([
       `${assetPath}/${imagePath}/**/*`,
       `!${assetPath}/${imagePath}/*.png`
     ]).pipe(dest(dp.image));
