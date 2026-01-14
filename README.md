@@ -54,6 +54,8 @@ https://en.wikipedia.org/wiki/Armor_alley
 
 ## **Quick Links**
 
+- 2025 Version 3.00 (work in progress) Overview (33m 45s): https://youtu.be/E8eJ8v7pQNw
+
 - 10th Anniversary summary video (3m 45s): https://youtu.be/oYUCUvg02rY
 
 * History, review, tutorial, demos, "Midnight Oasis" walk-through: (1h 12m 55s): https://youtu.be/6wEMcssFJ-E
@@ -73,6 +75,8 @@ For running the game locally and JS + CSS build instructions, see [src/README.md
 60 fps, improved performance, revamped game logic and enemy "AI", improved mobile + touch screen support, tons of new details and effects.
 
 ![Screenshot: Armor Alley, 2026 "work in progress" update, running in a full-screen browser tab. Game menu, Helicopter, battlefield and ground units are displayed.](assets/image/app-images/armor-alley_2025_wip_1920x1080.webp)
+
+Version 3.00 Overview (33m 45s): https://youtu.be/E8eJ8v7pQNw
 
 ## **V2.01.20230520: 10th Anniversary "Remastered" Edition Addendum**
 
