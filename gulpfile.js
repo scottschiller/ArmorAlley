@@ -579,7 +579,10 @@ function createAudioSpriteOGG() {
       audiosprite({
         ...getAudioOptions(),
         export: 'ogg',
-        // OGG doesn't do VBR, but can match MP3 quality at lower bitrate.
+        /**
+         * audiosprite library has VBR argument only for MP3?
+         * OGG can match MP3 quality at lower bitrate, however(?)
+         */
         bitrate: 64
       })
     )
