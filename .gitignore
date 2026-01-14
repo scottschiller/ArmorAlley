@@ -25,7 +25,8 @@ script/*bundle.js
 src/css/*.js
 assets/video
 *copy*
-assets/audio/bnb
-assets/audio/*/bnb
+assets/audio/wav/bnb/*.wav
+assets/audio/mp3/bnb/*.mp3
+assets/audio/ogg/bnb/*.ogg
 assets/video/bnb
 bun.lockb
