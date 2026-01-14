@@ -610,23 +610,23 @@ function encodeStandaloneMP3() {
   return binarySrc(standaloneFiles)
     .pipe(
       ffmpeg('mp3', function (cmd) {
-        return cmd
-          .audioBitrate('128k')
-          .audioChannels(2)
-          .audioCodec('libmp3lame');
+        return (
+          cmd
+            // "generally considered the default and close to perceptual transparency"
+            .audioQuality(4)
+            .audioChannels(2)
+            .audioCodec('libmp3lame')
+        );
       })
     )
     .pipe(dest(`${dp.audio}/mp3`));
 }
 
-function encodeStandaloneOgg() {
+function encodeStandaloneOGG() {
   return binarySrc(standaloneFiles)
     .pipe(
       ffmpeg('ogg', function (cmd) {
-        return cmd
-          .audioBitrate('128k')
-          .audioChannels(2)
-          .audioCodec('libvorbis');
+        return cmd.audioQuality(5).audioChannels(2).audioCodec('libvorbis');
       })
     )
     .pipe(dest(`${dp.audio}/ogg`));
@@ -912,7 +912,6 @@ const audioTasks = [
   createAudioSpriteMP3,
   createAudioSpriteOGG,
   buildAudioSpriteConfig,
-  encodeStandaloneFiles,
   cleanAudioTemp
 ];
 
