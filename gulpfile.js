@@ -605,8 +605,6 @@ function hearThatFloppy(callback) {
   );
 }
 
-function encodeStandaloneFiles() {
-  return merge([encodeStandaloneMP3(), encodeStandaloneOgg()]);
 }
 
 function encodeStandaloneMP3() {
@@ -915,6 +913,8 @@ const audioTasks = [
   createAudioSpriteMP3,
   createAudioSpriteOGG,
   buildAudioSpriteConfig,
+  encodeStandaloneMP3,
+  encodeStandaloneOGG,
   cleanAudioTemp
 ];
 
