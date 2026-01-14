@@ -68,11 +68,11 @@ For running the game locally and JS + CSS build instructions, see [src/README.md
 
 ## **Changelog / Revision History**
 
-## **V3.00.2025xxxx: 2025 Work In Progress**
+## **V3.00.2026xxxx: 2026 Work In Progress**
 
 60 fps, improved performance, revamped game logic and enemy "AI", improved mobile + touch screen support, tons of new details and effects.
 
-![Screenshot: Armor Alley, 2025 "work in progress" update, running in a full-screen browser tab. Game menu, Helicopter, battlefield and ground units are displayed.](assets/image/app-images/armor-alley_2025_wip_1920x1080.webp)
+![Screenshot: Armor Alley, 2026 "work in progress" update, running in a full-screen browser tab. Game menu, Helicopter, battlefield and ground units are displayed.](assets/image/app-images/armor-alley_2025_wip_1920x1080.webp)
 
 ## **V2.01.20230520: 10th Anniversary "Remastered" Edition Addendum**
 
