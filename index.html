@@ -155,7 +155,7 @@
     <script>
       (() => {
         // "version" string for loading assets.
-        window.aaVersion = 'V20251008';
+        window.aaVersion = 'V20260113';
 
         let wl = window.location;
         let wlhref = wl.href;
@@ -173,7 +173,7 @@
         let noVersion = wlhref.match(/noversion/i);
 
         if (!isProdHost || noVersion) {
-          // Versioning is applicable on the production site, e.g., aa.js.V20250101
+          // Versioning is applicable on the production site, e.g., aa.js.V20260101
           // Without a custom .htaccess or similar rule, you'll get 404s.
           window.aaVersion = '';
         }
