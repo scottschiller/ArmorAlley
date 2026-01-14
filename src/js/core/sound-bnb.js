@@ -437,8 +437,8 @@ function getSoundFromArray(ref) {
 // https://youtu.be/nSsYgd96seg
 
 function bnbURL(file) {
-  if (window.location.hostname === 'localhost' || chosenCodec === 'wav')
     return `${aaLoader.getAudioRoot()}/bnb/${file}.wav`;
+  if ((!aaLoader.isLocal() && !aaLoader.isProd()) || chosenCodec === 'wav')
 
   return `${aaLoader.getAudioRoot()}/${chosenCodec}/bnb/${file}.${chosenCodec}`;
 }
