@@ -432,13 +432,19 @@ function getSoundFromArray(ref) {
   return arrayItem;
 }
 
-// --- BnB sound config ---
-
-// https://youtu.be/nSsYgd96seg
+/**
+ * 
+ * BnB sound config
+ * https://youtu.be/nSsYgd96seg
+ * 
+ * NOTE: BnB sound assets are omitted by default.
+ * https://github.com/scottschiller/ArmorAlley/issues/29
+ * 
+ */
 
 function bnbURL(file) {
-    return `${aaLoader.getAudioRoot()}/bnb/${file}.wav`;
   if ((!aaLoader.isLocal() && !aaLoader.isProd()) || chosenCodec === 'wav')
+    return `${aaLoader.getAudioRoot()}/wav/bnb/${file}.wav`;
 
   return `${aaLoader.getAudioRoot()}/${chosenCodec}/bnb/${file}.${chosenCodec}`;
 }
