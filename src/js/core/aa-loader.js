@@ -344,6 +344,10 @@ function minifyAndVersion(url) {
   return `src/${fileExt}/${url}`;
 }
 
+function isLocal() {
+  return isLocalhost;
+}
+
 function isProd() {
   return (isProdSite || forceProd) && !missingDist;
 }
@@ -458,6 +462,7 @@ const aaLoader = {
   getVideoRoot,
   hello,
   isFloppy,
+  isLocal,
   isProd,
   loadCSS,
   loadGA,
