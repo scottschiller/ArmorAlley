@@ -100,11 +100,11 @@ If everything is working, you should be looking at your local copy of Armor Alle
 
 ---
 
-**Requirements: Building "Armor Alley" JS + CSS bundles + spritesheet(s) with Gulp**
+**Requirements: Building "Armor Alley" JS + CSS bundles, spritesheets and audio encoding with Gulp**
 
-**_Disclaimer:_** I suspect this section is very niche content, and likely not applicable. Notwithstanding, it is documented for my own reference and provided in case anyone else is poking around. ;)
+**_Disclaimer:_** I suspect this section is niche content. Notwithstanding, it is documented for reference and for those who might find it helpful.
 
-**Note**: If you are editing the source or playing the game locally, then you don't need to worry about the build / bundling process; it's fine to load the raw ES6 modules and unminified CSS. If you're deploying this to a production site for numerous users and want to optimize performance, read on - and tell me about your use case, because that sounds interesting. ;)
+**Note**: If you are editing the source or playing the game locally, then you don't need to worry about the build / bundling process; it's fine to load the raw ES6 modules and unminified CSS from the `src` and `assets` paths. If you're deploying this to a production site for numerous users and want to optimize performance, read on - and tell me about your use case, because that sounds interesting. ;)
 
 **Install required dev dependencies**
 
