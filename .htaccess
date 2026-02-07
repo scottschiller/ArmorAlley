@@ -1,7 +1,7 @@
 Options -Indexes
 ExpiresActive On
 
-<FilesMatch "\.(ico|png|jpe?g|gif|bmp|svg|mov|mp4|webp|webm|mp3|wav|ogg|woff|woff2|js|css)$">
+<FilesMatch "\.(ico|png|jpe?g|gif|bmp|svg|mov|mp4|webp|webm|mp3|wav|ogg|opus|woff|woff2|js|css)$">
   ExpiresDefault "access plus 1 year"
 </FilesMatch>
 

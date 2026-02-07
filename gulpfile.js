@@ -9,7 +9,7 @@
  * For more details, see src/README.md.
  *
  * ADDITIONAL REQUIREMENTS
- * `ffmpeg` with `libmp3lame` and `libvorbis` are required for encoding audio.
+ * `ffmpeg` with `libmp3lame` and `libopus` are required for encoding audio.
  * `imagemagick` is required for generating the image spritesheet.
  *
  * Default task, "compiled" game in `dist/` path:
@@ -18,7 +18,7 @@
  * Faster build, excluding audio sprites (handy for code changes):
  *  `gulp build`
  *
- * MP3 + OGG "audio sprite" files take some time to encode.
+ * MP3 + Opus "audio sprite" files take some time to encode.
  * This is included in the default task, but not "build."
  * Once this task has run, `build` will include the new sprite + config.
  * This can be run if you only want to update the audio sprites.
@@ -200,7 +200,18 @@ const standaloneFiles = [
   `${assetPath}/${audioPath}/wav/danger_zone_midi_doom_style.wav`
 ];
 
-const bnbAudioFiles = `${assetPath}/${audioPath}/wav/bnb/*.wav`;
+const bnbRoot = `${assetPath}/${audioPath}/wav/bnb`;
+
+// higher bitrate for certain musical elements
+const bnbAudioFilesHQ = [
+  `${bnbRoot}/i_got_you_babe.wav`,
+  `${bnbRoot}/theme.wav`
+];
+
+// all sounds, minus HQ (musical) ones
+const bnbAudioFiles = [`${bnbRoot}/*.wav`].concat(
+  bnbAudioFilesHQ.map((f) => `!${f}`)
+);
 
 const headerFile = () => root(headerFileName);
 const css = (file) => root(`${cssPath}/${file}.css`);
@@ -534,11 +545,11 @@ const copyStaticResourcesTasks = [
     return src(`${path}/*.*`, bnb).pipe(dest(`${dp.audio}/mp3/bnb`));
   },
 
-  function staticBNBOGG() {
+  function staticBNBOpus() {
     // encoded BnB assets may not always be present.
-    let path = `${assetPath}/${audioPath}/ogg/bnb`;
+    let path = `${assetPath}/${audioPath}/opus/bnb`;
     if (!fs.existsSync(path)) return Promise.resolve();
-    return src(`${path}/*.*`, bnb).pipe(dest(`${dp.audio}/ogg/bnb`));
+    return src(`${path}/*.*`, bnb).pipe(dest(`${dp.audio}/opus/bnb`));
   },
 
   function aaVideo() {
@@ -577,17 +588,17 @@ function createAudioSpriteMP3() {
     .pipe(dest(dp.audio));
 }
 
-function createAudioSpriteOGG() {
+function createAudioSpriteOpus() {
   return binarySrc(audioSpriteFiles)
     .pipe(
       audiosprite({
         ...getAudioOptions(),
-        export: 'ogg',
+        export: 'opus',
         /**
          * audiosprite library has VBR argument only for MP3?
-         * OGG can match MP3 quality at lower bitrate, however(?)
+         * Opus can match MP3 quality at lower bitrate, however(?)
          */
-        bitrate: 64
+        bitrate: 48
       })
     )
     .pipe(dest(dp.audio));
@@ -595,12 +606,12 @@ function createAudioSpriteOGG() {
 
 function hearThatFloppy(callback) {
   pipeline(
-    // lo-fi OGG sprite for floppy version
+    // lo-fi Opus sprite for floppy version
     binarySrc(audioSpriteFiles),
     audiosprite({
       ...getAudioOptions(),
-      export: 'ogg',
-      // OGG doesn't do VBR, but can match MP3 quality at lower bitrate.
+      export: 'opus',
+      // Opus doesn't do VBR, but can match MP3 quality at lower bitrate.
       bitrate: 32,
       samplerate: 22050
     }),
@@ -625,20 +636,46 @@ function encodeBNBMP3() {
   return binarySrc(bnbAudioFiles)
     .pipe(
       ffmpeg('mp3', function (cmd) {
-        return cmd.audioChannels(2).audioCodec('libmp3lame').audioQuality(7);
+        return cmd
+          .audioChannels(2)
+          .audioCodec('libmp3lame')
+          .audioFrequency(22050);
       })
     )
     .pipe(dest(`${assetPath}/${audioPath}/mp3/bnb`));
 }
 
-function encodeBNBOGG() {
-  return binarySrc(bnbAudioFiles)
+function encodeBNBMP3HQ() {
+  return binarySrc(bnbAudioFilesHQ)
     .pipe(
-      ffmpeg('ogg', function (cmd) {
-        return cmd.audioChannels(2).audioCodec('libvorbis').audioQuality(4);
+      ffmpeg('mp3', function (cmd) {
+        return cmd.audioChannels(2).audioCodec('libmp3lame');
       })
     )
-    .pipe(dest(`${assetPath}/${audioPath}/ogg/bnb`));
+    .pipe(dest(`${assetPath}/${audioPath}/mp3/bnb`));
+}
+
+function encodeBNBOpus() {
+  return binarySrc(bnbAudioFiles)
+    .pipe(
+      ffmpeg('opus', function (cmd) {
+        return cmd
+          .audioChannels(2)
+          .audioCodec('libopus')
+          .audioBitrate('64k');
+      })
+    )
+    .pipe(dest(`${assetPath}/${audioPath}/opus/bnb`));
+}
+
+function encodeBNBOpusHQ() {
+  return binarySrc(bnbAudioFilesHQ)
+    .pipe(
+      ffmpeg('opus', function (cmd) {
+        return cmd.audioChannels(2).audioCodec('libopus').audioBitrate('128k');
+      })
+    )
+    .pipe(dest(`${assetPath}/${audioPath}/opus/bnb`));
 }
 
 function encodeStandaloneMP3() {
@@ -657,14 +694,14 @@ function encodeStandaloneMP3() {
     .pipe(dest(`${dp.audio}/mp3`));
 }
 
-function encodeStandaloneOGG() {
+function encodeStandaloneOpus() {
   return binarySrc(standaloneFiles)
     .pipe(
-      ffmpeg('ogg', function (cmd) {
-        return cmd.audioQuality(5).audioChannels(2).audioCodec('libvorbis');
+      ffmpeg('opus', function (cmd) {
+        return cmd.audioChannels(2).audioCodec('libopus');
       })
     )
-    .pipe(dest(`${dp.audio}/ogg`));
+    .pipe(dest(`${dp.audio}/opus`));
 }
 
 function cleanAudioDist() {
@@ -673,8 +710,17 @@ function cleanAudioDist() {
 }
 
 function cleanAudioTemp() {
-  // delete temporary audio JS / JSON, post-build
-  return clean([`${dp.audio}/*.json`]);
+  /**
+   * Delete temporary audio JS / JSON, post-build
+   * ---
+   * 02/2026: Duplicate ` .mp3` + ` .opus` of last files to be encoded,
+   * Possible ffmpeg / gulp bug stemming from src([glob1, !glob2])?
+   */
+  return clean([
+    `${assetPath}/${audioPath}/mp3/bnb/ .mp3`,
+    `${assetPath}/${audioPath}/opus/bnb/ .opus`,
+    `${dp.audio}/*.json`
+  ]);
 }
 
 function cleanDist() {
@@ -945,10 +991,10 @@ const buildTasks = [
 const audioTasks = [
   cleanAudioDist,
   createAudioSpriteMP3,
-  createAudioSpriteOGG,
+  createAudioSpriteOpus,
   buildAudioSpriteConfig,
   encodeStandaloneMP3,
-  encodeStandaloneOGG,
+  encodeStandaloneOpus,
   cleanAudioTemp
 ];
 
@@ -1033,15 +1079,28 @@ task('build', series(aa, cleanDist, ...buildTasks));
 
 /**
  * `gulp build-bnb`
- * Creates MP3 + OGG versions of the BnB .WAV files in `assets/bnb`.
+ * Creates MP3 + Opus versions of the BnB .WAV files in `assets/bnb`.
  * This can take about two minutes to run, FWIW.
  *
- * Shell script version, tested on macOS with oggenc and lame:
- * find 'assets/audio/wav/bnb' -iname '*.wav' -exec bash -c 'B=$(basename "{}"); oggenc -q 4 --discard-comments "{}" -o "./assets/audio/ogg/bnb/${B%.*}.ogg"' \;
+ * Shell script version, tested on macOS with opus-tools and lame (installed via Homebrew.)
+ * Note: this is not as optimized as the gulp script, file sizes will be somewhat larger.
+ * find 'assets/audio/wav/bnb' -iname '*.wav' -exec bash -c 'B=$(basename "{}"); opusenc "{}" "./assets/audio/opus/bnb/${B%.*}.opus"' \;
  * find 'assets/audio/wav/bnb' -iname '*.wav' -exec bash -c 'B=$(basename "{}"); lame -V 5 "{}" -o "./assets/audio/mp3/bnb/${B%.*}.mp3"' \;
+ *
  */
 
-task('build-bnb', series(aa, beavis, encodeBNBMP3, encodeBNBOGG));
+task(
+  'build-bnb',
+  series(
+    aa,
+    beavis,
+    encodeBNBMP3,
+    encodeBNBMP3HQ,
+    encodeBNBOpus,
+    encodeBNBOpusHQ,
+    cleanAudioTemp
+  )
+);
 
 /**
  * `gulp build-floppy`

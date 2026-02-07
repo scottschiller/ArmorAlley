@@ -30,5 +30,5 @@ assets/video/old
 *copy*
 assets/audio/wav/bnb/*.wav
 assets/audio/mp3/bnb/*.mp3
-assets/audio/ogg/bnb/*.ogg
+assets/audio/opus/bnb/*.opus
 bun.lockb
