@@ -23,14 +23,14 @@ import { aaLoader } from './aa-loader.js';
 // client format support
 let chosenCodec;
 
-if (soundManager.canPlayMIME('audio/ogg')) {
-  chosenCodec = 'ogg';
+if (soundManager.canPlayMIME('audio/opus')) {
+  chosenCodec = 'opus';
 } else if (soundManager.canPlayMIME('audio/mp3')) {
   chosenCodec = 'mp3';
 } else {
   // Only allow .wav files ($$$) on dev / localhost.
   if (aaLoader.version) {
-    console.warn('No OGG or MP3 support detected? Disabling sound.');
+    console.warn('No Opus or MP3 support detected? Disabling sound.');
     soundManager.disable();
   } else {
     chosenCodec = 'wav';
@@ -91,9 +91,9 @@ function preloadCommonSounds() {
   function parseURL(item) {
     // array of URLs, or a single URL (e.g., if on dev.)
     if (typeof item === 'string') return item;
-    // here be dragons: assume mp3/ogg/wav order as in getURL(). :X
+    // here be dragons: assume mp3/opus/wav order as in getURL(). :X
     if (soundManager.html5.mp3) return item[0];
-    if (soundManager.html5.ogg) return item[1];
+    if (soundManager.html5.opus) return item[1];
     return item[2];
   }
 
@@ -361,7 +361,7 @@ function playSound(soundReference, target, soundOptions) {
   if (!soundReference) {
     // this is bad.
 
-    // bail silently if SM2 has been explicitly disabled, e.g., due to lack of OGG/MP3 support.
+    // bail silently if SM2 has been explicitly disabled, e.g., due to lack of Opus/MP3 support.
     if (soundManager.disabled) return;
 
     console.warn('playSound: WTF no soundReference??', soundReference);
