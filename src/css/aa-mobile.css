@@ -2,6 +2,12 @@
  * The big mobile / touchscreen / gamepad rules file.
  * TODO: Maybe drop `body.is-mobile` everywhere.
  */
+
+body:not(.prefs-modal-open) * {
+  /* possibly dangerous: disable selection unless a modal is active. */
+  user-select: none;
+}
+
 body.is-mobile #game-menu-wrapper {
   /* always full-width on mobile. */
   max-width: 100%;
