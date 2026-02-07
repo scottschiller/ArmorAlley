@@ -96,7 +96,7 @@ The npm `http-server` package is popular and convenient, and supports byte servi
 
 - Open a browser, and load up [http://localhost:8080/](http://localhost:8080/).
 
-If everything is working, you should be looking at your local copy of Armor Alley in your browser of choice. If you use uMatrix or other browser security add-ons, you may need to allow JS + CSS for `localhost`.
+If everything is working, you should be looking at your local copy of Armor Alley in your browser of choice. Some ad blockers or security add-ons may require allowing JS + CSS for `localhost`.
 
 ---
 
