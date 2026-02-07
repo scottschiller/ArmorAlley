@@ -132,13 +132,13 @@ If everything is working, you should be looking at your local copy of Armor Alle
 
 - To build the assets, run this from the CLI in the AA home directory (which has `gulpfile.js`)...
 
-  `gulp`
+  `npx gulp`
 
   Ideally, this will run without a bunch of errors. Take a look at [gulpfile.js](gulpfile.js) for some notes as to requirements, and troubleshooting.
 
   Gulp should dump a bunch of output, and ultimately create files under `dist/js`, `dist/css` and the like. This is the "bundled" JS, and minified CSS that the game loads in production mode. The game will load faster using these files, vs. the raw development source files.
 
-  Whenever you make changes to the source JS or CSS, you can re-run `gulp` to update the "build." I also recommend updating the version string in `index.html`, if you are pushing this to production. More on that below.
+  Whenever you make changes to the source JS or CSS, you can re-run `npx gulp` to update the "build." I also recommend updating the version string in `index.html`, if you are pushing this to production. More on that below.
 
 **Armor Alley "Boot Loader": dev vs. production assets**
 
