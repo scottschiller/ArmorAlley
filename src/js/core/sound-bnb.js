@@ -2087,7 +2087,8 @@ function addBNBSounds() {
       addVL('b_yeah_yeah_this_is_cool_seen_before_it_rules')
     ),
     addVL('b_yeah_this_game_kicks_ass'),
-    add('b_lets_get_ready_to_rumble')
+    add('b_lets_get_ready_to_rumble'),
+    add('b_big_boobs_and_fire') // https://youtu.be/watch?v=eje-KaSjAZk&t=10m12s
   ]);
   bnb.gameMenu.excludeThrottling = true;
 
