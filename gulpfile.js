@@ -612,7 +612,7 @@ function hearThatFloppy(callback) {
       ...getAudioOptions(),
       export: 'opus',
       // Opus doesn't do VBR, but can match MP3 quality at lower bitrate.
-      bitrate: 32,
+      bitrate: 30,
       samplerate: 22050
     }),
     dest(dp.audio),
