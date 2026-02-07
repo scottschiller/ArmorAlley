@@ -926,7 +926,6 @@ body.is_iphone .hide-on-iphone {
 
 @keyframes noise {
   0% {
-    background-position: 0 0;
     transform: translate3d(0, 0, 0);
   }
 
