@@ -791,7 +791,8 @@ function addBNBSounds() {
     addVL('b_what_bh_i_didnt_say_anything'),
     addVL('b_yeah_up_yours'),
     addVL('b_you_need_to_shut_up_so_i_can_concentrate'),
-    addVL('b_heh_yeah_shut_up_fartknocker')
+    addVL('b_heh_yeah_shut_up_fartknocker'),
+    add('b_wu_tang_sword_letterman')
   ]);
 
   bnb.bGoodQuestionResponse = addSequence(
@@ -2108,7 +2109,8 @@ function addBNBSounds() {
       add('bh_dammit_beavis_settle_down'),
       addVL('bh_hard_laugh')
     ),
-    addVL('bh_boioioing_b_you_cant_really_do_that_butthead')
+    addVL('bh_boioioing_b_you_cant_really_do_that_butthead'),
+    add('b_wu_tang_sword_letterman') // https://youtu.be/watch?v=eje-KaSjAZk&t=7m46s
   ]);
   bnb.gameMenuHard.excludeDelay = true;
   bnb.gameMenuHard.excludeThrottling = true;
