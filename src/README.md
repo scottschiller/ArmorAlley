@@ -108,7 +108,7 @@ If everything is working, you should be looking at your local copy of Armor Alle
 
 **Install required dev dependencies**
 
-- Install [npm + nodeJS](https://nodejs.org), if you don't have it yet. On a Mac with homebrew, try `brew install npm`. The AA project uses a variety of npm packages ("libraries") for its build process.
+- Install [npm + nodeJS](https://nodejs.org), if you don't have it yet. On a Mac with homebrew, try `brew install npm`. The AA project uses a variety of npm packages ("libraries") for its build process. For Windows, I recommend trying a prebuilt node installer for x64 architecture.
 
 - With `npm` installed, run this command within the AA home directory (which has `package.json`):
 
@@ -124,9 +124,13 @@ If everything is working, you should be looking at your local copy of Armor Alle
 
 - The build process for Armor Alley includes encoding .WAV audio to .MP3 and .opus formats via `ffmpeg`, and building spritesheets via `imagemagick`.
 
-- You will need to install `ffmpeg` with `libmp3lame` and `libopus` support in order to encode .MP3 and .opus, respectively. You may be able to obtain a precompiled binary that has these options. Package managers like `brew`, `apt-get` etc. are likely a good place to start. On macOS with "homebrew", Opus and lame may be included by default - so `brew install ffmpeg` may work. If not, `brew install ffmpeg --with-theora --with-opus` may be the next thing to try.
+- You will need to install `ffmpeg` with `libmp3lame` and `libopus` support in order to encode .MP3 and .opus, respectively. You may be able to obtain a precompiled binary that has these options. Package managers like `brew`, `apt-get` etc. are likely a good place to start. On macOS with "homebrew", Opus and lame support should be included by default - so try `brew install ffmpeg` first. If not, `brew install ffmpeg-full` is worth a shot.
 
-- On Windows, `winget` is available by default; try `winget install "FFmpeg (Essentials Build)"` for a build with MP3 + Opus support. For imagemagick, you can try `winget install ImageMagick.Q8`.
+**Notes for Windows users**
+
+- `winget` is typically available on Windows. Try `winget install "FFmpeg (Essentials Build)" --source winget` for a build with MP3 + Opus support. For imagemagick, try `winget install ImageMagick.Q8 --source winget`.
+
+- If `npm install` throws errors regarding missing binaries for `cwebp` (part of `imagemin-webp`) or similar, try uninstalling Node via add/remove programs, then installing a prebuilt Node.js installer from nodejs.org. I found that a Node installer for x64 architecture worked, when running on an Arm version of Windows 11.
 
 **Build the JS bundle + minified CSS**
 
