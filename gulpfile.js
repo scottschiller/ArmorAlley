@@ -633,7 +633,7 @@ function beavis(callback) {
 }
 
 function encodeBNBMP3() {
-  return binarySrc(bnbAudioFiles)
+  return src(bnbAudioFiles, bnb)
     .pipe(
       ffmpeg('mp3', function (cmd) {
         return cmd
@@ -646,7 +646,7 @@ function encodeBNBMP3() {
 }
 
 function encodeBNBMP3HQ() {
-  return binarySrc(bnbAudioFilesHQ)
+  return src(bnbAudioFilesHQ, bnb)
     .pipe(
       ffmpeg('mp3', function (cmd) {
         return cmd.audioChannels(2).audioCodec('libmp3lame');
@@ -656,20 +656,17 @@ function encodeBNBMP3HQ() {
 }
 
 function encodeBNBOpus() {
-  return binarySrc(bnbAudioFiles)
+  return src(bnbAudioFiles, bnb)
     .pipe(
       ffmpeg('opus', function (cmd) {
-        return cmd
-          .audioChannels(2)
-          .audioCodec('libopus')
-          .audioBitrate('64k');
+        return cmd.audioChannels(2).audioCodec('libopus').audioBitrate('64k');
       })
     )
     .pipe(dest(`${assetPath}/${audioPath}/opus/bnb`));
 }
 
 function encodeBNBOpusHQ() {
-  return binarySrc(bnbAudioFilesHQ)
+  return src(bnbAudioFilesHQ, bnb)
     .pipe(
       ffmpeg('opus', function (cmd) {
         return cmd.audioChannels(2).audioCodec('libopus').audioBitrate('128k');
