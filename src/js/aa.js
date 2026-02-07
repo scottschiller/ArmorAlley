@@ -86,7 +86,7 @@ let stats;
 
 
 if (soundManager) {
-  // OGG is available, so MP3 is not required.
+  // Opus should be available, so MP3 is not required.
   soundManager.audioFormats.mp3.required = false;
 
   soundManager.setup({
