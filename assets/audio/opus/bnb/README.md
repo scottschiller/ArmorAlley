@@ -9,4 +9,3 @@ Run `gulp build-bnb` from the AA root path to encode the MP3 + Opus files.
 This involves encoding over 1,000 files, so it may take a few minutes.
 
 Once encoded, `gulp` (default build task) will copy these to the `dist` path.
- 
