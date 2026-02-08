@@ -36,8 +36,8 @@ function hello() {
       (dev
         ? isFloppy
           ? '💾 floppy disk build.'
-          : 'using development JS.'
-        : `using production JS build, ${
+          : 'using development /src code + raw assets.'
+        : `using production /dist code + compiled assets, ${
             version.length ? version.substring(1) : 'no versioning'
           }. Try ?dev=1 for the full source with comments.`)
   );
