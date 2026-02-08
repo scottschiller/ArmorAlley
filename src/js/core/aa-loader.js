@@ -21,7 +21,11 @@ const sp = new URLSearchParams(wl.search);
 const forceProd = sp.get('prod') && !missingDist;
 
 const dev = !forceProd && (sp.get('dev') || !isProdSite || missingDist);
-const isFloppy = !!(wl.href.match(/floppy/i) || sp.get('floppy'));
+const isFloppy = !!(
+  wl.href.match(/floppy/i) ||
+  sp.get('floppy') ||
+  window.aaFloppy
+);
 
 // e.g., '.V20231216'
 const version = (dev || isLocalhost) && !forceProd ? '' : v || '';
