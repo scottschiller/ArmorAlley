@@ -206,8 +206,8 @@ body.bnb #game-menu-wrapper.active {
 }
 
 #game-menu-wrapper .logo-overlay-cutout {
-  mask-image: url(../../assets/image/UI/armor-alley-wordmark.svg);
-  -webkit-mask-image: url(../../assets/image/UI/armor-alley-wordmark.svg);
+  mask-image: url(/assets/image/UI/armor-alley-wordmark.svg);
+  -webkit-mask-image: url(/assets/image/UI/armor-alley-wordmark.svg);
   mask-size: contain;
   -webkit-mask-size: contain;
   mask-repeat: no-repeat;
@@ -902,7 +902,7 @@ body.is_floppy #start-network-game {
   }
 
   #game-options-button {
-    background-image: url(../../assets/image/UI/win95-networking-icon.png);
+    background-image: url(/assets/image/UI/win95-networking-icon.png);
     background-position: 86% 50%;
     background-size: calc(8px * var(--menu-scale));
     background-repeat: no-repeat;
@@ -925,7 +925,7 @@ body.is_floppy #start-network-game {
 
 button .network-icon {
   position: relative;
-  background: url(../../assets/image/UI/win95-networking-icon.png) 0 0 / contain
+  background: url(/assets/image/UI/win95-networking-icon.png) 0 0 / contain
     no-repeat;
   display: inline-block;
   width: calc(10px * var(--menu-scale));

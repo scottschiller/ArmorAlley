@@ -606,13 +606,13 @@ body:not(.is-mobile).has-gamepad.mobile-controls_right-aligned
 }
 
 #mobile-controls li.weapons-item a.ammo {
-  /* background-image: url(../../assets/image/UI/status-ammo.png); */
+  /* background-image: url(/assets/image/UI/status-ammo.png); */
   background-position: 50% 50%;
   background-size: 42%;
 }
 
 #mobile-controls li.weapons-item a.bombs {
-  /* background-image: url(../../assets/image/UI/status-bombs.png); */
+  /* background-image: url(/assets/image/UI/status-bombs.png); */
   background-position: 50% 50%;
   background-size: 10%;
 }
@@ -868,7 +868,7 @@ body.has-gamepad.is-mobile.is_iphone:not(.tutorial-mode)
 }
 
 #mobile-controls li.weapons-item a.parachute-infantry {
-  background-image: url(../../assets/image/UI/parachute-infantry-static.png);
+  background-image: url(/assets/image/UI/parachute-infantry-static.png);
   background-position: 50% 50%;
   background-size: 39% !important; /* argh */
 }
@@ -887,7 +887,7 @@ body.has-gamepad.is-mobile.is_iphone:not(.tutorial-mode)
 
 #mobile-controls li.weapons-item a.smart-missile {
   background-position: 50% 50%;
-  /* background-image: url(../../assets/image/UI/status-missile.png); */
+  /* background-image: url(/assets/image/UI/status-missile.png); */
   background-size: 40%;
 }
 
@@ -950,11 +950,11 @@ body:not(.is_safari) #mobile-controls li span.letter-block.show_inventory {
 #mobile-controls li.inventory-item a.engineer,
 #player-status-bar .inventory-item a.engineer,
 .static-sprite.engineer {
-  background-image: url(../../assets/image/UI/engineer-static.png);
+  background-image: url(/assets/image/UI/engineer-static.png);
 }
 
 #mobile-controls.enemy li.inventory-item a.engineer {
-  background-image: url(../../assets/image/UI/engineer-enemy-static.png);
+  background-image: url(/assets/image/UI/engineer-enemy-static.png);
 }
 
 body.game-paused:not(.game-started) #world {

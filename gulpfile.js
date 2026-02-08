@@ -355,7 +355,7 @@ function minifyCSS() {
        * Given this trivial string match, “What could possibly go wrong?” ;)
        */
       .pipe(
-        replace(`${!isFloppy ? '../../' : ''}${assetPath}/`, `${distRootPath}/`)
+        replace(`/${assetPath}/`, `/${distRootPath}/`)
       )
       // https://github.com/clean-css/clean-css#constructor-options
       .pipe(lightningcss(lightningOptions))

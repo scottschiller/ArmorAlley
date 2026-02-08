@@ -104,7 +104,7 @@ b {
   font-display: swap;
   font-family: 'Iosevka Custom';
   font-style: normal;
-  src: url(../../assets/font/Iosevka/Iosevka-Custom-optimized-unicode.woff2)
+  src: url(/assets/font/Iosevka/Iosevka-Custom-optimized-unicode.woff2)
     format('woff2');
 }
 
@@ -112,7 +112,7 @@ b {
   font-display: swap;
   font-family: 'Iosevka Custom Bold';
   font-style: bold;
-  src: url(../../assets/font/Iosevka/Iosevka-Custom-Bold-optimized-no-unicode.woff2)
+  src: url(/assets/font/Iosevka/Iosevka-Custom-Bold-optimized-no-unicode.woff2)
     format('woff2');
 }
 
@@ -123,13 +123,13 @@ b {
   font-family: 'FA Sysfont C';
   font-style: normal;
   font-weight: 400;
-  src: url(../../assets/font/sysfont/sysfont.woff2) format('woff2');
+  src: url(/assets/font/sysfont/sysfont.woff2) format('woff2');
 }
 
 @font-face {
   /* home menu battle selection */
   font-family: 'Cheddar Gothic Stencil';
-  src: url(../../assets/font/CheddarGothicStencil/CheddarGothicStencil-subset.woff2)
+  src: url(/assets/font/CheddarGothicStencil/CheddarGothicStencil-subset.woff2)
     format('woff2');
   font-weight: 400;
   font-style: normal;
@@ -139,7 +139,7 @@ b {
 @font-face {
   /* in-game tips */
   font-family: 'EB Garamond';
-  src: url(../../assets/font/EBGaramond/EBGaramond-Regular-subset.woff2)
+  src: url(/assets/font/EBGaramond/EBGaramond-Regular-subset.woff2)
     format('woff2');
   font-weight: 400;
   font-style: normal;
@@ -191,11 +191,11 @@ body {
 }
 
 body:not(.prefs-modal-open) {
-  cursor: url(../../assets/image/UI/cursor-cross.png), auto;
+  cursor: url(/assets/image/UI/cursor-cross.png), auto;
 }
 
 body.demo:not(.prefs-modal-open) {
-  cursor: url(../../assets/image/UI/cursor-cross-grey.png), crosshair;
+  cursor: url(/assets/image/UI/cursor-cross-grey.png), crosshair;
 }
 
 body.has-gamepad.gamepad-active:not(.prefs-modal-open) {
@@ -638,7 +638,7 @@ button.primary {
   /**
    * Hat tip: https://impossiblue.github.io/log/150406/index.html
    */
-  background-image: url(../../assets/image/UI/apple-watch.gif);
+  background-image: url(/assets/image/UI/apple-watch.gif);
   background-position: 50% 50%;
   background-size: 11px 16px;
   margin-bottom: -2.75px;
@@ -655,7 +655,7 @@ button.primary {
 }
 
 .mac-system-spinner {
-  background-image: url(../../assets/image/UI/mac-system-spinner.gif);
+  background-image: url(/assets/image/UI/mac-system-spinner.gif);
   background-size: contain;
   margin-bottom: -1px;
   margin-right: 1px;
@@ -719,7 +719,7 @@ video {
 }
 
 .flying-ace {
-  background: url(../../assets/image/UI/flying_ace.png) 50% 100% / contain
+  background: url(/assets/image/UI/flying_ace.png) 50% 100% / contain
     no-repeat;
   height: 40.5px;
   /* obligatory: the Flying Ace, on the doghouse. "Snoopy vs. The Red Baron" - from "It's The Great Pumpkin, Charlie Brown!" */
@@ -744,7 +744,7 @@ video {
 
 #lights .sub-sprite {
   display: block;
-  background: url(../../assets/image/UI/lights.exe.png) no-repeat;
+  background: url(/assets/image/UI/lights.exe.png) no-repeat;
   width: calc(64px * var(--gs));
   height: calc(10px * var(--gs));
   left: 0;

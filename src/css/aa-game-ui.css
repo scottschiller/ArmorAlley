@@ -150,7 +150,7 @@ body.game-started #game-status {
    */
   /* TODO: review and stop using invert. */
   filter: invert(0.6);
-  background: url(../../assets/image/UI/number-strip-iosevka.svg) 0 0/100% 1000%
+  background: url(/assets/image/UI/number-strip-iosevka.svg) 0 0/100% 1000%
     repeat-y;
   display: block;
   width: 100%;
@@ -387,7 +387,7 @@ body.game-started #fuel-bar {
 }
 
 #repair-complete {
-  background: url(../../assets/image/UI/status-repair-complete.png) 0 0 /
+  background: url(/assets/image/UI/status-repair-complete.png) 0 0 /
     contain repeat-x;
   display: none;
   height: calc(13px * var(--gs));
@@ -529,7 +529,7 @@ ul.stats-bar .lives .letter-block {
 }
 
 ul.stats-bar .lives em {
-  background: url(../../assets/image/UI/status-helicopter.png) 0 0 / contain
+  background: url(/assets/image/UI/status-helicopter.png) 0 0 / contain
     no-repeat;
   height: 4.67px;
   margin-left: 0.5em;
@@ -548,18 +548,18 @@ ul.stats-bar .infantry-count {
 #mobile-controls li.weapons-item a.parachute-infantry,
 .static-sprite.parachute-infantry,
 ul.stats-bar .infantry-count em {
-  background: url(../../assets/image/UI/parachute-infantry-static.png) no-repeat;
+  background: url(/assets/image/UI/parachute-infantry-static.png) no-repeat;
 }
 
 #mobile-controls.enemy li.weapons-item a.parachute-infantry,
 #player-status-bar.enemy .infantry-count em {
-  background: url(../../assets/image/UI/parachute-infantry-enemy-static.png) 0 0 /
+  background: url(/assets/image/UI/parachute-infantry-enemy-static.png) 0 0 /
     contain no-repeat;
 }
 
 ul.stats-bar .infantry-count em {
   background-repeat: no-repeat;
-  /* background: transparent url(../../assets/image/UI/parachute-infantry-static.png) no-repeat 0px 0px; */
+  /* background: transparent url(/assets/image/UI/parachute-infantry-static.png) no-repeat 0px 0px; */
   background-size: contain;
   height: 13px;
   margin-right: 3px;
@@ -597,7 +597,7 @@ ul.stats-bar .missiles span.divider {
 
 #mobile-controls li.weapons-item a.smart-missile,
 ul.stats-bar .missiles em {
-  background-image: url(../../assets/image/smart-missile.png);
+  background-image: url(/assets/image/smart-missile.png);
   background-position: 50% 50%;
   background-repeat: no-repeat;
   background-size: 75%;
@@ -605,7 +605,7 @@ ul.stats-bar .missiles em {
 
 #mobile-controls li.weapons-item a.ammo,
 ul.stats-bar .ammo em {
-  background-image: url(../../assets/image/UI/status-ammo.png);
+  background-image: url(/assets/image/UI/status-ammo.png);
   background-position: 2px 1px;
   background-repeat: no-repeat;
   background-size: 80%;
@@ -619,14 +619,14 @@ ul.stats-bar .ammo em {
 /* "aimed missile" mode */
 body.aimed-missile-mode #mobile-controls li.weapons-item a.ammo,
 body.aimed-missile-mode ul.stats-bar .ammo em {
-  background-image: url(../../assets/image/missile.png);
+  background-image: url(/assets/image/missile.png);
   background-position: 50% 50%;
   background-repeat: no-repeat;
 }
 
 #mobile-controls li.weapons-item a.bombs,
 ul.stats-bar .bombs em {
-  background: url(../../assets/image/UI/status-bombs.png) 50% 1px/75% no-repeat;
+  background: url(/assets/image/UI/status-bombs.png) 50% 1px/75% no-repeat;
 }
 
 ul.stats-bar .bombs em {
@@ -650,7 +650,7 @@ ul.stats-bar .bombs em {
 
 body.rubber-chicken-mode #mobile-controls li.weapons-item a.smart-missile,
 body.rubber-chicken-mode ul.stats-bar .missiles em {
-  background: url(../../assets/image/UI/rubber-chicken-static.png) 50% 33%/16px
+  background: url(/assets/image/UI/rubber-chicken-static.png) 50% 33%/16px
     4.5px no-repeat;
   min-width: 16px;
 }
@@ -659,7 +659,7 @@ body.rubber-chicken-mode ul.stats-bar .missiles em {
 body.banana-mode #mobile-controls li.weapons-item a.smart-missile,
 body.banana-mode ul.stats-bar .missiles em {
   /* https://www.shutterstock.com/image-vector/set-cartoon-banana-drawings-single-peeled-1205236333 */
-  background: url(../../assets/image/banana.png) 50% 0 / contain no-repeat;
+  background: url(/assets/image/banana.png) 50% 0 / contain no-repeat;
 }
 
 body.original_missile_mode ul.stats-bar .missiles .alternate-missiles,
@@ -1078,12 +1078,12 @@ body.game-started #world-wrapper.incoming-smart-missile {
 #mobile-controls li.inventory-item a.missile-launcher,
 #player-status-bar .inventory-item a.missile-launcher,
 .static-sprite.missile-launcher {
-  background-image: url(../../assets/image/UI/missile-launcher-static.png);
+  background-image: url(/assets/image/UI/missile-launcher-static.png);
 }
 
 #mobile-controls.enemy li.inventory-item a.missile-launcher,
 #player-status-bar.enemy .inventory-item a.missile-launcher {
-  background-image: url(../../assets/image/UI/missile-launcher-enemy-static.png);
+  background-image: url(/assets/image/UI/missile-launcher-enemy-static.png);
 }
 
 #player-status-bar .inventory-item a.missile-launcher {
@@ -1172,13 +1172,13 @@ body.limited-lives-mode.has-gamepad
 }
 
 body.limited-lives-mode #mobile-controls li.inventory-item a.helicopter {
-  background-image: url(../../assets/image/UI/helicopter-static.png);
+  background-image: url(/assets/image/UI/helicopter-static.png);
   background-size: 78%;
 }
 
 body.limited-lives-mode #mobile-controls.enemy li.inventory-item a.helicopter {
   /* enemy chopper */
-  background-image: url(../../assets/image/UI/helicopter-enemy-static.png);
+  background-image: url(/assets/image/UI/helicopter-enemy-static.png);
   background-size: 78%;
 }
 
@@ -1186,12 +1186,12 @@ body.limited-lives-mode #mobile-controls.enemy li.inventory-item a.helicopter {
 #player-status-bar .inventory-item a.tank,
 .static-sprite.tank {
   /* TODO: replace with new asset */
-  background-image: url(../../assets/image/UI/tank-static.png);
+  background-image: url(/assets/image/UI/tank-static.png);
 }
 
 #mobile-controls.enemy li.inventory-item a.tank,
 #player-status-bar.enemy .inventory-item a.tank {
-  background-image: url(../../assets/image/UI/tank-enemy-static.png);
+  background-image: url(/assets/image/UI/tank-enemy-static.png);
 }
 
 #player-status-bar .inventory-item a.tank {
@@ -1203,12 +1203,12 @@ body.limited-lives-mode #mobile-controls.enemy li.inventory-item a.helicopter {
 #mobile-controls li.inventory-item a.van,
 #player-status-bar .inventory-item a.van,
 .static-sprite.van {
-  background-image: url(../../assets/image/UI/van-static.png);
+  background-image: url(/assets/image/UI/van-static.png);
 }
 
 #mobile-controls.enemy li.inventory-item a.van,
 #player-status-bar.enemy .inventory-item a.van {
-  background-image: url(../../assets/image/UI/van-enemy-static.png);
+  background-image: url(/assets/image/UI/van-enemy-static.png);
 }
 
 #player-status-bar .inventory-item a.van {
@@ -1220,12 +1220,12 @@ body.limited-lives-mode #mobile-controls.enemy li.inventory-item a.helicopter {
 #mobile-controls li.inventory-item a.infantry,
 #player-status-bar .inventory-item a.infantry,
 .static-sprite.infantry {
-  background-image: url(../../assets/image/UI/infantry-static.png);
+  background-image: url(/assets/image/UI/infantry-static.png);
 }
 
 #mobile-controls.enemy li.inventory-item a.infantry,
 #player-status-bar.enemy .inventory-item a.infantry {
-  background-image: url(../../assets/image/UI/infantry-enemy-static.png);
+  background-image: url(/assets/image/UI/infantry-enemy-static.png);
 }
 
 #player-status-bar .inventory-item a.engineer,
@@ -1237,11 +1237,11 @@ body.limited-lives-mode #mobile-controls.enemy li.inventory-item a.helicopter {
 }
 
 #player-status-bar .inventory-item a.engineer {
-  background-image: url(../../assets/image/UI/engineer-static.png);
+  background-image: url(/assets/image/UI/engineer-static.png);
 }
 
 #player-status-bar.enemy .inventory-item a.engineer {
-  background-image: url(../../assets/image/UI/engineer-enemy-static.png);
+  background-image: url(/assets/image/UI/engineer-enemy-static.png);
 }
 
 #player-status-bar a {
@@ -1642,27 +1642,27 @@ body.radar_jammed .target-marker {
 }
 
 #medals .medal-1 {
-  background-image: url(../../assets/image/UI/medal-1.png);
+  background-image: url(/assets/image/UI/medal-1.png);
 }
 
 #medals .medal-2 {
-  background-image: url(../../assets/image/UI/medal-2.png);
+  background-image: url(/assets/image/UI/medal-2.png);
 }
 
 #medals .medal-3 {
-  background-image: url(../../assets/image/UI/medal-3.png);
+  background-image: url(/assets/image/UI/medal-3.png);
 }
 
 #medals .medal-4 {
-  background-image: url(../../assets/image/UI/medal-4.png);
+  background-image: url(/assets/image/UI/medal-4.png);
 }
 
 #medals .medal-5 {
-  background-image: url(../../assets/image/UI/medal-5.png);
+  background-image: url(/assets/image/UI/medal-5.png);
 }
 
 #medals .medal-6 {
-  background-image: url(../../assets/image/UI/medal-6.png);
+  background-image: url(/assets/image/UI/medal-6.png);
 }
 
 body.game-over #pointer {
