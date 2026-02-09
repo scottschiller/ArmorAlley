@@ -255,7 +255,7 @@ console.log = function () {
   }
 
   // skip the initial "starting 'aa' message
-  if (str.match(/aa|anonymous/g)) return;
+  if (str.match(/aa|anonymous|beavis/g)) return;
 
   if (str.match(/starting/gi)) {
     if (barProgress >= 1) {
