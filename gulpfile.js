@@ -165,7 +165,7 @@ const lightningOptions = {
 };
 
 function asset(path) {
-  return `${assetPath}/${path}`;
+  return `/${assetPath}/${path}`;
 }
 
 function root(path) {
