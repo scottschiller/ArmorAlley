@@ -530,11 +530,6 @@ function minifyJS() {
 function headerJS() {
   // prepend is no longer needed, done via minify.
   return src(bundleFile()).pipe(dest(dp.js));
-  /*
-  return src([headerFile(), bundleFile()])
-    .pipe(concat(bundleFile()))
-    .pipe(dest('.'));
-  */
 }
 
 function headerCSS() {
@@ -558,9 +553,7 @@ function minifyCSS() {
        * Remap production / bundled CSS asset references, accordingly.
        * Given this trivial string match, “What could possibly go wrong?” ;)
        */
-      .pipe(
-        replace(`/${assetPath}/`, `/${distRootPath}/`)
-      )
+      .pipe(replace(`/${assetPath}/`, `/${distRootPath}/`))
       // https://github.com/clean-css/clean-css#constructor-options
       .pipe(lightningcss(lightningOptions))
       .pipe(dest(dp.css))
@@ -835,7 +828,6 @@ function beavis(callback) {
   for (let k in sequences) {
     unpackedANSI = unpackedANSI.map((txt) => txt.replaceAll(k, sequences[k]));
   }
-
   console.log(unpackedANSI.join('\n'));
 
   callback();
@@ -956,9 +948,6 @@ function cleanThatFloppy() {
   return clean([floppyRoot]);
 }
 
-/**
- * TODO: reduce to single task, console output is noisy.
- */
 const copyThatFloppyTasks = [
   // copy select assets into a separate build path
   // gotta have a favicon.ico, of course...
@@ -1000,7 +989,7 @@ function copy360FloppySource() {
 }
 
 function build360FloppyBundle(callback) {
-  // sneaky: have the build reference the floppy source, and output to floppy dist.
+  // sneaky: have the build reference the floppy source, output to floppy dist.
   srcRoot = srcRoot360;
   distRoot = `${floppyRoot}/${distRootPath}`;
   updateDistPaths();
@@ -1083,9 +1072,6 @@ const gzipOptions = {
   level: 9
 };
 
-/**
- * TODO: reduce to single task, console output is noisy.
- */
 const gzipThatFloppyTasks = [
   function floppyGZJS() {
     // index.html -> index.html.gz (a new index.html "boot loader" will be created)
