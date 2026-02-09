@@ -116,6 +116,7 @@ const htmlmin = require('gulp-htmlmin');
 const minifyInline = require('gulp-minify-inline');
 const imageInliner = require('postcss-image-inliner');
 const postcss = require('gulp-postcss');
+const cliProgress = require('cli-progress');
 
 // spritesheet bits
 // https://www.npmjs.com/package/gulp.spritesmith#spritesmithparams
