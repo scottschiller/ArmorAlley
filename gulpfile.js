@@ -1,5 +1,33 @@
 /**
- * Armor Alley: Gulp "task runner" build/compile script.
+ * ARMOR ALLEY: GULP BUILD/COMPILE SCRIPT
+ * --------------------------------------
+ *
+ * DISTRIBUTABLE BUILD VS. SOURCE / DEVELOPMENT VERSIONS
+ * The game is designed to load via HTTP without the build step,
+ * but the distributable version will load faster online.
+ *
+ * This is the process I use to compile the game for the official
+ * play.armor-alley.net site.
+ *
+ * The build step "compiles" optimized assets into `dist/`.
+ * Regardless of build version, the game loads from the root directory
+ * where /index.html is found.
+ *
+ * By default, the game will load the "source" / development files.
+ * This is OK, but uncompressed sound and image assets will be used.
+ *
+ * With the built `dist`/ version, assets are concatenated, minified,
+ * and compressed. Image and audio "sprites" are used, instead of
+ * many separate .png and .wav files that will take more bandwidth.
+ *
+ * (You may need to `npm i http-server` or similar HTTP daemon.)
+ * `npx http-server`
+ *
+ * Browse to http://localhost:8080/?prod=1 to test the production build.
+ * You will need to run `npx gulp` to compile the `dist/` build.
+ * By default, the game will load the dev/source version.
+ *
+ * GENERAL USAGE
  * Use via `npx gulp`, or install `gulp-cli` and run `gulp`.
  *
  * Initial setup:
@@ -18,11 +46,16 @@
  * Faster build, excluding audio sprites (handy for code changes):
  *  `gulp build`
  *
+ * AUDIO ENCODING
  * MP3 + Opus "audio sprite" files take some time to encode.
  * This is included in the default task, but not "build."
  * Once this task has run, `build` will include the new sprite + config.
  * This can be run if you only want to update the audio sprites.
- *  `gulp audio`
+ *
+ * "BNB" AUDIO ENCODING
+ * This applies only if you are doing a full build of the game into dist/.
+ * If you have the extra theme .wav files in `assets/audio/wav/bnb`
+ * and want to encode MP3 + Opus versions, run `gulp build-bnb`.
  *
  * Audio and image sprites have some related configuration / mapping,
  * generated in `src/config` and rolled up in the build process.
