@@ -100,10 +100,13 @@ function aa(callback) {
   callback();
 }
 
-const fs = require('fs');
+/**
+ * "Fancy" progress bar and minimal console output option.
+ * To get standard output: `npx gulp --verbose`
+ */
+let FANCY_OUTPUT = !process.argv.includes('--verbose');
 
-const headerFileName = 'aa_header.txt';
-const headerFileContents = fs.readFileSync(`src/${headerFileName}`, 'utf8');
+const fs = require('fs');
 
 // npmjs.com/package/[name] unless otherwise specified
 const { src, dest, series, task } = require('gulp');
@@ -135,6 +138,9 @@ async function clean(paths) {
   deleteSync(paths);
 }
 
+const headerFileName = 'aa_header.txt';
+const headerFileContents = fs.readFileSync(`src/${headerFileName}`, 'utf8');
+
 // path replacement
 replace = require('gulp-replace');
 
@@ -165,6 +171,159 @@ const lightningOptions = {
   sourceMap: false
 };
 
+// shenanigans ahead - "fancy output"
+const originalConsoleLog = console.log;
+
+const { emitWarning } = process;
+
+// EVIL: silence DEP0040 warning from console output.
+process.emitWarning = (warning, type, code, ...extraArgs) =>
+  (!FANCY_OUTPUT || code !== 'DEP0040') &&
+  emitWarning(warning, type, code, ...extraArgs);
+
+let clearLine = '\x1b[2K\r';
+let backToZero = '\u001b[G';
+let oneUp = '\x1b[1A';
+
+// npm-style progress indicator
+workingCharacters = '⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏';
+
+let workingInterval = 90;
+let wcOffset = 0;
+let lastStr;
+
+let taskCountsByName = {};
+let currentTask;
+let lastFinished = '';
+let workingTimer;
+
+function updateTask(str) {
+  let p = workingCharacters[wcOffset];
+  return lastStr.replace('*', workingCharacters[wcOffset]);
+}
+
+function parseTask(str) {
+  /**
+   * Terminal shenanigans: drop quotes and periods following tasks,
+   * but preserve timings e.g., "3.24 s"
+   */
+  return `${str
+    .substring(str.indexOf("'") + 1)
+    .replace("'", '')
+    .replace('...', '')}`;
+}
+
+function tidyTask(str) {
+  lastStr = `${backToZero}${oneUp}${clearLine}* ${(lastFinished ? lastFinished.replace(' after ', ': ') + ' -> ' : '') + parseTask(str)}`;
+  return updateTask(lastStr);
+}
+
+function maybeStartWorking() {
+  if (workingTimer) return;
+  workingTimer = setInterval(() => {
+    // bail if canceled between intervals
+    if (!workingTimer) return;
+
+    wcOffset++;
+    if (wcOffset >= workingCharacters.length) {
+      wcOffset = 0;
+    }
+    originalConsoleLog(updateTask(lastStr));
+  }, workingInterval);
+}
+
+function maybeStopWorking() {
+  if (!workingTimer) return;
+  lastFinished = '';
+  clearInterval(workingTimer);
+  workingTimer = null;
+  // assign default "complete" character
+  workingCharacters = '✔';
+  wcOffset = 0;
+}
+
+// HACKS: Here be shenanigans, for FANCY_OUTPUT mode.
+console.log = function () {
+  if (!FANCY_OUTPUT) return originalConsoleLog(...arguments);
+
+  // message being logged
+  let str = arguments[0].toString();
+
+  // always mark finished tasks
+  if (str.match(/finished|after/gi)) {
+    barProgress = Math.min(barProgress + 1, taskCountsByName[currentTask]);
+  }
+
+  // skip the initial "starting 'aa' message
+  if (str.match(/aa|anonymous/g)) return;
+
+  if (str.match(/starting/gi)) {
+    if (barProgress >= 1) {
+      bar1.start(taskCountsByName[currentTask], barProgress);
+      maybeStartWorking();
+      originalConsoleLog(tidyTask(str));
+    }
+    return;
+  }
+
+  if (str.match(/finished|after/gi)) {
+    if (str.match(/build|default/gi)) {
+      // don't track the top-level build or default tasks when they finish.
+      lastFinished = '';
+    } else {
+      lastFinished = parseTask(str);
+    }
+    originalConsoleLog(tidyTask(str));
+    // HACK: ignore first tasks, AA logo.
+    if (barProgress >= 1) {
+      bar1.update(barProgress);
+    }
+    return;
+  }
+
+  return originalConsoleLog(...arguments);
+};
+
+function customTask(taskName, ...seriesArgs) {
+  if (!FANCY_OUTPUT) return task(taskName, series(...seriesArgs));
+  /**
+   * Wrapper for gulp task(): count the number of tasks to be performed,
+   * mark them in an array for tracking and progress bar stuff.
+   *
+   * This is a total hack and a fun experiment to rewrite Gulp output,
+   * and will likely need refactoring at some point in the future.
+   */
+  let beforeHelpers = [
+    function (cb) {
+      currentTask = taskName;
+      cb();
+    }
+  ];
+
+  let afterHelpers = [
+    function (cb) {
+      maybeStopWorking();
+      bar1.update(barProgress);
+      // back up one line
+      originalConsoleLog(`${oneUp}${clearLine}${backToZero}`);
+      setTimeout(() => {
+        // bar needs time to re-render before stop
+        bar1.stop();
+        cb();
+      }, 250);
+    }
+  ];
+
+  // nit: don't include helpers as part of actual displayed task count.
+  taskCountsByName[taskName] =
+    seriesArgs.length - beforeHelpers.length - afterHelpers.length;
+
+  return task(
+    taskName,
+    series(...beforeHelpers, ...seriesArgs, ...afterHelpers)
+  );
+}
+
 function asset(path) {
   return `/${assetPath}/${path}`;
 }
@@ -194,6 +353,8 @@ const cheddarGothic360K = 'CheddarGothicStencil-subset-floppy-360k.woff2';
 
 const imageRoot = `${assetPath}/${imagePath}`;
 
+let dp;
+
 function updateDistPaths() {
   dp = {
     audio: dist(audioPath),
@@ -208,7 +369,6 @@ function updateDistPaths() {
   };
 }
 
-let dp;
 updateDistPaths();
 
 const audioSpriteModule = 'audioSpriteConfig';
@@ -268,6 +428,16 @@ function binarySrc() {
    */
   return src(...arguments, { encoding: false });
 }
+
+let bar1;
+let barProgress = 0;
+
+bar1 = new cliProgress.SingleBar({
+  format: '  {bar} {value}/{total} | {percentage}%',
+  barCompleteChar: '▰',
+  barIncompleteChar: '▱',
+  hideCursor: true
+});
 
 const htmlminOpts = {
   collapseWhitespace: true,
@@ -1067,26 +1237,22 @@ function setFloppyRoot(path, callback) {
   callback();
 }
 
-function floppy360KTask() {
-  isFloppy = true;
-  return series(
-    function set360Root(callback) {
-      setFloppyRoot(floppyTypes._360, callback);
-    },
-    ...floppyTasks360
-  );
-}
+const floppy360KTasks = [
+  function set360Root(callback) {
+    isFloppy = true;
+    setFloppyRoot(floppyTypes._360, callback);
+  },
+  ...floppyTasks360
+];
 
-function floppy1200KTask() {
+const floppy1200KTasks = [
   // default floppy build: 1200k version.
-  isFloppy = true;
-  return series(
-    function set1200Root(callback) {
-      setFloppyRoot(floppyTypes._1200, callback);
-    },
-    ...floppyTasks1200
-  );
-}
+  function set1200Root(callback) {
+    isFloppy = true;
+    setFloppyRoot(floppyTypes._1200, callback);
+  },
+  ...floppyTasks1200
+];
 
 /**
  * `gulp`
@@ -1099,7 +1265,7 @@ function floppy1200KTask() {
  *
  * The floppy build tasks are separate.
  */
-task('default', series(aa, cleanDist, ...audioTasks, ...buildTasks));
+customTask('default', aa, cleanDist, ...audioTasks, ...buildTasks);
 
 /**
  * `gulp build`
@@ -1111,7 +1277,7 @@ task('default', series(aa, cleanDist, ...audioTasks, ...buildTasks));
  *
  * Note that this does not include encoding the optional BnB audio assets.
  */
-task('build', series(aa, cleanDist, ...buildTasks));
+customTask('build', aa, cleanDist, ...buildTasks);
 
 /**
  * `gulp build-bnb`
@@ -1122,20 +1288,17 @@ task('build', series(aa, cleanDist, ...buildTasks));
  * Note: this is not as optimized as the gulp script, file sizes will be somewhat larger.
  * find 'assets/audio/wav/bnb' -iname '*.wav' -exec bash -c 'B=$(basename "{}"); opusenc "{}" "./assets/audio/opus/bnb/${B%.*}.opus"' \;
  * find 'assets/audio/wav/bnb' -iname '*.wav' -exec bash -c 'B=$(basename "{}"); lame -V 5 "{}" -o "./assets/audio/mp3/bnb/${B%.*}.mp3"' \;
- *
  */
 
-task(
+customTask(
   'build-bnb',
-  series(
-    aa,
-    beavis,
-    encodeBNBMP3,
-    encodeBNBMP3HQ,
-    encodeBNBOpus,
-    encodeBNBOpusHQ,
-    cleanAudioTemp
-  )
+  aa,
+  beavis,
+  encodeBNBMP3,
+  encodeBNBMP3HQ,
+  encodeBNBOpus,
+  encodeBNBOpusHQ,
+  cleanAudioTemp
 );
 
 /**
@@ -1145,13 +1308,13 @@ task(
  * This builds versions of the game optimized for 3.5" and 5.25" FDD media.
  * This references the default build, so run `gulp` at least once beforehand.
  */
-task('build-floppy', series(aa, floppy1200KTask(), floppy360KTask()));
+customTask('build-floppy', aa, ...floppy1200KTasks, ...floppy360KTasks);
 
 // 360 KB floppy version.
-task('build-floppy-360k', series(aa, floppy360KTask()));
+customTask('build-floppy-360k', aa, ...floppy360KTasks);
 
 // 1.2 MB floppy version.
-task('build-floppy-1200k', series(aa, floppy1200KTask()));
+customTask('build-floppy-1200k', aa, ...floppy1200KTasks);
 
 // reduced ANSI codes, "optimized" for numerous string replace operations - ridiculous, yes.
 let beavisANSI = [
