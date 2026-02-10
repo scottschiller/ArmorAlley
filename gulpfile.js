@@ -199,7 +199,7 @@ let workingTimer;
 
 function updateTask(str) {
   let p = workingCharacters[wcOffset];
-  return lastStr.replace('*', workingCharacters[wcOffset]);
+  return lastStr.replace('*', ' ' + workingCharacters[wcOffset]);
 }
 
 function parseTask(str) {
