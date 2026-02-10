@@ -1315,10 +1315,10 @@ customTask(
   'build-bnb',
   aa,
   beavis,
-  encodeBNBMP3,
   encodeBNBMP3HQ,
-  encodeBNBOpus,
+  encodeBNBMP3,
   encodeBNBOpusHQ,
+  encodeBNBOpus,
   cleanAudioTemp
 );
 
