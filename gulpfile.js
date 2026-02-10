@@ -432,9 +432,21 @@ function binarySrc() {
 let bar1;
 let barProgress = 0;
 
+let ansiGrey = '\x1b[1;90m';
+let ansiGreen = '\x1b[0;32m';
+let ansiReset = '\x1b[0m';
+
+let barANSI = [ansiGreen, '{bar}', ansiReset].join('');
+
 bar1 = new cliProgress.SingleBar({
-  format: '  {bar} {value}/{total} | {percentage}%',
+  barsize: 56,
+  format: `  ${barANSI} {value}/{total} ${ansiGrey}|${ansiReset} {percentage}%`,
   barCompleteChar: '▰',
+  /**
+   * ANSI control sequence for incomplete portion: "bold high intensity" black.
+   * https://gist.github.com/JBlond/2fea43a3049b38287e5e9cefc87b2124
+   */
+  barGlue: ansiGrey,
   barIncompleteChar: '▱',
   hideCursor: true
 });
