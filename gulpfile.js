@@ -323,17 +323,11 @@ function customTask(taskName, ...seriesArgs) {
     }
   ];
 
-  // certain tasks can be excluded from the task count, i.e., ANSI logos.
-  let seriesToExclude = seriesArgs.filter((f) =>
-    f.name.match(/aa|beavis/i)
-  ).length;
-
   // nit: don't include helpers as part of actual displayed task count.
   taskCountsByName[taskName] =
     seriesArgs.length -
     beforeHelpers.length -
-    afterHelpers.length -
-    seriesToExclude;
+    afterHelpers.length;
 
   return task(
     taskName,
