@@ -249,35 +249,44 @@ console.log = function () {
   // message being logged
   let str = arguments[0].toString();
 
+  // strings of interest
+  let defaultName = str.match(/build|default/i);
+  let anon = str.match(/anonymous/i);
+  let initial = str.match(/aa|beavis/i);
+  let starting = str.match(/starting/i);
+  let finished = str.match(/finished|after/i);
+
   // always mark finished tasks
-  if (str.match(/finished|after/gi)) {
+  if (finished && !initial) {
     barProgress = Math.min(barProgress + 1, taskCountsByName[currentTask]);
   }
 
   // skip the initial "starting 'aa' message
-  if (str.match(/aa|anonymous|beavis/g)) return;
+  if (initial) return;
 
-  if (str.match(/starting/gi)) {
-    if (barProgress >= 1) {
+  if (starting && !initial) {
+    if (barProgress === 1) {
       bar1.start(taskCountsByName[currentTask], barProgress);
       maybeStartWorking();
+    }
+    if (barProgress !== 0) {
+      // don't log the initial default / build task
       originalConsoleLog(tidyTask(str));
     }
     return;
   }
 
-  if (str.match(/finished|after/gi)) {
-    if (str.match(/build|default/gi)) {
+  if (finished) {
+    if (defaultName || anon) {
       // don't track the top-level build or default tasks when they finish.
       lastFinished = '';
     } else {
       lastFinished = parseTask(str);
     }
+    if (anon) return;
+
     originalConsoleLog(tidyTask(str));
-    // HACK: ignore first tasks, AA logo.
-    if (barProgress >= 1) {
-      bar1.update(barProgress);
-    }
+    bar1.update(barProgress);
     return;
   }
 
