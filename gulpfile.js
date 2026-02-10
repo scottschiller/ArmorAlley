@@ -432,21 +432,33 @@ function binarySrc() {
 let bar1;
 let barProgress = 0;
 
-let ansiGrey = '\x1b[1;90m';
-let ansiGreen = '\x1b[0;32m';
-let ansiReset = '\x1b[0m';
+let ansi = {
+  darkGrey: '\x1b[38;5;244m',
+  lightGrey: '\x1b[38;5;252m',
+  grey: '\x1b[1;90m',
+  green: '\x1b[0;32m',
+  white: '\x1b[37m',
+  cyan: '\x1b[36m',
+  reset: '\x1b[0m'
+};
 
-let barANSI = [ansiGreen, '{bar}', ansiReset].join('');
+function ac(color, str) {
+  // wrap a given string in ANSI color / reset sequences
+  return `${ansi[color] || ansi.white}${str}${ansi.reset}`;
+}
+
+let barANSI = ac('green', '{bar}');
+let pipe = ac('darkGrey', '|');
 
 bar1 = new cliProgress.SingleBar({
   barsize: 56,
-  format: `  ${barANSI} {value}/{total} ${ansiGrey}|${ansiReset} {percentage}%`,
+  format: `  ${barANSI} ${ac('green', '{value}/{total}')} ${pipe} ${ac('lightGrey', '{percentage}%')}`,
   barCompleteChar: '▰',
   /**
    * ANSI control sequence for incomplete portion: "bold high intensity" black.
    * https://gist.github.com/JBlond/2fea43a3049b38287e5e9cefc87b2124
    */
-  barGlue: ansiGrey,
+  barGlue: ansi.grey,
   barIncompleteChar: '▱',
   hideCursor: true
 });
