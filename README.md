@@ -567,7 +567,7 @@ Macintosh System 7-style scrollbars (images and CSS) - [System.css](https://gith
 
 [Faulty Flourescent Light Start & Hum.wav](https://freesound.org/people/EverydaySounds/sounds/125064/) by EverydaySounds
 
-[Wilhem Scream Sample (1951)](https://archive.org/details/WilhelmScreamSample) - archive.org
+[Wilhelm Scream Sample (1951)](https://archive.org/details/WilhelmScreamSample) - archive.org
 
 [imppact wrench bounce.wav](https://freesound.org/people/andrewgnau2/sounds/71534/) by andrewgnau2
 

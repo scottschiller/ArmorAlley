@@ -1034,7 +1034,7 @@ soundManager.onready(() => {
     }),
     add({
       // https://archive.org/details/WilhelmScreamSample
-      url: 'wilhem-scream',
+      url: 'wilhelm-scream',
       volume: 5
     })
   ]);
