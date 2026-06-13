@@ -10,7 +10,8 @@ import {
   rndInt,
   rubberChickenMode,
   TYPES,
-  worldHeight
+  worldHeight,
+  worldWidth
 } from '../core/global.js';
 import { gamePrefs } from '../UI/preferences.js';
 import {
@@ -506,7 +507,7 @@ MissileLauncher.radarItemConfig = ({ data }) => ({
     let radiusX =
       MISSILE_LAUNCHER_SCAN_RADIUS *
       game.objects.radar.data.scale *
-      (game.objects.view.data.browser.screenWidth / 8192) *
+      (game.objects.view.data.browser.screenWidth / worldWidth) *
       (data?.stepOffset !== undefined ? data.stepOffset : 1);
 
     effects.refreshScanDistanceScale(data);

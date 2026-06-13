@@ -1,7 +1,7 @@
 // helicopter AI extensions: wander
 
 import { common } from '../core/common.js';
-import { GAME_SPEED_RATIOED } from '../core/global.js';
+import { GAME_SPEED_RATIOED, worldWidth } from '../core/global.js';
 import { Vector } from '../core/Vector.js';
 import { addForce } from './Helicopter-forces.js';
 import { brakeY } from './Helicopter-utils.js';
@@ -10,7 +10,7 @@ import { brakeY } from './Helicopter-utils.js';
 const END_OF_WORLD_BUFFER = 128;
 
 const END_OF_WORLD_LEFT = 0 + END_OF_WORLD_BUFFER;
-const END_OF_WORLD_RIGHT = 8192 - END_OF_WORLD_BUFFER;
+const END_OF_WORLD_RIGHT = worldWidth - END_OF_WORLD_BUFFER;
 
 function wander(data) {
   /**

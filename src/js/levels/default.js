@@ -1,7 +1,13 @@
 import { gamePrefs } from '../UI/preferences.js';
 import { game, gameType } from '../core/Game.js';
 import { common } from '../core/common.js';
-import { autoStart, searchParams, TYPES, worldHeight } from '../core/global.js';
+import {
+  autoStart,
+  searchParams,
+  TYPES,
+  worldHeight,
+  worldWidth
+} from '../core/global.js';
 import { net } from '../core/network.js';
 import { prefsManager, screenScale } from '../aa.js';
 import { utils } from '../core/utils.js';
@@ -908,8 +914,8 @@ function addWorldObjects() {
       addItem('right-arrow-sign', 550);
 
       // right base area...
-      addItem('left-arrow-sign', 7700);
-      addItem('left-arrow-sign', 8192 + 32);
+      addItem('left-arrow-sign', worldWidth - 492);
+      addItem('left-arrow-sign', worldWidth + 32);
     }
   }
 

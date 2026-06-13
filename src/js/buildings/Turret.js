@@ -15,7 +15,8 @@ import {
   soundManager,
   tutorialMode,
   TYPES,
-  worldHeight
+  worldHeight,
+  worldWidth
 } from '../core/global.js';
 import {
   playSound,
@@ -348,7 +349,7 @@ Turret.radarItemConfig = ({ data }) => ({
     let radiusX =
       TURRET_SCAN_RADIUS *
       game.objects.radar.data.scale *
-      (game.objects.view.data.browser.screenWidth / 8192);
+      (game.objects.view.data.browser.screenWidth / worldWidth);
 
     effects.refreshScanDistanceScale(data);
 
