@@ -510,7 +510,7 @@ const audioSpriteConfig = {
       185344.64852607663,
       3015.600907029466
     ],
-    'wilhem-scream': [
+    'wilhelm-scream': [
       188370.2494331061,
       1063.6734693877656
     ]
