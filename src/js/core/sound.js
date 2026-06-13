@@ -1429,54 +1429,54 @@ soundManager.onready(() => {
   sounds.rubberChicken.bg = shuffle([
     add({
       url: 'rubber-chicken-bg0',
-      volume: 30
+      volume: 25
     }),
     add({
       url: 'rubber-chicken-bg1',
-      volume: 30
+      volume: 25
     }),
     add({
       url: 'rubber-chicken-bg2',
-      volume: 30
+      volume: 25
     })
   ]);
 
   sounds.rubberChicken.launch = shuffle([
     add({
       url: 'rubber-chicken-launch-1',
-      volume: 20
+      volume: 15
     }),
     add({
       url: 'rubber-chicken-launch-2',
-      volume: 20
+      volume: 15
     }),
     add({
       url: 'rubber-chicken-launch-3',
-      volume: 20
+      volume: 15
     })
   ]);
 
   sounds.rubberChicken.expire = add({
     url: 'rubber-chicken-expire',
-    volume: 30
+    volume: 25
   });
 
   sounds.rubberChicken.die = shuffle([
     add({
       url: 'rubber-chicken-hit-1',
-      volume: 20
+      volume: 15
     }),
     add({
       url: 'rubber-chicken-hit-2',
-      volume: 20
+      volume: 15
     }),
     add({
       url: 'rubber-chicken-hit-3',
-      volume: 20
+      volume: 15
     }),
     add({
       url: 'rubber-chicken-hit-4',
-      volume: 20
+      volume: 15
     })
   ]);
 
