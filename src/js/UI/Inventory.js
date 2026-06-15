@@ -567,9 +567,9 @@ const Inventory = () => {
         if (sendToRemote) {
           net.sendMessage({
             type: 'ADD_OBJECT',
-            // HACK: if infantry + role = 1, then engineer. Otherwise, type is as-is.
+            // special case for engineers, is infantry w/ `isEngineer`
             objectType:
-              newObject.data.type === TYPES.infantry && newObject.data.role
+              newObject.data.type === TYPES.infantry && newObject.data.isEngineer
                 ? TYPES.engineer
                 : newObject.data.type,
             params: {
@@ -636,9 +636,7 @@ const Inventory = () => {
       // build arrays of unique items, and counts
       for (i = 0, j = data.queueCopy.length; i < j; i++) {
         // same item as before? handle difference between infantry and engineers
-        actualType = data.queueCopy[i].data.role
-          ? data.queueCopy[i].data.roles[data.queueCopy[i].data.role]
-          : data.queueCopy[i].data.type;
+        actualType = data.queueCopy[i].data.isEngineer ? TYPES.engineer : data.queueCopy[i].data.type;
 
         if (i > 0 && actualType === types[types.length - 1]) {
           counts[counts.length - 1] = (counts[counts.length - 1] || 0) + 1;
@@ -820,9 +818,9 @@ const Inventory = () => {
     if (net.active) {
       net.sendMessage({
         type: 'ADD_OBJECT',
-        // HACK: if infantry + role = 1, then engineer. Otherwise, type is as-is.
+        // special case: engineers are infantry w/ `.isEngineer`
         objectType:
-          newObject.data.type === TYPES.infantry && newObject.data.role
+          newObject.data.type === TYPES.infantry && newObject.data.isEngineer
             ? TYPES.engineer
             : newObject.data.type,
         params: {
@@ -879,7 +877,7 @@ const Inventory = () => {
     // otherwise, the first item has finished and can be removed from the queue.
     if (item) {
       // tank, infantry, or special-case: engineer.
-      type = item.data.role ? item.data.roles[item.data.role] : item.data.type;
+      type = item.data.isEngineer ? TYPES.engineer : item.data.type;
 
       if (queue.childNodes.length) {
         oLastChild = queue.childNodes[queue.childNodes.length - 1];

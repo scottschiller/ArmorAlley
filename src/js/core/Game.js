@@ -303,7 +303,7 @@ let game = (() => {
         if (!obj.data) return;
         let { type } = obj.data;
         // I forgot about this special case.
-        if (type === TYPES.infantry && obj.data.role) {
+        if (type === TYPES.infantry && obj.data.isEngineer) {
           type = TYPES.engineer;
         }
         if (qualifiers[type]) {
@@ -326,7 +326,7 @@ let game = (() => {
         // engineers, again - special case
         const iData = item.data;
         let { type } = iData;
-        if (type === TYPES.infantry && iData.role) type = TYPES.engineer;
+        if (type === TYPES.infantry && iData.isEngineer) type = TYPES.engineer;
 
         // 2 or 3 args, depending
         const args = [

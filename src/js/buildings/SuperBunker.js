@@ -184,10 +184,8 @@ const SuperBunker = (options = {}) => {
         }
 
         /**
-         * Only infantry (excluding engineers by role=1) are involved,
          * beyond this point.
          */
-        if (target.data.type !== TYPES.infantry || target.data.role) return;
 
         /**
          * Super Bunkers can hold up to five men. Only interact if not full

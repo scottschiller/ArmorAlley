@@ -84,7 +84,7 @@ function Stats() {
   function normalizeType(obj) {
     let type = obj.data.type;
     // special case: infantry -> engineer
-    if (obj.data.type === TYPES.infantry && obj.data.role) {
+    if (obj.data.type === TYPES.infantry && obj.data.isEngineer) {
       type = TYPES.engineer;
     }
     return type;
@@ -325,8 +325,8 @@ function Stats() {
     // then, account for infantry which are actually engineers.
     let type = item.data.type;
 
-    // special case: engineers are infantry, with a role assigned.
-    if (type === TYPES.infantry && item.data.role) {
+    // special case: engineers are infantry, with `.isEngineer` assigned.
+    if (type === TYPES.infantry && item.data.isEngineer) {
       type = TYPES.engineer;
     }
 

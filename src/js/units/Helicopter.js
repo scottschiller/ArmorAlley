@@ -754,7 +754,7 @@ const Helicopter = (options = {}) => {
               let updateParams = { parachutes: true };
 
               // if an engineer, notify about repairs etc.
-              if (tData.role) {
+              if (tData.isEngineer) {
                 game.objects.notifications.add(
                   'An engineer partially re-armed your chopper. 🚁'
                 );

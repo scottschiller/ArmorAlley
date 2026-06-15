@@ -130,18 +130,18 @@ const EndBunker = (options = {}) => {
             if (
               data.funds &&
               collisionCheckMidPoint(target, exports) &&
-              (!target.data.role || gamePrefs.engineers_rob_the_bank)
+              (!target.data.isEngineer || gamePrefs.engineers_rob_the_bank)
             ) {
               captureFunds(exports, target);
               data.energy = 0;
             }
           } else if (
-            !target.data.role &&
+            !target.data.isEngineer &&
             !data.energy &&
             isFriendly &&
             collisionCheckMidPoint(target, exports)
           ) {
-            // infantry-only (role is not 1): end bunker presently isn't "staffed" / manned by infantry, guns are inoperable.
+            // infantry-only: end bunker presently isn't "staffed" / manned by infantry, guns are inoperable.
             // claim infantry, enable guns.
             data.energy = data.energyMax;
             let isYours = data.isEnemy === game.players.local.data.isEnemy;
@@ -252,7 +252,7 @@ function captureFunds(exports, target) {
 
   // infantry only get to steal so much at a time.
   // because they're special, engineers may be able to steal all funds. 💰
-  allFunds = target.data.role && gamePrefs.engineers_rob_the_bank;
+  allFunds = target.data.isEngineer && gamePrefs.engineers_rob_the_bank;
 
   let endBunkers = game.objects[TYPES.endBunker];
 
@@ -273,7 +273,7 @@ function captureFunds(exports, target) {
   data.funds = -25;
 
   // engineer + BnB case, vs.
-  if (target.data.role) {
+  if (target.data.isEngineer) {
     actor = gamePrefs.bnb
       ? target.data.isBeavis
         ? 'Beavis'

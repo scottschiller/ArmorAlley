@@ -4,7 +4,7 @@ import { getTypes } from '../core/global.js';
 
 const Engineer = (options = {}) => {
   // flag as an engineer
-  options.role = 1;
+  options.isEngineer = 1;
 
   // hackish: BNB - alternate characters with each group.
   if (!options.isEnemy) {

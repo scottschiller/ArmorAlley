@@ -81,7 +81,7 @@ const Infantry = (options = {}) => {
   let data, domCanvas, defaultLookAhead, exports;
 
   // engineers stop closer to turrets vs. infantry.
-  defaultLookAhead = options.role ? 4 : 8;
+  defaultLookAhead = options.isEngineer ? 4 : 8;
 
   data = common.inheritData(
     {
@@ -91,8 +91,7 @@ const Infantry = (options = {}) => {
       defaultLookAhead,
       energy,
       energyMax: energy,
-      role: options.role || 0,
-      roles: [TYPES.infantry, TYPES.engineer],
+      isEngineer: !!options.isEngineer,
       isBeavis: !options.isEnemy && !!options.isBeavis,
       isButthead: !options.isEnemy && !!options.isButthead,
       stopped: false,
@@ -150,7 +149,7 @@ const Infantry = (options = {}) => {
     refreshSprite: () => {
       // standard infantry / engineer
       exports.animConfig.sprite.url = getInfantryEngURL(data);
-      if (data.role) {
+      if (data.isEngineer) {
         // possible BnB case
         getSpriteURL(exports);
       } else {
@@ -165,14 +164,14 @@ const Infantry = (options = {}) => {
     sprite: {
       url: getInfantryEngURL(data),
       // engineer sprite is packed slightly tighter.
-      width: data.role ? 100 : 110,
+      width: data.isEngineer ? 100 : 110,
       height: 22,
-      frameWidth: data.role ? 20 : 22,
+      frameWidth: data.isEngineer ? 20 : 22,
       frameHeight: 22,
       animationDuration: 0.9,
       horizontal: true,
       loop: true,
-      reverseDirection: !data.isEnemy && !data.role
+      reverseDirection: !data.isEnemy && !data.isEngineer
     }
   };
 
@@ -190,7 +189,7 @@ const Infantry = (options = {}) => {
         let target = getObjectById(targetID);
         const tData = target.data;
         // engineer + turret case? reclaim or repair.
-        if (data.role && tData.type === TYPES.turret) {
+        if (data.isEngineer && tData.type === TYPES.turret) {
           // is there work to do?
           // ignore if too far away, accounting for special look-ahead offset.
           let deltaX = target.data.x - data.x - (data.xLookAheadTurret || 0);
@@ -207,7 +206,7 @@ const Infantry = (options = {}) => {
           }
         } else if (
           gamePrefs.engineers_repair_bunkers &&
-          data.role &&
+          data.isEngineer &&
           tData.type === TYPES.bunker &&
           data.isEnemy === tData.isEnemy &&
           target.engineerHit
@@ -267,10 +266,10 @@ const Infantry = (options = {}) => {
          * this is sort of an edge case, to prevent parachuting infantry landing in the middle of a tank.
          * this would normally cause both objects to stop and fire, but unable to hit one another due to the overlap.
          */
-        if (!data.role && target.infantryHit) {
+        if (!data.isEngineer && target.infantryHit) {
           // infantry hit bunker or other object
           target.infantryHit(exports);
-        } else if (data.role && target.engineerHit) {
+        } else if (data.isEngineer && target.engineerHit) {
           // engineer hit bunker or other object
           target.engineerHit(exports);
         } else if (
@@ -357,7 +356,7 @@ function setFlip(exports, isFlipped) {
 
   data.flipX = !!isFlipped;
   // swap flipped / non-flipped sprites, when not BnB + engineers
-  if (!data.role || !gamePrefs.bnb) {
+  if (!data.isEngineer || !gamePrefs.bnb) {
     domCanvas?.animation?.updateSprite(getInfantryEngURL(data));
   }
 }
@@ -370,7 +369,7 @@ function stop(exports, noFire) {
   data.stopped = true;
   data.noFire = !!noFire;
 
-  if (data.role) {
+  if (data.isEngineer) {
     getSpriteURL(exports);
   } else {
     domCanvas?.animation?.updateSprite(getInfantryEngURL(data));
@@ -392,19 +391,10 @@ function resume(exports) {
   data.stopped = false;
   data.noFire = false;
 
-  if (data.role) {
+  if (data.isEngineer) {
     getSpriteURL(exports);
   } else {
     domCanvas?.animation?.updateSprite(getInfantryEngURL(data));
-  }
-}
-
-function setRole(exports, role, force) {
-  let { data } = exports;
-
-  if (data.role !== role || force) {
-    // role
-    data.role = role;
   }
 }
 
@@ -419,7 +409,7 @@ function die(exports, dieOptions = {}) {
     if (gamePrefs.bnb) {
       if (data.isEnemy) {
         playSound(sounds.bnb.dvdPrincipalScream, exports);
-      } else if (data.role) {
+      } else if (data.isEngineer) {
         // engineer case
         if (data.isBeavis) {
           playSound(sounds.bnb.beavisScreamShort, exports);
@@ -440,9 +430,6 @@ function die(exports, dieOptions = {}) {
       vX: plusMinus(rnd(3)),
       vY: rnd(5)
     });
-
-    const isInfantry = data.roles[data.role] === TYPES.infantry;
-    const isEngineer = data.roles[data.role] === TYPES.engineer;
 
     const attacker = dieOptions?.attacker?.data;
 
@@ -475,11 +462,11 @@ function die(exports, dieOptions = {}) {
           ? `You killed %s ${emoji}`
           : `You lost %s ${emoji}`;
       const maybeEnemy = isOpponent ? 'an enemy ' : 'an ';
-      if (isInfantry && gamePrefs[`notify_${TYPES.infantry}`]) {
+      if (!data.isEngineer && gamePrefs[`notify_${TYPES.infantry}`]) {
         game.objects.notifications.add(
           str.replace('%s', `${maybeEnemy}infantry`)
         );
-      } else if (isEngineer && gamePrefs[`notify_${TYPES.engineer}`]) {
+      } else if (data.isEngineer && gamePrefs[`notify_${TYPES.engineer}`]) {
         game.objects.notifications.add(
           str.replace('%s', `${maybeEnemy}engineer`)
         );
@@ -517,7 +504,7 @@ function animate(exports) {
   domCanvas?.animation?.animate?.();
 
   if (!data.stopped) {
-    if (data.roles[data.role] === TYPES.infantry) {
+    if (!data.isEngineer) {
       // infantry walking "pace" varies slightly, similar to original game
       moveTo(
         exports,
@@ -563,13 +550,10 @@ function initInfantry(exports, options = {}) {
 
   if (options?.noInit) return;
 
-  // infantry, or engineer?
-  setRole(exports, data.role, true);
-
   refreshHeight(exports);
 
   // note: domCanvas must exist before this call, because it causes modifications. :X
-  // we also need to know the role, before doing canvas stuff here.
+  // we also need to know `isEngineer` before doing canvas stuff here.
   getSpriteURL(exports);
 
   common.initDOM(exports);
@@ -608,11 +592,11 @@ function refreshHeight(exports) {
   if (options.isEnemy || !gamePrefs.bnb) {
     height = DEFAULT_HEIGHT;
   } else {
-    // if role (engineer), then BnB now
-    height = options.role ? BNB_HEIGHT : DEFAULT_HEIGHT;
+    // if isEngineer, then BnB now
+    height = options.isEngineer ? BNB_HEIGHT : DEFAULT_HEIGHT;
   }
 
-  if (options.role) {
+  if (options.isEngineer) {
     // if an engineer, ensure the proper sprite / animation is applied.
     getSpriteURL(exports);
   }
@@ -626,7 +610,7 @@ function getInfantryEngURL(data) {
   const parts = [];
 
   // infantry / engineer
-  parts.push(data.roles[data.role]);
+  parts.push(data.isEngineer ? TYPES.engineer : TYPES.infantry);
 
   if (data.isEnemy) parts.push('enemy');
 
@@ -646,7 +630,7 @@ function getSpriteURL(exports) {
     // NOTE: Only friendly side has BnB, for now
     gamePrefs.bnb &&
     !data.isEnemy &&
-    data.role &&
+    data.isEngineer &&
     game.players.local.data.isEnemy === data.isEnemy
   ) {
     if (data.isBeavis) {

@@ -262,7 +262,7 @@ function collisionCheckObject(options) {
       (!tData.dead ||
         (tData.type === TYPES.turret &&
           sData.type === TYPES.infantry &&
-          sData.role)) &&
+          sData.isEngineer)) &&
       // more non-standard formatting....
       // most common case: enemy vs. non-enemy. Otherwise, don't check friendly units by default UNLESS looking only for friendly.
       ((tData.isEnemy !== sData.isEnemy && !options.friendlyOnly) ||
@@ -271,12 +271,12 @@ function collisionCheckObject(options) {
         (sData.type === TYPES.helicopter && tData.type === TYPES.superBunker) ||
         (sData.type === TYPES.infantry && tData.type === TYPES.bunker) ||
         (tData.type === TYPES.infantry &&
-          ((sData.type === TYPES.endBunker && !tData.role) ||
-            (sData.type === TYPES.superBunker && !tData.role) ||
+          ((sData.type === TYPES.endBunker && !tData.isEngineer) ||
+            (sData.type === TYPES.superBunker && !tData.isEngineer) ||
             sData.type === TYPES.helicopter)) ||
         // OR engineer vs. turret
         (sData.type === TYPES.infantry &&
-          sData.role &&
+          sData.isEngineer &&
           tData.type === TYPES.turret) ||
         // OR we're dealing with a hostile or neutral object
         sData.hostile ||
@@ -836,7 +836,7 @@ function checkRefund(params) {
   let costObj, refund, type;
 
   // tank, infantry etc., or special-case: engineer.
-  type = data.role ? data.roles[data.role] : data.type;
+  type = data.isEngineer ? TYPES.engineer : data.type;
 
   // special case: infantry may have been dropped by player, or when helicopter exploded.
   // exclude those from being "refunded" at all, given player was involved in their move.
