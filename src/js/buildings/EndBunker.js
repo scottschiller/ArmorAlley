@@ -292,9 +292,11 @@ function captureFunds(exports, target) {
         game.objects.notifications.add(`🏦 ${actor} found no enemy funds. 🤷`);
       } else {
         if (allFunds) {
-          msg = `🏦 💰 ${actor} captured all ${capturedFunds}${
-            capturedFunds > 1 ? ' enemy funds! 🤑' : ' enemy fund. 😒'
-          }`;
+          msg =
+            `🏦 💰 ${actor} captured ` +
+            (capturedFunds > 1
+              ? ` all ${capturedFunds}enemy funds! 🤑`
+              : ` a single enemy fund. 😒`);
         } else {
           msg = `🏦 💸 ${capturedFunds} enemy ${
             capturedFunds > 1 ? ' funds' : ' fund'
