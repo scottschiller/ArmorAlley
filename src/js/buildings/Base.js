@@ -12,7 +12,8 @@ import {
   TYPES,
   rng,
   isMobile,
-  rngInt
+  rngInt,
+  DEFAULT_GLOW
 } from '../core/global.js';
 import { playSound, stopSound, sounds } from '../core/sound.js';
 import { playSequence, resetBNBSoundQueue } from '../core/sound-bnb.js';
@@ -432,7 +433,7 @@ function nukeTheBase(exports) {
       );
     }
 
-    data.shadowBlur = 32 * (gamePrefs.gfx_hi_dpi ? 2 : 1);
+    data.shadowBlur = DEFAULT_GLOW * 4 * (gamePrefs.gfx_hi_dpi ? 2 : 1);
   }, 25);
 }
 

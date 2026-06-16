@@ -225,6 +225,8 @@ const debugCollision = searchParams.get('debugCollision');
 
 const DEFAULT_VOLUME = 25;
 
+const DEFAULT_GLOW = 8;
+
 const rad2Deg = 180 / Math.PI;
 
 // used for various measurements in the game
@@ -570,6 +572,7 @@ export {
   isMaybeiPad,
   debug,
   debugCollision,
+  DEFAULT_GLOW,
   DEFAULT_VOLUME,
   noRadar,
   rad2Deg,

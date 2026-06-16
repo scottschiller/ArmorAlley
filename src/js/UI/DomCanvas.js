@@ -1,6 +1,7 @@
 import { game } from '../core/Game.js';
 import { common } from '../core/common.js';
 import {
+  DEFAULT_GLOW,
   ENEMY_UNIT_COLOR,
   ENERGY_TIMER_DELAY,
   ENERGY_TIMER_FADE_RATIO,
@@ -428,15 +429,16 @@ const DomCanvas = () => {
 
   function startShadowBlur(ctx, exports) {
     const { data } = exports;
-    const ss = game.objects.view.data.screenScale * (gamePrefs.gfx_hi_dpi ? 2 : 1);
+    const ss =
+      game.objects.view.data.screenScale * (gamePrefs.gfx_hi_dpi ? 2 : 1);
 
     const tracking =
       !data.dead && (data.smartMissileTracking || data.isNextMissileTarget);
 
     // smart missile: next, or current target?
     if (tracking) {
-      // radius approximately matching CSS glow.
-      ctx.shadowBlur = 8 * ss;
+      // radius approximately matching original CSS glow.
+      ctx.shadowBlur = DEFAULT_GLOW * 0.75 * ss;
       // current (active) vs. next detected target
       ctx.shadowColor = data.smartMissileTracking ? '#ff3333' : '#999';
     } else if (data.shadowBlur) {

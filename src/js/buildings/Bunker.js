@@ -9,7 +9,8 @@ import {
   rngInt,
   GAME_SPEED_RATIOED,
   GAME_SPEED,
-  ENEMY_COLOR
+  ENEMY_COLOR,
+  DEFAULT_GLOW
 } from '../core/global.js';
 import { collisionCheckMidPoint, checkProduction } from '../core/logic.js';
 import { playSound, playSoundWithDelay, sounds } from '../core/sound.js';
@@ -469,7 +470,7 @@ function die(exports, dieOptions = {}) {
     nukeConfig
   );
 
-  data.shadowBlur = 8 * (gamePrefs.gfx_hi_dpi ? 2 : 1);
+  data.shadowBlur = DEFAULT_GLOW * (gamePrefs.gfx_hi_dpi ? 2 : 1);
   data.shadowColor = '#fff';
 
   // burning sprite
@@ -561,7 +562,7 @@ function animate(exports) {
     data.smokeFramesLeft--;
     // cut size in half over time
     data.shadowBlur =
-      8 *
+      DEFAULT_GLOW *
       (data.smokeFramesLeft / data.smokeFramesMax) *
       (gamePrefs.gfx_hi_dpi ? 2 : 1);
     // ... and fade blur out

@@ -1,4 +1,11 @@
-import { FPS, GAME_SPEED, oneOf, rng, worldHeight } from '../core/global.js';
+import {
+  DEFAULT_GLOW,
+  FPS,
+  GAME_SPEED,
+  oneOf,
+  rng,
+  worldHeight
+} from '../core/global.js';
 import { game, getObjectById } from '../core/Game.js';
 import { domFettiBoom } from '../UI/DomFetti.js';
 import { gamePrefs } from '../UI/preferences.js';
@@ -33,7 +40,7 @@ function genericExplosion(exports, sprites, options = {}) {
   const { data } = exports;
 
   // potentially dangerous: mutate the object being passed in.
-  data.shadowBlur = 8;
+  data.shadowBlur = DEFAULT_GLOW * 0.75;
   data.shadowColor = '#ff3333';
 
   return common.domCanvas.canvasAnimation(exports, {

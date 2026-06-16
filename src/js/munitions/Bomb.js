@@ -14,7 +14,8 @@ import {
   GAME_SPEED_RATIOED,
   rngInt,
   rngPlusMinus,
-  FPS
+  FPS,
+  DEFAULT_GLOW
 } from '../core/global.js';
 import { playSound, sounds } from '../core/sound.js';
 import { sprites } from '../core/sprites.js';
@@ -270,7 +271,7 @@ function die(exports, dieOptions = {}) {
           };
         })();
 
-        data.shadowBlur = 4 * (gamePrefs.gfx_hi_dpi ? 2 : 1);
+        data.shadowBlur = DEFAULT_GLOW * 1/3 * (gamePrefs.gfx_hi_dpi ? 2 : 1);
         data.shadowColor = 'rgba(255, 255, 255, 0.5)';
 
         exports.domCanvas.dieExplosion = common.domCanvas.canvasAnimation(
