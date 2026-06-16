@@ -353,16 +353,16 @@ const Inventory = () => {
       game.objects.notifications.add('%s1%s2: %c1/%c2 💰 🤏 🤷', {
         type: 'NSF',
         onRender(input) {
-          // hack: special-case missile launcher
-          const text = type.replace('missileLauncher', 'missile launcher');
+          // force lower-case to start
+          const item = PRETTY_TYPES[type].toLowerCase();
           // long vs. short-hand copy, flag set once NSF is hit and the order completes
           const result = input
             .replace('%s1', data.canShowNSF ? '' : 'Insufficient funds: ')
             .replace(
               '%s2',
               (data.canShowNSF ? '🚫 ' : '') +
-                text.charAt(0).toUpperCase() +
-                (data.canShowNSF ? '' : text.slice(1))
+                item.charAt(0).toUpperCase() +
+                (data.canShowNSF ? '' : item.slice(1))
             )
             .replace(
               '%c1',
