@@ -326,7 +326,6 @@ function changeOwnership(obj) {
   if (obj.data.isOnScreen) {
     debugZone(obj);
   }
-
 }
 
 function leaveFrontAndRear(obj, group) {

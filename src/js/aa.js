@@ -84,7 +84,6 @@ const keyboardMonitor = KeyboardMonitor();
 
 let stats;
 
-
 if (soundManager) {
   // Opus should be available, so MP3 is not required.
   soundManager.audioFormats.mp3.required = false;

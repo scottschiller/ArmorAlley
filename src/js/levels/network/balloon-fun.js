@@ -83,7 +83,11 @@ const balloonFunLevel = [
         let luftBalloons = new Array(39);
         // NOTE: n = neutral
         for (let i = 0, j = luftBalloons.length; i < j; i++) {
-          luftBalloons[i] = ['balloon', 'n', 3084 + parseInt((2048 * i) / j, 10)];
+          luftBalloons[i] = [
+            'balloon',
+            'n',
+            3084 + parseInt((2048 * i) / j, 10)
+          ];
         }
         return luftBalloons;
       })()

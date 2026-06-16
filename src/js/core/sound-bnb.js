@@ -433,13 +433,13 @@ function getSoundFromArray(ref) {
 }
 
 /**
- * 
+ *
  * BnB sound config
  * https://youtu.be/nSsYgd96seg
- * 
+ *
  * NOTE: BnB sound assets are omitted by default.
  * https://github.com/scottschiller/ArmorAlley/issues/29
- * 
+ *
  */
 
 function bnbURL(file) {

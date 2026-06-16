@@ -569,7 +569,8 @@ const Inventory = () => {
             type: 'ADD_OBJECT',
             // special case for engineers, is infantry w/ `isEngineer`
             objectType:
-              newObject.data.type === TYPES.infantry && newObject.data.isEngineer
+              newObject.data.type === TYPES.infantry &&
+              newObject.data.isEngineer
                 ? TYPES.engineer
                 : newObject.data.type,
             params: {
@@ -636,7 +637,9 @@ const Inventory = () => {
       // build arrays of unique items, and counts
       for (i = 0, j = data.queueCopy.length; i < j; i++) {
         // same item as before? handle difference between infantry and engineers
-        actualType = data.queueCopy[i].data.isEngineer ? TYPES.engineer : data.queueCopy[i].data.type;
+        actualType = data.queueCopy[i].data.isEngineer
+          ? TYPES.engineer
+          : data.queueCopy[i].data.type;
 
         if (i > 0 && actualType === types[types.length - 1]) {
           counts[counts.length - 1] = (counts[counts.length - 1] || 0) + 1;

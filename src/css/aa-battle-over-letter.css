@@ -474,7 +474,8 @@ a.glow-item {
   inset: -5px;
   border: 10px solid transparent;
   border-radius: var(--glow-border-radius);
-  mask: linear-gradient(#0000, #0000),
+  mask:
+    linear-gradient(#0000, #0000),
     conic-gradient(
       from calc((var(--glow-start) - (var(--glow-spread) * 0.5)) * 1deg),
       #000 0deg,
@@ -497,14 +498,16 @@ a.glow-item {
   background: var(--glow-border);
   background-attachment: fixed;
   border-radius: var(--glow-border-radius);
-  mask: linear-gradient(#0000, #0000),
+  mask:
+    linear-gradient(#0000, #0000),
     conic-gradient(
       from
         calc(
           (
               (var(--glow-start) + (var(--glow-spread) * 0.25)) -
                 (var(--glow-spread) * 1.5)
-            ) * 1deg
+            ) *
+            1deg
         ),
       hsl(0 0% 100% / 0.15) 0deg,
       white,
@@ -528,14 +531,16 @@ a.glow-item {
   --glow-alpha: 0;
   inset: -2px;
   border: var(--glow-border-width) solid transparent;
-  mask: linear-gradient(#0000, #0000),
+  mask:
+    linear-gradient(#0000, #0000),
     conic-gradient(
       from
         calc(
           (
               (var(--glow-start) + (var(--glow-spread) * 0.25)) -
                 (var(--glow-spread) * 0.5)
-            ) * 1deg
+            ) *
+            1deg
         ),
       #0000 0deg,
       #fff,

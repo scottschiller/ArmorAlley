@@ -206,36 +206,36 @@ function addControllers() {
 
           // left shoulder button
           l1: 'btn8',
-    
+
           // TODO: fix for axis case of -1 / 1
           l2: 'axis4',
-    
+
           // right shoulder button
           r1: 'btn9',
-    
+
           // TODO: fix for axis case of -1 / 1
           r2: 'axis5',
-    
+
           share: null,
           select: 'btn5',
-    
+
           option: null,
           start: 'btn4',
-    
+
           logo: null
         },
         dpads: [['btn0', 'btn1', 'btn2', 'btn3']],
-        abxy:[
+        abxy: [
           {
             // X
             top: 'btn14',
-    
+
             // Y
             left: 'btn13',
-    
+
             // A
             right: 'btn12',
-    
+
             // B
             bottom: 'btn11'
           }
@@ -246,7 +246,7 @@ function addControllers() {
       ...knownControllers[STD].joystickOptions,
       invertYAxis: true
     }
-  }
+  };
 
   addKnownController('nes30Pro', {
     /**

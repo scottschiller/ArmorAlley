@@ -146,7 +146,6 @@ function KeyboardMonitor() {
     keydown(e) {
       // let editor handle keys, unless method returns truthy
       if (game.objects.editor && !game.objects.editor.events.keydown(e)) return;
-
       [e.keyCode, e.key].forEach((item) => {
         if (preFlightCheck(item)) handleKeyDown(e, item);
       });
@@ -155,7 +154,6 @@ function KeyboardMonitor() {
     keyup(e) {
       // let editor handle keys, unless method returns truthy
       if (game.objects.editor && !game.objects.editor.events.keyup(e)) return;
-
       [e.keyCode, e.key].forEach((item) => {
         if (preFlightCheck(item)) handleKeyUp(e, item);
       });

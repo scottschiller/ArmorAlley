@@ -86,7 +86,8 @@
   /* global monospace font style */
   --monospace: 'Iosevka Custom', 'Fira Code', monospace;
   /* NOTE: fallback to "custom" if bold isn't provided e.g., in 360K floppy build */
-  --monospace-bold: 'Iosevka Custom Bold', 'Iosevka Custom', 'Fira Code', monospace;
+  --monospace-bold:
+    'Iosevka Custom Bold', 'Iosevka Custom', 'Fira Code', monospace;
 }
 
 #world-noise-overlay .noise {
@@ -719,8 +720,7 @@ video {
 }
 
 .flying-ace {
-  background: url(/assets/image/UI/flying_ace.png) 50% 100% / contain
-    no-repeat;
+  background: url(/assets/image/UI/flying_ace.png) 50% 100% / contain no-repeat;
   height: 40.5px;
   /* obligatory: the Flying Ace, on the doghouse. "Snoopy vs. The Red Baron" - from "It's The Great Pumpkin, Charlie Brown!" */
   width: 25px;

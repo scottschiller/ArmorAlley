@@ -229,8 +229,7 @@ body.is_safari #bnb-now-playing .pow {
 }
 
 #bnb-now-playing .beavis {
-  background: url(/assets/image/bnb/pow-beavis.webp) 50% 50% / contain
-    no-repeat;
+  background: url(/assets/image/bnb/pow-beavis.webp) 50% 50% / contain no-repeat;
 }
 
 #bnb-now-playing .butthead {

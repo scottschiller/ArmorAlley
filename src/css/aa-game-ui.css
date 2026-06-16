@@ -387,8 +387,8 @@ body.game-started #fuel-bar {
 }
 
 #repair-complete {
-  background: url(/assets/image/UI/status-repair-complete.png) 0 0 /
-    contain repeat-x;
+  background: url(/assets/image/UI/status-repair-complete.png) 0 0 / contain
+    repeat-x;
   display: none;
   height: calc(13px * var(--gs));
   top: calc(33px * var(--gs));
@@ -650,8 +650,8 @@ ul.stats-bar .bombs em {
 
 body.rubber-chicken-mode #mobile-controls li.weapons-item a.smart-missile,
 body.rubber-chicken-mode ul.stats-bar .missiles em {
-  background: url(/assets/image/UI/rubber-chicken-static.png) 50% 33%/16px
-    4.5px no-repeat;
+  background: url(/assets/image/UI/rubber-chicken-static.png) 50% 33%/16px 4.5px
+    no-repeat;
   min-width: 16px;
 }
 

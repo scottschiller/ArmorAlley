@@ -181,9 +181,11 @@ const Funds = () => {
     const rect = getWrecked();
 
     // scale to the real size - 1x + 10x
-    dom.digits[i].style.backgroundSize = `${rect.width}px ${rect.height * 10}px`;
+    dom.digits[i].style.backgroundSize =
+      `${rect.width}px ${rect.height * 10}px`;
 
-    dom.digits[i].style.backgroundPosition = `0px ${(data.offsetTop[i] + 1 + tensOffset) * data.displayHeight}${data.offsetType}`;
+    dom.digits[i].style.backgroundPosition =
+      `0px ${(data.offsetTop[i] + 1 + tensOffset) * data.displayHeight}${data.offsetType}`;
   }
 
   function updateScale() {

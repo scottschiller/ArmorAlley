@@ -367,7 +367,8 @@ body.auto-start.is-mobile.loaded.has-gamepad #start-game-mobile-hint {
 }
 
 #game-menu-wrapper .logo-overlay-shadow {
-  background: linear-gradient(
+  background:
+    linear-gradient(
       to bottom,
       rgba(0, 0, 0, 0) 0,
       rgba(0, 0, 0, 0.15) 10%,
@@ -1015,7 +1016,8 @@ button .button-icon {
   inset: -5px;
   border: 10px solid transparent;
   border-radius: var(--glow-border-radius);
-  mask: linear-gradient(#0000, #0000),
+  mask:
+    linear-gradient(#0000, #0000),
     conic-gradient(
       from calc((var(--glow-start) - (var(--glow-spread) * 0.5)) * 1deg),
       #000 0deg,
@@ -1038,14 +1040,16 @@ button .button-icon {
   background: var(--glow-border);
   background-attachment: fixed;
   border-radius: var(--glow-border-radius);
-  mask: linear-gradient(#0000, #0000),
+  mask:
+    linear-gradient(#0000, #0000),
     conic-gradient(
       from
         calc(
           (
               (var(--glow-start) + (var(--glow-spread) * 0.25)) -
                 (var(--glow-spread) * 1.5)
-            ) * 1deg
+            ) *
+            1deg
         ),
       hsl(0 0% 100% / 0.15) 0deg,
       white,
@@ -1069,14 +1073,16 @@ button .button-icon {
   --glow-alpha: 0;
   inset: -2px;
   border: var(--glow-border-width) solid transparent;
-  mask: linear-gradient(#0000, #0000),
+  mask:
+    linear-gradient(#0000, #0000),
     conic-gradient(
       from
         calc(
           (
               (var(--glow-start) + (var(--glow-spread) * 0.25)) -
                 (var(--glow-spread) * 0.5)
-            ) * 1deg
+            ) *
+            1deg
         ),
       #0000 0deg,
       #fff,
