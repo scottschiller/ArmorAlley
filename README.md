@@ -656,3 +656,7 @@ BnB "VS" banner image - https://www.steamgriddb.com/game/5248723
 ## Fonts ("Typefaces" :P)
 
 [FA Sysfont C](https://fontsarena.com/sysfont-by-alina-sava/) by Alina Sava (SIL Open Font License 1.1)
+
+## Play online
+
+Also playable on [WASM Arcade](https://www.wasmarcade.online/arcade/armor-alley/) — free, no download.
